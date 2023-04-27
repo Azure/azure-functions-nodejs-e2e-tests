@@ -1,0 +1,51 @@
+{
+    "name": "@azure/functions-e2e-tests",
+    "version": "1.0.0",
+    "description": "Microsoft Azure Functions NodeJS E2E Tests",
+    "keywords": [
+        "azure",
+        "azure-functions",
+        "serverless",
+        "typescript"
+    ],
+    "author": "Microsoft",
+    "license": "MIT",
+    "homepage": "https://github.com/Azure/azure-functions-nodejs-e2e-tests",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Azure/azure-functions-nodejs-e2e-tests.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Azure/azure-functions-nodejs-e2e-tests/issues"
+    },
+    "main": "./dist/azure-functions.js",
+    "types": "types/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "lint": "eslint . --fix",
+        "watch": "tsc -w"
+    },
+    "dependencies": {
+        "@types/chai": "^4.2.22",
+        "@types/chai-as-promised": "^7.1.5",
+        "@types/mocha": "^9.1.1",
+        "@types/node": "^18.0.0",
+        "@typescript-eslint/eslint-plugin": "^5.12.1",
+        "@typescript-eslint/parser": "^5.12.1",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-deprecation": "^1.3.2",
+        "eslint-plugin-header": "^3.1.1",
+        "eslint-plugin-prettier": "^4.0.0",
+        "globby": "^11.0.0",
+        "mocha": "^9.1.1",
+        "mocha-junit-reporter": "^2.0.2",
+        "mocha-multi-reporters": "^1.5.1",
+        "prettier": "^2.4.1",
+        "ts-loader": "^9.3.1",
+        "ts-node": "^3.3.0",
+        "typescript": "^4.5.5"
+    }
+}

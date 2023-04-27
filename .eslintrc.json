@@ -1,0 +1,54 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint",
+        "header",
+        "deprecation"
+    ],
+    "parserOptions": {
+        "project": "tsconfig.json",
+        "sourceType": "module"
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:prettier/recommended"
+    ],
+    "rules": {
+        "header/header": [
+            2,
+            "line",
+            [
+                " Copyright (c) .NET Foundation. All rights reserved.",
+                " Licensed under the MIT License."
+            ],
+            2
+        ],
+        "deprecation/deprecation": "error",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "prefer-const": ["error", { "destructuring": "all" }],
+        "@typescript-eslint/explicit-member-accessibility": [
+            "error", {
+                "accessibility": "no-public"
+            }
+        ],
+        "no-return-await": "off",
+        "@typescript-eslint/return-await": "error",
+        "@typescript-eslint/no-unsafe-argument": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-unsafe-return": "off"
+    },
+    "ignorePatterns": [
+        "**/*.js",
+        "**/*.mjs",
+        "**/*.cjs",
+        "out",
+        "dist"
+    ]
+}
