@@ -43,6 +43,6 @@ jobs:
   - task: PublishTestResults@2
     displayName: 'Publish Unit Test Results'
     inputs:
-      testResultsFiles: 'test/e2e-test-results.xml'
+      testResultsFiles: 'e2e-test-results.xml'
       testRunTitle: '$(Agent.JobName)'
     condition: succeededOrFailed()

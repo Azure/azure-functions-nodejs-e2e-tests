@@ -9,22 +9,21 @@ export async function run(): Promise<void> {
     try {
         const options: Mocha.MochaOptions = {
             color: true,
-            require: ['ts-node/register'],
+            timeout: 30 * 1000,
             reporter: 'mocha-multi-reporters',
             reporterOptions: {
                 reporterEnabled: 'spec, mocha-junit-reporter',
                 mochaJunitReporterReporterOptions: {
-                    mochaFile: path.resolve(__dirname, '..', 'test', 'e2e-test-results.xml'),
+                    mochaFile: path.resolve(__dirname, '..', '..', 'e2e-test-results.xml'),
                 },
             },
         };
 
         addEnvVarsToMochaOptions(options);
-        console.log(`Mocha options: ${JSON.stringify(options, undefined, 2)}`);
 
         const mocha = new Mocha(options);
 
-        const files: string[] = await globby('**/**.test.ts', { cwd: __dirname });
+        const files: string[] = await globby('**/**.test.js', { cwd: __dirname });
 
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
 
