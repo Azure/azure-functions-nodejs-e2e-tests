@@ -24,7 +24,8 @@
         "build": "tsc",
         "lint": "eslint . --fix",
         "watch": "tsc -w",
-        "test": "node out/index.js"
+        "testV3": "node out/index.js -m v3",
+        "testV4": "node out/index.js -m v4"
     },
     "dependencies": {
         "@types/chai": "^4.2.22",
@@ -41,6 +42,8 @@
         "eslint-plugin-header": "^3.1.1",
         "eslint-plugin-prettier": "^4.0.0",
         "globby": "^11.0.0",
+        "iconv-lite": "^0.6.3",
+        "minimist": "^1.2.8",
         "mocha": "^9.1.1",
         "mocha-junit-reporter": "^2.0.2",
         "mocha-multi-reporters": "^1.5.1",

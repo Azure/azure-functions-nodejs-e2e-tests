@@ -2,17 +2,27 @@
 // Licensed under the MIT License.
 
 import * as cp from 'child_process';
+import * as parseArgs from 'minimist';
 import * as path from 'path';
 import * as treeKill from 'tree-kill';
 import { delay } from './utils/delay';
 import { nonNullProp } from './utils/nonNull';
 
 export let funcOutput = '';
+export let model: 'v3' | 'v4' | undefined;
 let childProc: cp.ChildProcess | undefined;
 let testsDone = false;
 
 before(async function (this: Mocha.Context): Promise<void> {
-    const appPath = path.join(__dirname, '..', 'app', 'v4');
+    const args = parseArgs(process.argv.slice(2));
+    const modelArg: string = args.model || args.m;
+    if (modelArg === 'v3' || modelArg === 'v4') {
+        model = modelArg;
+    } else {
+        throw new Error('You must pass in the model argument with "--model" or "-m". Valid values are "v3" or "v4".');
+    }
+
+    const appPath = path.join(__dirname, '..', 'app', model);
     startFuncProcess(appPath);
     await waitForOutput('Host lock lease acquired by instance ID');
 });
