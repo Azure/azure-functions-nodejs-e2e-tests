@@ -11,7 +11,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         body: {
             body: formatIfBuffer(req.body),
             rawBody: formatIfBuffer(req.rawBody),
-            bufferBody: formatIfBuffer(req.bufferBody)
+            bufferBody: formatIfBuffer(req.bufferBody),
         },
     };
 };
@@ -19,5 +19,5 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 export default httpTrigger;
 
 function formatIfBuffer(data: any): any {
-    return Buffer.isBuffer(data) ? util.format(data) : data
+    return Buffer.isBuffer(data) ? util.format(data) : data;
 }

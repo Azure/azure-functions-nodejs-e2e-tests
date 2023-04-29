@@ -1,9 +1,8 @@
 {
     "azureFunctions.showProjectWarning": false,
-    "editor.codeActionsOnSave": [
-        "source.organizeImports",
-        "source.fixAll"
-    ],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll"],
     "typescript.tsdk": "node_modules/typescript/lib",
     "typescript.preferences.importModuleSpecifier": "relative",
+    "azureFunctions.suppressProject": true
 }

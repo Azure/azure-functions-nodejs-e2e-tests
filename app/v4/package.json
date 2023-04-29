@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
+    "lint": "eslint . --fix",
     "prestart": "npm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\""
