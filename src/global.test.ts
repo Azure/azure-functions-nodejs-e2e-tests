@@ -32,6 +32,10 @@ after(async () => {
     await killFuncProc();
 });
 
+afterEach(async () => {
+    funcOutput = '';
+});
+
 async function killFuncProc(): Promise<void> {
     if (childProc) {
         const pid = nonNullProp(childProc, 'pid');

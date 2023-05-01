@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "name": "myQueueItem",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "e2etestqueue2",
+      "connection": "e2eTest_storage"
+    }
+  ],
+  "scriptFile": "../dist/storageQueueTrigger2/index.js"
+}
