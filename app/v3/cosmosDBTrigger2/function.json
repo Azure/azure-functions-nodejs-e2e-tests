@@ -1,0 +1,15 @@
+{
+  "bindings": [
+    {
+      "type": "cosmosDBTrigger",
+      "name": "documents",
+      "direction": "in",
+      "leaseCollectionName": "leases",
+      "connectionStringSetting": "e2eTest_cosmosDB",
+      "databaseName": "e2eTestDB",
+      "collectionName": "e2eTestContainer2",
+      "createLeaseCollectionIfNotExists": true
+    }
+  ],
+  "scriptFile": "../dist/cosmosDBTrigger2/index.js"
+}
