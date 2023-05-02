@@ -4,9 +4,8 @@
 import * as cp from 'child_process';
 import * as parseArgs from 'minimist';
 import * as path from 'path';
-import * as treeKill from 'tree-kill';
 import { delay } from './utils/delay';
-import { nonNullProp } from './utils/nonNull';
+import findProcess = require('find-process');
 
 export let funcOutput = '';
 export let model: 'v3' | 'v4' | undefined;
@@ -21,6 +20,7 @@ before(async function (this: Mocha.Context): Promise<void> {
     } else {
         throw new Error('You must pass in the model argument with "--model" or "-m". Valid values are "v3" or "v4".');
     }
+    await killFuncProc();
 
     const appPath = path.join(__dirname, '..', 'app', model);
     startFuncProcess(appPath);
@@ -37,12 +37,10 @@ afterEach(async () => {
 });
 
 async function killFuncProc(): Promise<void> {
-    if (childProc) {
-        const pid = nonNullProp(childProc, 'pid');
-        treeKill(pid, 'SIGINT');
-        while (isRunning(pid)) {
-            await delay(1000);
-        }
+    const results = await findProcess('port', 7071);
+    for (const result of results) {
+        console.log(`Killing process ${result.name} with id ${result.pid}`);
+        process.kill(result.pid, 'SIGINT');
     }
 }
 
@@ -66,6 +64,7 @@ function startFuncProcess(appPath: string): void {
             ...process.env,
             FUNCTIONS_WORKER_RUNTIME: 'node',
             AzureWebJobsFeatureFlags: 'EnableWorkerIndexing',
+            logging__logLevel__Worker: 'debug',
         },
     };
     childProc = cp.spawn('func', ['start'], options);
@@ -94,16 +93,4 @@ function startFuncProcess(appPath: string): void {
             process.exit(1);
         }
     });
-}
-
-function isRunning(pid: number): boolean {
-    try {
-        // https://nodejs.org/api/process.html#process_process_kill_pid_signal
-        // This method will throw an error if the target pid does not exist. As a special case, a signal of 0 can be used to test for the existence of a process.
-        // Even though the name of this function is process.kill(), it is really just a signal sender, like the kill system call.
-        process.kill(pid, 0);
-        return true;
-    } catch {
-        return false;
-    }
 }
