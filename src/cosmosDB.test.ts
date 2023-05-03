@@ -3,15 +3,14 @@
 
 import { CosmosClient } from '@azure/cosmos';
 import { waitForOutput } from './global.test';
+import { cosmosDBConnectionString } from './resources/connectionStrings';
+import { container1Name, dbName } from './resources/cosmosDB';
 import { getRandomHexString } from './utils/getRandomHexString';
-import { nonNullProp } from './utils/nonNull';
 
 describe('cosmosDB', () => {
-    const connectionString = nonNullProp(process.env, 'e2eTest_cosmosDB');
-
     it('trigger and output', async () => {
-        const client = new CosmosClient(connectionString);
-        const container = client.database('e2eTestDB').container('e2eTestContainer1');
+        const client = new CosmosClient(cosmosDBConnectionString);
+        const container = client.database(dbName).container(container1Name);
         const message = getRandomHexString();
         await container.items.create({ message });
 

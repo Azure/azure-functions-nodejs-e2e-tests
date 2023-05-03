@@ -4,6 +4,13 @@
 import * as cp from 'child_process';
 import * as parseArgs from 'minimist';
 import * as path from 'path';
+import { EnvVarNames } from './constants';
+import {
+    cosmosDBConnectionString,
+    eventHubConnectionString,
+    initializeConnectionStrings,
+    storageConnectionString,
+} from './resources/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
@@ -21,6 +28,8 @@ before(async function (this: Mocha.Context): Promise<void> {
         throw new Error('You must pass in the model argument with "--model" or "-m". Valid values are "v3" or "v4".');
     }
     await killFuncProc();
+
+    await initializeConnectionStrings();
 
     const appPath = path.join(__dirname, '..', 'app', model);
     startFuncProcess(appPath);
@@ -62,9 +71,13 @@ function startFuncProcess(appPath: string): void {
         cwd: appPath,
         env: {
             ...process.env,
+            AzureWebJobsStorage: storageConnectionString,
             FUNCTIONS_WORKER_RUNTIME: 'node',
             AzureWebJobsFeatureFlags: 'EnableWorkerIndexing',
             logging__logLevel__Worker: 'debug',
+            [EnvVarNames.storage]: storageConnectionString,
+            [EnvVarNames.eventHub]: eventHubConnectionString,
+            [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
         },
     };
     childProc = cp.spawn('func', ['start'], options);

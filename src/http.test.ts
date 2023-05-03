@@ -7,7 +7,7 @@ import * as util from 'util';
 import { model } from './global.test';
 
 function getFuncUrl(functionName: string): string {
-    return `http://localhost:7071/api/${functionName}`;
+    return `http://127.0.0.1:7071/api/${functionName}`;
 }
 
 const helloWorld1Url = getFuncUrl('helloWorld1');

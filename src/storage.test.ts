@@ -4,14 +4,12 @@
 import { ContainerClient } from '@azure/storage-blob';
 import { QueueClient } from '@azure/storage-queue';
 import { waitForOutput } from './global.test';
+import { storageConnectionString } from './resources/connectionStrings';
 import { getRandomHexString } from './utils/getRandomHexString';
-import { nonNullProp } from './utils/nonNull';
 
 describe('storage', () => {
-    const connectionString = nonNullProp(process.env, 'e2eTest_storage');
-
     it('queue trigger and output', async () => {
-        const client = new QueueClient(connectionString, 'e2etestqueue1');
+        const client = new QueueClient(storageConnectionString, 'e2etestqueue1');
         await client.createIfNotExists();
 
         const message = getRandomHexString();
@@ -22,7 +20,7 @@ describe('storage', () => {
     });
 
     it('blob trigger and output', async () => {
-        const client = new ContainerClient(connectionString, 'e2etestcontainer');
+        const client = new ContainerClient(storageConnectionString, 'e2etestcontainer');
         await client.createIfNotExists();
 
         const message = getRandomHexString();

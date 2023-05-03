@@ -3,15 +3,14 @@
 
 import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
+import { eventHubConnectionString } from './resources/connectionStrings';
+import { eventHubMany, eventHubOne } from './resources/eventHub';
 import { getRandomHexString } from './utils/getRandomHexString';
-import { nonNullProp } from './utils/nonNull';
 
 describe('eventHub', () => {
-    const connectionString = nonNullProp(process.env, 'e2eTest_eventHub');
-
     it('event hub cardinality one', async () => {
         const message = getRandomHexString();
-        const client = new EventHubProducerClient(connectionString, 'e2etesteventhubone');
+        const client = new EventHubProducerClient(eventHubConnectionString, eventHubOne);
         await client.sendBatch([{ body: message }]);
 
         await waitForOutput(`eventHubTriggerOne was triggered by "${message}"`);
@@ -20,7 +19,7 @@ describe('eventHub', () => {
     it('event hub cardinality many', async () => {
         const message = getRandomHexString();
         const message2 = getRandomHexString();
-        const client = new EventHubProducerClient(connectionString, 'e2etesteventhubmany');
+        const client = new EventHubProducerClient(eventHubConnectionString, eventHubMany);
         await client.sendBatch([{ body: message }, { body: message2 }]);
 
         await waitForOutput(`eventHubTriggerMany processed 2 messages`);
