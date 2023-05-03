@@ -8,10 +8,21 @@ import { eventHubMany, eventHubOne } from './resources/eventHub';
 import { getRandomHexString } from './utils/getRandomHexString';
 
 describe('eventHub', () => {
+    let clientOne: EventHubProducerClient;
+    let clientMany: EventHubProducerClient;
+
+    before(() => {
+        clientOne = new EventHubProducerClient(eventHubConnectionString, eventHubOne);
+        clientMany = new EventHubProducerClient(eventHubConnectionString, eventHubMany);
+    });
+
+    after(async () => {
+        await Promise.all([clientOne.close(), clientMany.close()]);
+    });
+
     it('event hub cardinality one', async () => {
         const message = getRandomHexString();
-        const client = new EventHubProducerClient(eventHubConnectionString, eventHubOne);
-        await client.sendBatch([{ body: message }]);
+        await clientOne.sendBatch([{ body: message }]);
 
         await waitForOutput(`eventHubTriggerOne was triggered by "${message}"`);
     });
@@ -19,8 +30,7 @@ describe('eventHub', () => {
     it('event hub cardinality many', async () => {
         const message = getRandomHexString();
         const message2 = getRandomHexString();
-        const client = new EventHubProducerClient(eventHubConnectionString, eventHubMany);
-        await client.sendBatch([{ body: message }, { body: message2 }]);
+        await clientMany.sendBatch([{ body: message }, { body: message2 }]);
 
         await waitForOutput(`eventHubTriggerMany processed 2 messages`);
         await waitForOutput(`eventHubTriggerMany was triggered by "${message}"`);
