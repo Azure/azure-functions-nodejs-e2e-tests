@@ -56,13 +56,42 @@ jobs:
       AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
       AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
+  # Run tests Node 16
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 16.x
+    displayName: 'Install Node 16'
+  - script: npm test
+    displayName: 'Run tests Node 16'
+    continueOnError: true
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+
   # Run tests Node 18
   - task: NodeTool@0
     inputs:
       versionSpec: 18.x
     displayName: 'Install Node 18'
   - script: npm test
-    displayName: 'Run tests'
+    displayName: 'Run tests Node 18'
+    continueOnError: true
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+
+  # Run tests Node 20
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 20.x
+    displayName: 'Install Node 20'
+  - script: npm test
+    displayName: 'Run tests Node 20'
+    continueOnError: true
     env:
       AZURE_TENANT_ID: $(AZURE_TENANT_ID)
       AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
@@ -82,4 +111,5 @@ jobs:
     displayName: 'Publish Unit Test Results'
     inputs:
       testResultsFiles: 'e2e-test-results/*.xml'
+      failTaskOnFailedTests: true
     condition: succeededOrFailed()
