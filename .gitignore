@@ -42,3 +42,5 @@ pkg
 *.tgz
 
 e2e-test-results
+func-cli
+func-cli.zip

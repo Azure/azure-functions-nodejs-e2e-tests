@@ -15,8 +15,9 @@ jobs:
     inputs:
       versionSpec: 18.x
     displayName: 'Install Node.js'
-  - script: npm install -g azure-functions-core-tools@4
-    displayName: 'install func'
+  - pwsh: |
+      .\scripts\install-func-cli.ps1
+    displayName: 'Install func cli'
 
   # Setup e2e tests
   - script: npm ci

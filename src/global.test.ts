@@ -80,7 +80,9 @@ function startFuncProcess(appPath: string): void {
             [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
         },
     };
-    childProc = cp.spawn('func', ['start'], options);
+
+    const funcPath = path.join(__dirname, '..', 'func-cli', 'func');
+    childProc = cp.spawn(funcPath, ['start'], options);
 
     childProc.stdout?.on('data', (data: string | Buffer) => {
         data = data.toString();
