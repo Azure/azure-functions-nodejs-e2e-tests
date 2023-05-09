@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 
 import * as cp from 'child_process';
-import * as parseArgs from 'minimist';
 import * as path from 'path';
-import { EnvVarNames } from './constants';
+import * as semver from 'semver';
+import { EnvVarNames, defaultTimeout } from './constants';
+import { Model, getModelArg } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
@@ -15,18 +16,16 @@ import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
 export let funcOutput = '';
-export let model: 'v3' | 'v4' | undefined;
+export let model: Model | undefined;
 let childProc: cp.ChildProcess | undefined;
 let testsDone = false;
 
 before(async function (this: Mocha.Context): Promise<void> {
-    const args = parseArgs(process.argv.slice(2));
-    const modelArg: string = args.model || args.m;
-    if (modelArg === 'v3' || modelArg === 'v4') {
-        model = modelArg;
-    } else {
-        throw new Error('You must pass in the model argument with "--model" or "-m". Valid values are "v3" or "v4".');
+    model = getModelArg();
+    if (model === 'v4' && semver.lt(process.versions.node, '18.0.0')) {
+        this.skip();
     }
+
     await killFuncProc();
 
     await initializeConnectionStrings();
@@ -53,7 +52,7 @@ async function killFuncProc(): Promise<void> {
     }
 }
 
-export async function waitForOutput(data: string, timeout = 20 * 1000): Promise<void> {
+export async function waitForOutput(data: string, timeout = defaultTimeout): Promise<void> {
     const start = Date.now();
     while (true) {
         if (funcOutput.includes(data)) {
@@ -69,6 +68,7 @@ export async function waitForOutput(data: string, timeout = 20 * 1000): Promise<
 function startFuncProcess(appPath: string): void {
     const options: cp.SpawnOptions = {
         cwd: appPath,
+        shell: true,
         env: {
             ...process.env,
             AzureWebJobsStorage: storageConnectionString,

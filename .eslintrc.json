@@ -47,12 +47,5 @@
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/require-await": "off",
         "@typescript-eslint/restrict-template-expressions": "off"
-    },
-    "ignorePatterns": [
-        "**/*.js",
-        "**/*.mjs",
-        "**/*.cjs",
-        "out",
-        "dist"
-    ]
+    }
 }

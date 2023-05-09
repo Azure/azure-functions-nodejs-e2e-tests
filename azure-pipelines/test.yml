@@ -1,48 +1,85 @@
-variables: {
-  NODE_18: '18.x'
-}
-
-pr:
-  branches:
-    include:
-      - v4.x
-
-trigger:
-- v4.x
-
 jobs:
-- job: UnitTests
+- job: e2eTests
   strategy:
     matrix:
-      UBUNTU_NODE18:
+      LINUX:
         IMAGE_TYPE: 'ubuntu-latest'
-        NODE_VERSION: $(NODE_18)
-      WINDOWS_NODE18:
+      WINDOWS:
         IMAGE_TYPE: 'windows-latest'
-        NODE_VERSION: $(NODE_18)
-      MAC_NODE18:
+      MAC:
         IMAGE_TYPE: 'macOS-latest'
-        NODE_VERSION: $(NODE_18)
   pool:
     vmImage: $(IMAGE_TYPE)
   steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: $(NODE_VERSION)
+      versionSpec: 18.x
     displayName: 'Install Node.js'
+  - script: npm install -g azure-functions-core-tools@4
+    displayName: 'install func'
+
+  # Setup e2e tests
   - script: npm ci
-    displayName: 'npm ci'
+    displayName: 'install deps e2e tests'
   - script: npm run build
-    displayName: 'npm run build'
+    displayName: 'build e2e tests'
   - script: npm run lint
-    displayName: 'npm run lint'
-  - script: npm run updateVersion -- --validate
-    displayName: 'validate version'
+    displayName: 'lint e2e tests'
+
+  # Setup v3 app
+  - script: npm ci
+    displayName: 'install deps v3 app'
+    workingDirectory: 'app/v3'
+  - script: npm run build
+    displayName: 'build v3 app'
+    workingDirectory: 'app/v3'
+  - script: npm run lint
+    displayName: 'lint v3 app'
+    workingDirectory: 'app/v3'
+
+  # Setup v4 app
+  - script: npm ci
+    displayName: 'install deps v4 app'
+    workingDirectory: 'app/v4'
+  - script: npm run build
+    displayName: 'build v4 app'
+    workingDirectory: 'app/v4'
+  - script: npm run lint
+    displayName: 'lint v4 app'
+    workingDirectory: 'app/v4'
+
+  - script: npm run createResources
+    displayName: 'Create resources'
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+
+  # Run tests Node 18
+  - task: NodeTool@0
+    inputs:
+      versionSpec: 18.x
+    displayName: 'Install Node 18'
   - script: npm test
-    displayName: 'Run unit tests'
+    displayName: 'Run tests'
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+
+  - script: npm run deleteResources
+    displayName: 'Delete resources'
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+    condition: succeededOrFailed()
+
   - task: PublishTestResults@2
     displayName: 'Publish Unit Test Results'
     inputs:
-      testResultsFiles: 'e2e-test-results.xml'
-      testRunTitle: '$(Agent.JobName)'
+      testResultsFiles: 'e2e-test-results/*.xml'
     condition: succeededOrFailed()

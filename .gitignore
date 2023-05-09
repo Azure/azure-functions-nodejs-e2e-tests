@@ -41,4 +41,4 @@ out
 pkg
 *.tgz
 
-**/*-test-results.xml
+e2e-test-results

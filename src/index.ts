@@ -4,17 +4,24 @@
 import * as globby from 'globby';
 import * as Mocha from 'mocha';
 import * as path from 'path';
+import { defaultTimeout } from './constants';
+import { getModelArg } from './getModelArg';
 
 export async function run(): Promise<void> {
     try {
         const options: Mocha.MochaOptions = {
             color: true,
-            timeout: 30 * 1000,
+            timeout: defaultTimeout,
             reporter: 'mocha-multi-reporters',
             reporterOptions: {
                 reporterEnabled: 'spec, mocha-junit-reporter',
                 mochaJunitReporterReporterOptions: {
-                    mochaFile: path.resolve(__dirname, '..', '..', 'e2e-test-results.xml'),
+                    mochaFile: path.resolve(
+                        __dirname,
+                        '..',
+                        'e2e-test-results',
+                        `${process.platform}_model-${getModelArg()}_Node-${process.version}.xml`
+                    ),
                 },
             },
         };
