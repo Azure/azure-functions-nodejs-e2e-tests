@@ -5,7 +5,7 @@ import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
 import { eventHubConnectionString } from './resources/connectionStrings';
 import { eventHubMany, eventHubOne } from './resources/eventHub';
-import { getRandomHexString } from './utils/getRandomHexString';
+import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('eventHub', () => {
     let clientOne: EventHubProducerClient;
@@ -21,15 +21,15 @@ describe('eventHub', () => {
     });
 
     it('event hub cardinality one', async () => {
-        const message = getRandomHexString();
+        const message = getRandomTestData();
         await clientOne.sendBatch([{ body: message }]);
 
         await waitForOutput(`eventHubTriggerOne was triggered by "${message}"`);
     });
 
     it('event hub cardinality many', async () => {
-        const message = getRandomHexString();
-        const message2 = getRandomHexString();
+        const message = getRandomTestData();
+        const message2 = getRandomTestData();
         await clientMany.sendBatch([{ body: message }, { body: message2 }]);
 
         await waitForOutput(`eventHubTriggerMany processed 2 messages`);
