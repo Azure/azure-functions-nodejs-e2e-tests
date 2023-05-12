@@ -8,7 +8,8 @@
       "connectionStringSetting": "e2eTest_cosmosDB",
       "databaseName": "e2eTestDB",
       "collectionName": "e2eTestContainer2",
-      "createLeaseCollectionIfNotExists": true
+      "createLeaseCollectionIfNotExists": true,
+      "leaseCollectionPrefix": "2"
     }
   ],
   "scriptFile": "../dist/cosmosDBTrigger2/index.js"

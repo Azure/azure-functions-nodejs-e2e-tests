@@ -3,8 +3,8 @@
 
 import { AzureFunction, Context } from '@azure/functions';
 
-const eventHubTrigger: AzureFunction = async function (context: Context, message: unknown): Promise<void> {
-    context.log(`eventHubTriggerOne was triggered by "${message}"`);
+const eventHubTrigger: AzureFunction = async function (_context: Context, message: unknown): Promise<void> {
+    console.log(`eventHubTriggerOne was triggered by "${message}"`);
 };
 
 export default eventHubTrigger;

@@ -3,8 +3,8 @@
 
 import { app, InvocationContext } from '@azure/functions';
 
-export async function storageBlobTrigger2(blob: Buffer, context: InvocationContext): Promise<void> {
-    context.log(`storageBlobTrigger2 was triggered by "${blob.toString()}"`);
+export async function storageBlobTrigger2(blob: Buffer, _context: InvocationContext): Promise<void> {
+    console.log(`storageBlobTrigger2 was triggered by "${blob.toString()}"`);
 }
 
 app.storageBlob('storageBlobTrigger2', {

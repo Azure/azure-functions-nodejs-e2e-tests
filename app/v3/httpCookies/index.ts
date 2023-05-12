@@ -4,7 +4,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 
 const httpCookies: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log(`Http function processed request for url "${req.url}"`);
+    console.log(`Http function processed request for url "${req.url}"`);
 
     context.res = {
         cookies: [

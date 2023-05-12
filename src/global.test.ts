@@ -33,6 +33,9 @@ before(async function (this: Mocha.Context): Promise<void> {
     const appPath = path.join(__dirname, '..', 'app', model);
     startFuncProcess(appPath);
     await waitForOutput('Host lock lease acquired by instance ID');
+
+    // Add slight delay after starting func to hopefully increase reliability of tests
+    await delay(30 * 1000);
 });
 
 after(async () => {
@@ -52,7 +55,7 @@ async function killFuncProc(): Promise<void> {
     }
 }
 
-export async function waitForOutput(data: string, timeout = defaultTimeout): Promise<void> {
+export async function waitForOutput(data: string, timeout = defaultTimeout * 0.9): Promise<void> {
     const start = Date.now();
     while (true) {
         if (funcOutput.includes(data)) {
@@ -86,13 +89,13 @@ function startFuncProcess(appPath: string): void {
 
     childProc.stdout?.on('data', (data: string | Buffer) => {
         data = data.toString();
-        console.log(data);
+        process.stdout.write(data);
         funcOutput += data;
     });
 
     childProc.stderr?.on('data', (data: string | Buffer) => {
         data = data.toString();
-        console.error(data);
+        process.stderr.write(data);
         funcOutput += data;
     });
 
