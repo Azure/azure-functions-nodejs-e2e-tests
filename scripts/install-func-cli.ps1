@@ -2,12 +2,6 @@
 # Copyright (c) Microsoft. All rights reserved.
 # Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #
-param
-(
-    [Switch]
-    $UseCoreToolsBuildFromIntegrationTests
-)
-
 $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
 if ($IsWindows) {
     $FUNC_EXE_NAME = "func.exe"
@@ -21,22 +15,10 @@ if ($IsWindows) {
     }
 }
 
+Write-Host "Install Functions Core Tools for integration tests" -fore Green
 $FUNC_RUNTIME_VERSION = '4'
-$coreToolsDownloadURL = $null
-if ($UseCoreToolsBuildFromIntegrationTests.IsPresent)
-{
-    Write-Host "Install Functions Core Tools for integration tests" -fore Green
-    $coreToolsDownloadURL = "https://functionsintegclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest/Azure.Functions.Cli.$os-$arch.zip"
-    $env:CORE_TOOLS_URL = "https://functionsintegclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest"
-}
-else
-{
-    $coreToolsDownloadURL = "https://functionsclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest/Azure.Functions.Cli.$os-$arch.zip"
-    if (-not $env:CORE_TOOLS_URL)
-    {
-        $env:CORE_TOOLS_URL = "https://functionsclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest"
-    }
-}
+$coreToolsDownloadURL = "https://functionsintegclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest/Azure.Functions.Cli.$os-$arch.zip"
+$env:CORE_TOOLS_URL = "https://functionsintegclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest"
 
 $FUNC_CLI_DIRECTORY = Join-Path $PSScriptRoot '..' 'func-cli'
 
