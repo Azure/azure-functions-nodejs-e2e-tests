@@ -1,9 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as globby from 'globby';
-import * as Mocha from 'mocha';
-import * as path from 'path';
+import globby from 'globby';
+import Mocha from 'mocha';
+import path from 'path';
 import { defaultTimeout } from './constants';
 import { getModelArg } from './getModelArg';
 

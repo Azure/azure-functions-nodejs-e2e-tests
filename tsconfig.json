@@ -8,6 +8,7 @@
         "outDir": "out",
         "sourceMap": true,
         "baseUrl": "./",
+        "esModuleInterop": true
     },
     "include": [
         "src"

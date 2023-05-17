@@ -1,15 +1,16 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as cp from 'child_process';
-import * as path from 'path';
-import * as semver from 'semver';
+import cp from 'child_process';
+import path from 'path';
+import semver from 'semver';
 import { EnvVarNames, defaultTimeout } from './constants';
 import { Model, getModelArg } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
+    serviceBusConnectionString,
     storageConnectionString,
 } from './resources/connectionStrings';
 import { delay } from './utils/delay';
@@ -84,6 +85,7 @@ function startFuncProcess(appPath: string): void {
             [EnvVarNames.storage]: storageConnectionString,
             [EnvVarNames.eventHub]: eventHubConnectionString,
             [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
+            [EnvVarNames.serviceBus]: serviceBusConnectionString,
         },
     };
 

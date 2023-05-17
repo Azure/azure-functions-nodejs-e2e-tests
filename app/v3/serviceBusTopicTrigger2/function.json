@@ -1,0 +1,13 @@
+{
+  "bindings": [
+    {
+      "name": "mySbMsg",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "topicName": "e2etesttopic2",
+      "subscriptionName": "e2etestsub",
+      "connection": "e2eTest_serviceBus"
+    }
+  ],
+  "scriptFile": "../dist/serviceBusTopicTrigger2/index.js"
+}

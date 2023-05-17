@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { encode } from 'iconv-lite';
 // Node.js core added support for fetch in v18, but while we're testing versions <18 we'll use "node-fetch"
 import { HeadersInit, default as fetch } from 'node-fetch';
-import * as util from 'util';
+import util from 'util';
 import { model } from './global.test';
 
 function getFuncUrl(functionName: string): string {

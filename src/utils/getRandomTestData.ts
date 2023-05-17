@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 export function getRandomTestData(): string {
     // This should start with non-numeric data to prevent this bug from causing a test failure

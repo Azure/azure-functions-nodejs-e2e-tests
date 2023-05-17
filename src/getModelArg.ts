@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as parseArgs from 'minimist';
+import parseArgs from 'minimist';
 
 export type Model = 'v3' | 'v4';
 
