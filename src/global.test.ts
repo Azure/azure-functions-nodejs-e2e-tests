@@ -15,7 +15,8 @@ import {
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
-export let funcOutput = '';
+let perTestFuncOutput = '';
+let fullFuncOutput = '';
 export let model: Model | undefined;
 let childProc: cp.ChildProcess | undefined;
 let testsDone = false;
@@ -44,7 +45,7 @@ after(async () => {
 });
 
 afterEach(async () => {
-    funcOutput = '';
+    perTestFuncOutput = '';
 });
 
 async function killFuncProc(): Promise<void> {
@@ -55,12 +56,14 @@ async function killFuncProc(): Promise<void> {
     }
 }
 
-export async function waitForOutput(data: string, timeout = defaultTimeout * 0.9): Promise<void> {
+export async function waitForOutput(data: string, checkFullOutput = false): Promise<void> {
     const start = Date.now();
     while (true) {
-        if (funcOutput.includes(data)) {
+        if (checkFullOutput && fullFuncOutput.includes(data)) {
             return;
-        } else if (Date.now() > start + timeout) {
+        } else if (perTestFuncOutput.includes(data)) {
+            return;
+        } else if (Date.now() > start + defaultTimeout * 0.9) {
             throw new Error(`Timed out while waiting for "${data}"`);
         } else {
             await delay(200);
@@ -90,13 +93,15 @@ function startFuncProcess(appPath: string): void {
     childProc.stdout?.on('data', (data: string | Buffer) => {
         data = data.toString();
         process.stdout.write(data);
-        funcOutput += data;
+        perTestFuncOutput += data;
+        fullFuncOutput += data;
     });
 
     childProc.stderr?.on('data', (data: string | Buffer) => {
         data = data.toString();
         process.stderr.write(data);
-        funcOutput += data;
+        perTestFuncOutput += data;
+        fullFuncOutput += data;
     });
 
     childProc.on('error', (err) => {
