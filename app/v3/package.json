@@ -15,5 +15,6 @@
     "@azure/functions": "^3.0.0",
     "@types/node": "^18.x",
     "typescript": "^4.0.0"
-  }
+  },
+  "main": "dist/index.js"
 }
