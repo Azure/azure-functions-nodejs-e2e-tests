@@ -1,3 +1,14 @@
+resources:
+  pipelines:
+  - pipeline: nodeLibraryV3
+    project: 'Azure Functions'
+    source: azure-functions-nodejs-library.build
+    branch: v3.x
+  - pipeline: nodeLibraryV4
+    project: 'Azure Functions'
+    source: azure-functions-nodejs-library.build
+    branch: v4.x
+
 jobs:
 - job: e2eTests
   strategy:
@@ -31,6 +42,13 @@ jobs:
   - script: npm ci
     displayName: 'install deps v3 app'
     workingDirectory: 'app/v3'
+  - download: nodeLibraryV3
+  - script: mv *.tgz package.tgz
+    displayName: 'Rename v3 tgz file' # because the publish command below requires an exact path
+    workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV3/drop'
+  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
+    displayName: 'install latest v3 library'
+    workingDirectory: 'app/v3'
   - script: npm run build
     displayName: 'build v3 app'
     workingDirectory: 'app/v3'
@@ -41,6 +59,13 @@ jobs:
   # Setup v4 app
   - script: npm ci
     displayName: 'install deps v4 app'
+    workingDirectory: 'app/v4'
+  - download: nodeLibraryV4
+  - script: mv *.tgz package.tgz
+    displayName: 'Rename v4 tgz file' # because the publish command below requires an exact path
+    workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV4/drop'
+  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+    displayName: 'install latest v4 library'
     workingDirectory: 'app/v4'
   - script: npm run build
     displayName: 'build v4 app'
