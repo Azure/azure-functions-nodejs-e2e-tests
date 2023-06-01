@@ -9,6 +9,22 @@ resources:
     source: azure-functions-nodejs-library.build
     branch: v4.x
 
+schedules:
+- cron: "0 13 * * *"
+  displayName: Nightly at 6:00 AM PT
+  always: true # Run even when there are no code changes
+  branches:
+    include:
+    - main
+
+pr:
+  branches:
+    include:
+      - main
+
+trigger:
+- main
+
 jobs:
 - job: e2eTests
   strategy:
