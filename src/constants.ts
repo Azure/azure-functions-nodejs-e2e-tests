@@ -9,3 +9,6 @@ export namespace EnvVarNames {
 }
 
 export const defaultTimeout = 3 * 60 * 1000;
+
+export const combinedFolder = 'combined';
+export const oldBundleSuffix = '-oldBundle';

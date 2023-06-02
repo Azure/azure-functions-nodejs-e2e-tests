@@ -11,10 +11,10 @@ export async function cosmosDBTrigger2(documents: unknown[], _context: Invocatio
 }
 
 app.cosmosDB('cosmosDBTrigger2', {
-    connection: 'e2eTest_cosmosDB',
+    connectionStringSetting: 'e2eTest_cosmosDB',
     databaseName: 'e2eTestDB',
-    containerName: 'e2eTestContainer2',
-    createLeaseContainerIfNotExists: true,
-    leaseContainerPrefix: '2',
+    collectionName: 'e2eTestContainer2',
+    createLeaseCollectionIfNotExists: true,
+    leaseCollectionPrefix: '2',
     handler: cosmosDBTrigger2,
 });

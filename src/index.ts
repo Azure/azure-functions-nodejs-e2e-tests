@@ -5,10 +5,12 @@ import globby from 'globby';
 import Mocha from 'mocha';
 import path from 'path';
 import { defaultTimeout } from './constants';
-import { getModelArg } from './getModelArg';
+import { getModelArg, getOldBundleArg } from './getModelArg';
 
 export async function run(): Promise<void> {
     try {
+        const bundleSuffix = getOldBundleArg() ? '_oldBundle' : '';
+        const fileName = `${process.platform}_model-${getModelArg()}_Node-${process.version}${bundleSuffix}.xml`;
         const options: Mocha.MochaOptions = {
             color: true,
             timeout: defaultTimeout,
@@ -16,12 +18,7 @@ export async function run(): Promise<void> {
             reporterOptions: {
                 reporterEnabled: 'spec, mocha-junit-reporter',
                 mochaJunitReporterReporterOptions: {
-                    mochaFile: path.resolve(
-                        __dirname,
-                        '..',
-                        'e2e-test-results',
-                        `${process.platform}_model-${getModelArg()}_Node-${process.version}.xml`
-                    ),
+                    mochaFile: path.resolve(__dirname, '..', 'e2e-test-results', fileName),
                 },
             },
         };

@@ -54,6 +54,14 @@ jobs:
   - script: npm run lint
     displayName: 'lint e2e tests'
 
+  - script: npm run createResources
+    displayName: 'Create resources'
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+
   # Setup v3 app
   - script: npm ci
     displayName: 'install deps v3 app'
@@ -90,13 +98,36 @@ jobs:
     displayName: 'lint v4 app'
     workingDirectory: 'app/v4'
 
-  - script: npm run createResources
-    displayName: 'Create resources'
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+  - script: npm run createCombinedApps
+    displayName: 'Create combined apps'
+
+  # Setup v3 oldBundle app
+  - script: npm ci
+    displayName: 'install deps v3 app (oldBundle)'
+    workingDirectory: 'app/combined/v3-oldBundle'
+  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
+    displayName: 'install latest v3 library (oldBundle)'
+    workingDirectory: 'app/combined/v3-oldBundle'
+  - script: npm run build
+    displayName: 'build v3 app (oldBundle)'
+    workingDirectory: 'app/combined/v3-oldBundle'
+  - script: npm run lint
+    displayName: 'lint v3 app (oldBundle)'
+    workingDirectory: 'app/combined/v3-oldBundle'
+
+  # Setup v4 oldBundle app
+  - script: npm ci
+    displayName: 'install deps v4 app (oldBundle)'
+    workingDirectory: 'app/combined/v4-oldBundle'
+  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+    displayName: 'install latest v4 library (oldBundle)'
+    workingDirectory: 'app/combined/v4-oldBundle'
+  - script: npm run build
+    displayName: 'build v4 app (oldBundle)'
+    workingDirectory: 'app/combined/v4-oldBundle'
+  - script: npm run lint
+    displayName: 'lint v4 app (oldBundle)'
+    workingDirectory: 'app/combined/v4-oldBundle'
 
   # Run tests Node 16
   - task: NodeTool@0
@@ -119,6 +150,16 @@ jobs:
     displayName: 'Install Node 18'
   - script: npm test
     displayName: 'Run tests Node 18'
+    continueOnError: true
+    env:
+      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+
+  # Run tests for old bundle (just one Node.js version is enough)
+  - script: npm run testOldBundle
+    displayName: 'Run tests old bundle'
     continueOnError: true
     env:
       AZURE_TENANT_ID: $(AZURE_TENANT_ID)

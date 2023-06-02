@@ -4,8 +4,8 @@
 import cp from 'child_process';
 import path from 'path';
 import semver from 'semver';
-import { EnvVarNames, defaultTimeout } from './constants';
-import { Model, getModelArg } from './getModelArg';
+import { EnvVarNames, combinedFolder, defaultTimeout, oldBundleSuffix } from './constants';
+import { Model, getModelArg, getOldBundleArg } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
@@ -32,7 +32,10 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    const appPath = path.join(__dirname, '..', 'app', model);
+    const appPath = getOldBundleArg()
+        ? path.join(__dirname, '..', 'app', combinedFolder, model + oldBundleSuffix)
+        : path.join(__dirname, '..', 'app', model);
+
     startFuncProcess(appPath);
     await waitForOutput('Host lock lease acquired by instance ID');
 

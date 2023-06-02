@@ -4,20 +4,20 @@
       "type": "cosmosDBTrigger",
       "name": "documents",
       "direction": "in",
-      "leaseContainerName": "leases",
-      "connection": "e2eTest_cosmosDB",
+      "leaseCollectionName": "leases",
+      "connectionStringSetting": "e2eTest_cosmosDB",
       "databaseName": "e2eTestDB",
-      "containerName": "e2eTestContainer1",
-      "createLeaseContainerIfNotExists": true,
-      "leaseContainerPrefix": "1"
+      "collectionName": "e2eTestContainer1",
+      "createLeaseCollectionIfNotExists": true,
+      "leaseCollectionPrefix": "1"
     },
     {
       "type": "cosmosDB",
       "name": "$return",
       "direction": "out",
-      "connection": "e2eTest_cosmosDB",
+      "connectionStringSetting": "e2eTest_cosmosDB",
       "databaseName": "e2eTestDB",
-      "containerName": "e2eTestContainer2"
+      "collectionName": "e2eTestContainer2"
     }
   ],
   "scriptFile": "../dist/cosmosDBTrigger1/index.js"

@@ -26,10 +26,14 @@
         "lint": "eslint . --fix",
         "watch": "tsc -w",
         "createResources": "node out/resources/createResources.js",
+        "createCombinedApps": "node out/createCombinedApps.js",
         "deleteResources": "node out/resources/deleteResources.js",
         "test": "npm run testV3 && npm run testV4",
-        "testV3": "node out/index.js -m v3",
-        "testV4": "node out/index.js -m v4"
+        "testOldBundle": "npm run testV3OldBundle && npm run testV4OldBundle",
+        "testV3": "node out/index.js --model v3",
+        "testV3OldBundle": "node out/index.js --model v3 --oldBundle",
+        "testV4": "node out/index.js --model v4",
+        "testV4OldBundle": "node out/index.js --model v4 --oldBundle"
     },
     "dependencies": {
         "@types/semver": "^7.3.13",
@@ -46,6 +50,7 @@
         "@azure/storage-queue": "^12.13.0",
         "@types/chai": "^4.2.22",
         "@types/chai-as-promised": "^7.1.5",
+        "@types/minimist": "^1.2.2",
         "@types/mocha": "^9.1.1",
         "@types/node": "^18.0.0",
         "@typescript-eslint/eslint-plugin": "^5.12.1",
