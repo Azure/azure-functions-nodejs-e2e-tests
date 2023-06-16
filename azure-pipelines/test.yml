@@ -42,6 +42,7 @@ jobs:
     inputs:
       versionSpec: 18.x
     displayName: 'Install Node.js'
+    retryCountOnTaskFailure: 5
   - pwsh: |
       .\scripts\install-func-cli.ps1
     displayName: 'Install func cli'
@@ -103,6 +104,7 @@ jobs:
     inputs:
       versionSpec: 16.x
     displayName: 'Install Node 16'
+    retryCountOnTaskFailure: 5
   - script: npm test
     displayName: 'Run tests Node 16'
     continueOnError: true
@@ -117,6 +119,7 @@ jobs:
     inputs:
       versionSpec: 18.x
     displayName: 'Install Node 18'
+    retryCountOnTaskFailure: 5
   - script: npm test
     displayName: 'Run tests Node 18'
     continueOnError: true
@@ -131,6 +134,7 @@ jobs:
     inputs:
       versionSpec: 20.x
     displayName: 'Install Node 20'
+    retryCountOnTaskFailure: 5
   - script: npm test
     displayName: 'Run tests Node 20'
     continueOnError: true
