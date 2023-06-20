@@ -14,7 +14,8 @@ export interface ResourceInfo {
 
 function getResourcePrefix(): string {
     const buildNumber = validateEnvVar('BUILD_BUILDNUMBER');
-    const result = 'e2e' + process.platform + buildNumber;
+    const jobAttempt = process.env['SYSTEM_JOBATTEMPT'] || '';
+    const result = 'e2e' + process.platform + buildNumber + jobAttempt;
     return result.replace(/[^0-9a-zA-Z]/g, '');
 }
 
