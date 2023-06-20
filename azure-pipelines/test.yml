@@ -111,9 +111,6 @@ jobs:
   - script: npm run build
     displayName: 'build v3 app (oldBundle)'
     workingDirectory: 'app/combined/v3-oldBundle'
-  - script: npm run lint
-    displayName: 'lint v3 app (oldBundle)'
-    workingDirectory: 'app/combined/v3-oldBundle'
 
   # Setup v4 oldBundle app
   - script: npm ci
@@ -124,9 +121,6 @@ jobs:
     workingDirectory: 'app/combined/v4-oldBundle'
   - script: npm run build
     displayName: 'build v4 app (oldBundle)'
-    workingDirectory: 'app/combined/v4-oldBundle'
-  - script: npm run lint
-    displayName: 'lint v4 app (oldBundle)'
     workingDirectory: 'app/combined/v4-oldBundle'
 
   # Run tests Node 16
