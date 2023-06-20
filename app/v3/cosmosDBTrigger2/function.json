@@ -4,12 +4,12 @@
       "type": "cosmosDBTrigger",
       "name": "documents",
       "direction": "in",
-      "leaseCollectionName": "leases",
-      "connectionStringSetting": "e2eTest_cosmosDB",
+      "leaseContainerName": "leases",
+      "connection": "e2eTest_cosmosDB",
       "databaseName": "e2eTestDB",
-      "collectionName": "e2eTestContainer2",
-      "createLeaseCollectionIfNotExists": true,
-      "leaseCollectionPrefix": "2"
+      "containerName": "e2eTestContainer2",
+      "createLeaseContainerIfNotExists": true,
+      "leaseContainerPrefix": "2"
     }
   ],
   "scriptFile": "../dist/cosmosDBTrigger2/index.js"

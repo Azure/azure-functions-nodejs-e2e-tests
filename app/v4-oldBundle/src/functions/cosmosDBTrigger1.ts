@@ -12,15 +12,15 @@ export async function cosmosDBTrigger1(documents: unknown[], _context: Invocatio
 }
 
 app.cosmosDB('cosmosDBTrigger1', {
-    connection: 'e2eTest_cosmosDB',
+    connectionStringSetting: 'e2eTest_cosmosDB',
     databaseName: 'e2eTestDB',
-    containerName: 'e2eTestContainer1',
-    createLeaseContainerIfNotExists: true,
-    leaseContainerPrefix: '1',
+    collectionName: 'e2eTestContainer1',
+    createLeaseCollectionIfNotExists: true,
+    leaseCollectionPrefix: '1',
     return: output.cosmosDB({
-        connection: 'e2eTest_cosmosDB',
+        connectionStringSetting: 'e2eTest_cosmosDB',
         databaseName: 'e2eTestDB',
-        containerName: 'e2eTestContainer2',
+        collectionName: 'e2eTestContainer2',
     }),
     handler: cosmosDBTrigger1,
 });

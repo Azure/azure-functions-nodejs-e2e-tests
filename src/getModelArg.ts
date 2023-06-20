@@ -14,3 +14,9 @@ export function getModelArg(): Model {
         throw new Error('You must pass in the model argument with "--model" or "-m". Valid values are "v3" or "v4".');
     }
 }
+
+export function getOldBundleArg(): boolean {
+    const flag = 'oldBundle';
+    const args = parseArgs(process.argv.slice(2), { boolean: flag });
+    return args[flag];
+}
