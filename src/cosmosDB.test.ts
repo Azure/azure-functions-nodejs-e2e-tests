@@ -3,6 +3,7 @@
 
 import { CosmosClient } from '@azure/cosmos';
 import { expect } from 'chai';
+import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './resources/connectionStrings';
