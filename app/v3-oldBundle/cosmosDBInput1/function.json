@@ -22,6 +22,7 @@
       "connectionStringSetting": "e2eTest_cosmosDB",
       "databaseName": "e2eTestDB",
       "collectionName": "e2eTestContainer1",
+      "partitionKey": "testPartKey",
       "id": "{Query.id}"
     }
   ],

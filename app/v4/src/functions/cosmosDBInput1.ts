@@ -7,6 +7,7 @@ const cosmosInput = input.cosmosDB({
     databaseName: 'e2eTestDB',
     containerName: 'e2eTestContainer1',
     id: '{Query.id}',
+    partitionKey: 'testPartKey',
     connection: 'e2eTest_cosmosDB',
 });
 
