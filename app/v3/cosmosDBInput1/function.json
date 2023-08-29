@@ -1,0 +1,30 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "inputDoc",
+      "direction": "in",
+      "connection": "e2eTest_cosmosDB",
+      "databaseName": "e2eTestDB",
+      "containerName": "e2eTestContainer1",
+      "partitionKey": "testPartKey",
+      "id": "{Query.id}"
+    }
+  ],
+  "scriptFile": "../dist/cosmosDBInput1/index.js"
+}
