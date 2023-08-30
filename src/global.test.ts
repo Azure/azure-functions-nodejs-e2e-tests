@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import cp from 'child_process';
+import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
 import { EnvVarNames, combinedFolder, defaultTimeout, oldBundleSuffix } from './constants';
@@ -36,7 +37,7 @@ before(async function (this: Mocha.Context): Promise<void> {
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldBundleSuffix)
         : path.join(__dirname, '..', 'app', model);
 
-    startFuncProcess(appPath);
+    await startFuncProcess(appPath);
     await waitForOutput('Host lock lease acquired by instance ID');
 
     // Add slight delay after starting func to hopefully increase reliability of tests
@@ -75,25 +76,33 @@ export async function waitForOutput(data: string, checkFullOutput = false): Prom
     }
 }
 
-function startFuncProcess(appPath: string): void {
-    const options: cp.SpawnOptions = {
-        cwd: appPath,
-        shell: true,
-        env: {
-            ...process.env,
-            AzureWebJobsStorage: storageConnectionString,
-            FUNCTIONS_WORKER_RUNTIME: 'node',
-            AzureWebJobsFeatureFlags: 'EnableWorkerIndexing',
-            logging__logLevel__Worker: 'debug',
-            [EnvVarNames.storage]: storageConnectionString,
-            [EnvVarNames.eventHub]: eventHubConnectionString,
-            [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
-            [EnvVarNames.serviceBus]: serviceBusConnectionString,
-        },
-    };
+async function startFuncProcess(appPath: string): Promise<void> {
+    await fs.writeFile(
+        path.join(appPath, 'local.settings.json'),
+        JSON.stringify(
+            {
+                IsEncrypted: false,
+                Values: {
+                    AzureWebJobsStorage: storageConnectionString,
+                    FUNCTIONS_WORKER_RUNTIME: 'node',
+                    AzureWebJobsFeatureFlags: 'EnableWorkerIndexing',
+                    logging__logLevel__Worker: 'debug',
+                    [EnvVarNames.storage]: storageConnectionString,
+                    [EnvVarNames.eventHub]: eventHubConnectionString,
+                    [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
+                    [EnvVarNames.serviceBus]: serviceBusConnectionString,
+                },
+            },
+            null,
+            4
+        )
+    );
 
     const funcPath = path.join(__dirname, '..', 'func-cli', 'func');
-    childProc = cp.spawn(funcPath, ['start'], options);
+    childProc = cp.spawn(funcPath, ['start'], {
+        cwd: appPath,
+        shell: true,
+    });
 
     childProc.stdout?.on('data', (data: string | Buffer) => {
         data = data.toString();
