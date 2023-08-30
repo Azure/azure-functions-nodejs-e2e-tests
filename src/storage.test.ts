@@ -20,14 +20,20 @@ describe('storage', () => {
     });
 
     it('blob trigger and output', async () => {
-        const client = new ContainerClient(storageConnectionString, 'e2etestcontainer');
+        const containerName = 'e2etestcontainer';
+        const client = new ContainerClient(storageConnectionString, containerName);
         await client.createIfNotExists();
 
         const message = getRandomTestData();
         const messageBuffer = Buffer.from(message);
-        await client.uploadBlockBlob('e2etestblob1', messageBuffer, messageBuffer.byteLength);
+        const blobName = 'e2etestblob1';
+        await client.uploadBlockBlob(blobName, messageBuffer, messageBuffer.byteLength);
 
-        await waitForOutput(`storageBlobTrigger1 was triggered by "${message}"`);
-        await waitForOutput(`storageBlobTrigger2 was triggered by "${message}"`);
+        await waitForOutput(
+            `storageBlobTrigger1 was triggered by blob "${containerName}/${blobName}" with content "${message}"`
+        );
+        await waitForOutput(
+            `storageBlobTrigger2 was triggered by blob "${containerName}/e2etestblob2" with content "${message}"`
+        );
     });
 });
