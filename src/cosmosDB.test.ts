@@ -27,4 +27,28 @@ describe('cosmosDB', () => {
         const body = await response.text();
         expect(body).to.equal(message);
     });
+
+    it('extra output', async () => {
+        type Doc = { id: string; message: string };
+        function getDoc(): Doc {
+            const data = getRandomTestData();
+            return { id: data, message: data };
+        }
+        const url = getFuncUrl('cosmosDBOutput1');
+
+        // single doc
+        const singleDoc = getDoc();
+        await fetch(url, { method: 'POST', body: JSON.stringify(singleDoc) });
+        await waitForOutput(`cosmosDBTrigger2 was triggered by "${singleDoc.message}"`);
+
+        // bulk docs
+        const bulkDocs: Doc[] = [];
+        for (let i = 0; i < 5; i++) {
+            bulkDocs.push(getDoc());
+        }
+        await fetch(url, { method: 'POST', body: JSON.stringify(bulkDocs) });
+        for (const doc of bulkDocs) {
+            await waitForOutput(`cosmosDBTrigger2 was triggered by "${doc.message}"`);
+        }
+    });
 });
