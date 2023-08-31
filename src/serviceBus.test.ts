@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { ServiceBusClient } from '@azure/service-bus';
+import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
 import { waitForOutput } from './global.test';
 import { serviceBusConnectionString } from './resources/connectionStrings';

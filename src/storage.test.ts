@@ -3,6 +3,7 @@
 
 import { ContainerClient } from '@azure/storage-blob';
 import { QueueClient } from '@azure/storage-queue';
+import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
 import { waitForOutput } from './global.test';
 import { storageConnectionString } from './resources/connectionStrings';
