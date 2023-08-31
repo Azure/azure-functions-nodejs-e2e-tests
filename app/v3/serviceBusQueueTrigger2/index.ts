@@ -3,8 +3,8 @@
 
 import { AzureFunction, Context } from '@azure/functions';
 
-const serviceBusQueueTrigger: AzureFunction = async function (_context: Context, mySbMsg: any): Promise<void> {
-    console.log(`serviceBusQueueTrigger2 was triggered by "${mySbMsg}"`);
+const serviceBusQueueTrigger: AzureFunction = async function (context: Context, mySbMsg: any): Promise<void> {
+    context.log(`serviceBusQueueTrigger2 was triggered by "${mySbMsg}"`);
 };
 
 export default serviceBusQueueTrigger;

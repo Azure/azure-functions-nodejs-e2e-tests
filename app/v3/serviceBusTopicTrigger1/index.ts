@@ -3,8 +3,8 @@
 
 import { AzureFunction, Context } from '@azure/functions';
 
-const serviceBusTopicTrigger: AzureFunction = async function (_context: Context, mySbMsg: any): Promise<string> {
-    console.log(`serviceBusTopicTrigger1 was triggered by "${mySbMsg}"`);
+const serviceBusTopicTrigger: AzureFunction = async function (context: Context, mySbMsg: any): Promise<string> {
+    context.log(`serviceBusTopicTrigger1 was triggered by "${mySbMsg}"`);
     return mySbMsg;
 };
 

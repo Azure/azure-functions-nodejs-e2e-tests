@@ -4,7 +4,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    console.log(`Http function processed request for url "${req.url}"`);
+    context.log(`Http function processed request for url "${req.url}"`);
 
     const name = req.query.name || req.body || 'world';
 

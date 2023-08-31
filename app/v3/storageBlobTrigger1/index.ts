@@ -5,7 +5,7 @@ import { AzureFunction, Context } from '@azure/functions';
 
 const blobTrigger: AzureFunction = async function (context: Context, myBlob: any): Promise<any> {
     const blobPath = context.bindingData.blobTrigger;
-    console.log(`storageBlobTrigger1 was triggered by blob "${blobPath}" with content "${myBlob.toString()}"`);
+    context.log(`storageBlobTrigger1 was triggered by blob "${blobPath}" with content "${myBlob.toString()}"`);
     return myBlob;
 };
 

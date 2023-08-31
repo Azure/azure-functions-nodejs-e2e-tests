@@ -3,8 +3,8 @@
 
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 
-export async function httpCookies(request: HttpRequest, _context: InvocationContext): Promise<HttpResponseInit> {
-    console.log(`Http function processed request for url "${request.url}"`);
+export async function httpCookies(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+    context.log(`Http function processed request for url "${request.url}"`);
 
     return {
         cookies: [

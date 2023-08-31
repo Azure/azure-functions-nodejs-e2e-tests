@@ -3,8 +3,8 @@
 
 import { AzureFunction, Context } from '@azure/functions';
 
-const timerTrigger: AzureFunction = async function (_context: Context, _myTimer: any): Promise<void> {
-    console.log('timerTrigger1 was triggered');
+const timerTrigger: AzureFunction = async function (context: Context, _myTimer: any): Promise<void> {
+    context.log('timerTrigger1 was triggered');
 };
 
 export default timerTrigger;
