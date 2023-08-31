@@ -49,7 +49,7 @@ after(async () => {
     await killFuncProc();
 });
 
-afterEach(async () => {
+beforeEach(async () => {
     perTestFuncOutput = '';
 });
 
