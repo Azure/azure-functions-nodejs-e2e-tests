@@ -38,7 +38,7 @@ before(async function (this: Mocha.Context): Promise<void> {
         : path.join(__dirname, '..', 'app', model);
 
     await startFuncProcess(appPath);
-    await waitForOutput('Host lock lease acquired by instance ID');
+    await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });
 
     // Add slight delay after starting func to hopefully increase reliability of tests
     await delay(30 * 1000);
@@ -61,19 +61,28 @@ async function killFuncProc(): Promise<void> {
     }
 }
 
-export async function waitForOutput(data: string, checkFullOutput = false): Promise<void> {
+interface WaitForOutputOptions {
+    checkFullOutput?: boolean;
+    ignoreFailures?: boolean;
+}
+
+export async function waitForOutput(data: string, options?: WaitForOutputOptions): Promise<void> {
     const start = Date.now();
     while (true) {
-        if (checkFullOutput && fullFuncOutput.includes(data)) {
+        if (options?.checkFullOutput && fullFuncOutput.includes(data)) {
             return;
         } else if (perTestFuncOutput.includes(data)) {
             return;
         }
 
-        const failedMatch = perTestFuncOutput.match(/Executed 'Functions\.([^']+)' \(Failed/i);
-        if (failedMatch) {
-            throw new Error(`Function "${failedMatch[1]}" failed`);
-        } else if (Date.now() > start + defaultTimeout * 0.9) {
+        if (!options?.ignoreFailures) {
+            const failedMatch = perTestFuncOutput.match(/Executed 'Functions\.([^']+)' \(Failed/i);
+            if (failedMatch) {
+                throw new Error(`Function "${failedMatch[1]}" failed`);
+            }
+        }
+
+        if (Date.now() > start + defaultTimeout * 0.9) {
             throw new Error(`Timed out while waiting for "${data}"`);
         } else {
             await delay(200);
