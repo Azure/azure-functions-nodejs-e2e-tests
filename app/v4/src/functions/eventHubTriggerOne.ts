@@ -3,8 +3,8 @@
 
 import { app, InvocationContext } from '@azure/functions';
 
-export async function eventHubTriggerOne(message: unknown, _context: InvocationContext): Promise<void> {
-    console.log(`eventHubTriggerOne was triggered by "${message}"`);
+export async function eventHubTriggerOne(message: unknown, context: InvocationContext): Promise<void> {
+    context.log(`eventHubTriggerOne was triggered by "${message}"`);
 }
 
 app.eventHub('eventHubTriggerOne', {

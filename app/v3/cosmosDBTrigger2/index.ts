@@ -3,10 +3,10 @@
 
 import { AzureFunction, Context } from '@azure/functions';
 
-const cosmosDBTrigger: AzureFunction = async function (_context: Context, documents: any[]): Promise<void> {
-    console.log(`cosmosDBTrigger2 processed ${documents.length} documents`);
+const cosmosDBTrigger: AzureFunction = async function (context: Context, documents: any[]): Promise<void> {
+    context.log(`cosmosDBTrigger2 processed ${documents.length} documents`);
     for (const document of documents) {
-        console.log(`cosmosDBTrigger2 was triggered by "${document.message}"`);
+        context.log(`cosmosDBTrigger2 was triggered by "${document.message}"`);
     }
 };
 

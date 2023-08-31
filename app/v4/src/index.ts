@@ -1,7 +1,4 @@
-import * as app from '@azure/functions';
 import { registerHook } from '@azure/functions-core';
-
-app.setup();
 
 registerHook('postInvocation', async () => {
     // Add slight delay to ensure logs show up before the invocation finishes

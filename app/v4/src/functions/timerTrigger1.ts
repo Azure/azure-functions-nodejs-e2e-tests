@@ -3,8 +3,8 @@
 
 import { app, InvocationContext, Timer } from '@azure/functions';
 
-export async function timerTrigger1(_myTimer: Timer, _context: InvocationContext): Promise<void> {
-    console.log('timerTrigger1 was triggered');
+export async function timerTrigger1(_myTimer: Timer, context: InvocationContext): Promise<void> {
+    context.log('timerTrigger1 was triggered');
 }
 
 app.timer('timerTrigger1', {

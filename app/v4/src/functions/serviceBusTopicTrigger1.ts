@@ -3,8 +3,8 @@
 
 import { app, InvocationContext, output } from '@azure/functions';
 
-export async function serviceBusTopicTrigger1(message: unknown, _context: InvocationContext): Promise<unknown> {
-    console.log(`serviceBusTopicTrigger1 was triggered by "${message}"`);
+export async function serviceBusTopicTrigger1(message: unknown, context: InvocationContext): Promise<unknown> {
+    context.log(`serviceBusTopicTrigger1 was triggered by "${message}"`);
     return message;
 }
 

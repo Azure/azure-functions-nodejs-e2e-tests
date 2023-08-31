@@ -3,8 +3,8 @@
 
 import { app, InvocationContext } from '@azure/functions';
 
-export async function storageQueueTrigger2(queueItem: string, _context: InvocationContext): Promise<void> {
-    console.log(`storageQueueTrigger2 was triggered by "${queueItem}"`);
+export async function storageQueueTrigger2(queueItem: string, context: InvocationContext): Promise<void> {
+    context.log(`storageQueueTrigger2 was triggered by "${queueItem}"`);
 }
 
 app.storageQueue('storageQueueTrigger2', {
