@@ -68,6 +68,11 @@ export async function waitForOutput(data: string, checkFullOutput = false): Prom
             return;
         } else if (perTestFuncOutput.includes(data)) {
             return;
+        }
+
+        const failedMatch = perTestFuncOutput.match(/Executed 'Functions\.([^']+)' \(Failed/i);
+        if (failedMatch) {
+            throw new Error(`Function "${failedMatch[1]}" failed`);
         } else if (Date.now() > start + defaultTimeout * 0.9) {
             throw new Error(`Timed out while waiting for "${data}"`);
         } else {
