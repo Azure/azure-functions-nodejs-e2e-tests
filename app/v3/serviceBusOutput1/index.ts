@@ -3,9 +3,9 @@
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 
-const cosmosDBInput1: AzureFunction = async function (context: Context, request: HttpRequest): Promise<void> {
-    context.bindings.outputDoc = request.body;
+const serviceBusOutput1: AzureFunction = async function (context: Context, request: HttpRequest): Promise<void> {
+    context.bindings.outputMsg = request.body.output;
     context.res = { body: 'done' };
 };
 
-export default cosmosDBInput1;
+export default serviceBusOutput1;
