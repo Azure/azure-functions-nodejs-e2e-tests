@@ -4,10 +4,10 @@
       "type": "eventHubTrigger",
       "name": "eventHubMessages",
       "direction": "in",
-      "eventHubName": "e2etesteventhubone",
+      "eventHubName": "e2etesteventhubmany2",
       "connection": "e2eTest_eventHub",
-      "cardinality": "one"
+      "cardinality": "many"
     }
   ],
-  "scriptFile": "../dist/eventHubTriggerOne/index.js"
+  "scriptFile": "../dist/eventHubTriggerMany2/index.js"
 }
