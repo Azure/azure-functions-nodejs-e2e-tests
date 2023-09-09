@@ -9,8 +9,10 @@ function getNamespaceName(info: ResourceInfo): string {
     return info.resourcePrefix + 'eventhub';
 }
 
-export const eventHubOne = 'e2etesteventhubone';
-export const eventHubMany = 'e2etesteventhubmany';
+export const eventHubOne1 = 'e2etesteventhubone1';
+export const eventHubMany1 = 'e2etesteventhubmany1';
+export const eventHubOne2 = 'e2etesteventhubone2';
+export const eventHubMany2 = 'e2etesteventhubmany2';
 
 export async function createEventHub(info: ResourceInfo): Promise<void> {
     const client = new EventHubManagementClient(info.creds, info.subscriptionId);
@@ -21,7 +23,7 @@ export async function createEventHub(info: ResourceInfo): Promise<void> {
             name: KnownSkuName.Standard,
         },
     });
-    for (const eventHubName of [eventHubOne, eventHubMany]) {
+    for (const eventHubName of [eventHubOne1, eventHubMany1, eventHubOne2, eventHubMany2]) {
         await client.eventHubs.createOrUpdate(info.resourceGroupName, namespaceName, eventHubName, {
             messageRetentionInDays: 1,
         });
