@@ -6,7 +6,7 @@ import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
 import { waitForOutput } from './global.test';
 import { serviceBusConnectionString } from './resources/connectionStrings';
-import { serviceBusQueue1, serviceBusTopic1 } from './resources/serviceBus';
+import { serviceBusQueue1, serviceBusQueueMany1, serviceBusTopic1 } from './resources/serviceBus';
 import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('serviceBus', () => {
@@ -20,7 +20,7 @@ describe('serviceBus', () => {
         await client.close();
     });
 
-    it('queue', async () => {
+    it('queue trigger and output', async () => {
         const message = getRandomTestData();
         const sender = client.createSender(serviceBusQueue1);
         const batch = await sender.createMessageBatch();
@@ -31,7 +31,7 @@ describe('serviceBus', () => {
         await waitForOutput(`serviceBusQueueTrigger2 was triggered by "${message}"`);
     });
 
-    it('topic', async () => {
+    it('topic trigger and output', async () => {
         const message = getRandomTestData();
         const sender = client.createSender(serviceBusTopic1);
         const batch = await sender.createMessageBatch();
@@ -40,6 +40,21 @@ describe('serviceBus', () => {
 
         await waitForOutput(`serviceBusTopicTrigger1 was triggered by "${message}"`);
         await waitForOutput(`serviceBusTopicTrigger2 was triggered by "${message}"`);
+    });
+
+    it('trigger and output, cardinality many', async () => {
+        const message1 = getRandomTestData();
+        const message2 = getRandomTestData();
+        const sender = client.createSender(serviceBusQueueMany1);
+        const batch = await sender.createMessageBatch();
+        batch.tryAddMessage({ body: message1 });
+        batch.tryAddMessage({ body: message2 });
+        await sender.sendMessages(batch);
+
+        await waitForOutput(`serviceBusQueueTriggerMany1 was triggered by "${message1}"`);
+        await waitForOutput(`serviceBusQueueTriggerMany1 was triggered by "${message2}"`);
+        await waitForOutput(`serviceBusQueueTriggerMany2 was triggered by "${message1}"`);
+        await waitForOutput(`serviceBusQueueTriggerMany2 was triggered by "${message2}"`);
     });
 
     it('extra output', async () => {

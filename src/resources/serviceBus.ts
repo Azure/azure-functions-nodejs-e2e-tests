@@ -11,6 +11,8 @@ function getNamespaceName(info: ResourceInfo): string {
 
 export const serviceBusQueue1 = 'e2etestqueue1';
 export const serviceBusQueue2 = 'e2etestqueue2';
+export const serviceBusQueueMany1 = 'e2etestqueuemany1';
+export const serviceBusQueueMany2 = 'e2etestqueuemany2';
 
 export const serviceBusTopic1 = 'e2etesttopic1';
 export const serviceBusTopic2 = 'e2etesttopic2';
@@ -27,7 +29,7 @@ export async function createServiceBus(info: ResourceInfo): Promise<void> {
         },
     });
 
-    for (const queueName of [serviceBusQueue1, serviceBusQueue2]) {
+    for (const queueName of [serviceBusQueue1, serviceBusQueue2, serviceBusQueueMany1, serviceBusQueueMany2]) {
         await client.queues.createOrUpdate(info.resourceGroupName, namespaceName, queueName, {});
     }
 
