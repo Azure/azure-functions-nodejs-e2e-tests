@@ -12,6 +12,7 @@ import {
     eventHubConnectionString,
     initializeConnectionStrings,
     serviceBusConnectionString,
+    sqlConnectionString,
     storageConnectionString,
 } from './resources/connectionStrings';
 import { delay } from './utils/delay';
@@ -20,6 +21,7 @@ import findProcess = require('find-process');
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
 export let model: Model | undefined;
+export let isOldBundle: boolean;
 let childProc: cp.ChildProcess | undefined;
 let testsDone = false;
 
@@ -33,7 +35,8 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    const appPath = getOldBundleArg()
+    isOldBundle = getOldBundleArg();
+    const appPath = isOldBundle
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldBundleSuffix)
         : path.join(__dirname, '..', 'app', model);
 
@@ -105,6 +108,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
+                    [EnvVarNames.sql]: sqlConnectionString,
                 },
             },
             null,

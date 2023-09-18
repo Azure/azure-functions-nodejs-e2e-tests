@@ -6,6 +6,7 @@ import { getResourceInfo } from './ResourceInfo';
 import { createCosmosDB } from './cosmosDB';
 import { createEventHub } from './eventHub';
 import { createServiceBus } from './serviceBus';
+import { createSql } from './sql';
 import { createStorageAccount } from './storage';
 
 async function createResources(): Promise<void> {
@@ -20,6 +21,7 @@ async function createResources(): Promise<void> {
             createEventHub(info),
             createCosmosDB(info),
             createServiceBus(info),
+            createSql(info),
         ]);
     } catch (err) {
         console.error(err);
