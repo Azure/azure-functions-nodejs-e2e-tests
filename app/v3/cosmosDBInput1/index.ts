@@ -5,7 +5,7 @@ import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 
 const cosmosDBInput1: AzureFunction = async function (context: Context, _request: HttpRequest): Promise<void> {
     context.res = {
-        body: context.bindings.inputDoc.message,
+        body: context.bindings.inputDoc.testData,
     };
 };
 

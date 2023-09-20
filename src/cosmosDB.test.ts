@@ -14,32 +14,32 @@ describe('cosmosDB', () => {
     it('trigger, output, input', async () => {
         const client = new CosmosClient(cosmosDBConnectionString);
         const container = client.database(dbName).container(container1Name);
-        const message = getRandomTestData();
-        const createdItem = await container.items.create({ message, _partitionKey: 'testPartKey' });
+        const testData = getRandomTestData();
+        const createdItem = await container.items.create({ testData, _partitionKey: 'testPartKey' });
 
         await waitForOutput(`cosmosDBTrigger1 processed 1 documents`);
-        await waitForOutput(`cosmosDBTrigger1 was triggered by "${message}"`);
+        await waitForOutput(`cosmosDBTrigger1 was triggered by "${testData}"`);
         await waitForOutput(`cosmosDBTrigger2 processed 1 documents`);
-        await waitForOutput(`cosmosDBTrigger2 was triggered by "${message}"`);
+        await waitForOutput(`cosmosDBTrigger2 was triggered by "${testData}"`);
 
         const url = `${getFuncUrl('cosmosDBInput1')}?id=${createdItem.item.id}`;
         const response = await fetch(url);
         const body = await response.text();
-        expect(body).to.equal(message);
+        expect(body).to.equal(testData);
     });
 
     it('extra output', async () => {
-        type Doc = { id: string; message: string };
+        type Doc = { id: string; testData: string };
         function getDoc(): Doc {
             const data = getRandomTestData();
-            return { id: data, message: data };
+            return { id: data, testData: data };
         }
         const url = getFuncUrl('cosmosDBOutput1');
 
         // single doc
         const singleDoc = getDoc();
         await fetch(url, { method: 'POST', body: JSON.stringify(singleDoc) });
-        await waitForOutput(`cosmosDBTrigger2 was triggered by "${singleDoc.message}"`);
+        await waitForOutput(`cosmosDBTrigger2 was triggered by "${singleDoc.testData}"`);
 
         // bulk docs
         const bulkDocs: Doc[] = [];
@@ -48,7 +48,7 @@ describe('cosmosDB', () => {
         }
         await fetch(url, { method: 'POST', body: JSON.stringify(bulkDocs) });
         for (const doc of bulkDocs) {
-            await waitForOutput(`cosmosDBTrigger2 was triggered by "${doc.message}"`);
+            await waitForOutput(`cosmosDBTrigger2 was triggered by "${doc.testData}"`);
         }
     });
 });

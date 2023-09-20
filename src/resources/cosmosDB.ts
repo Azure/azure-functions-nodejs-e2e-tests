@@ -7,7 +7,7 @@ import { nonNullProp } from '../utils/nonNull';
 import { ResourceInfo } from './ResourceInfo';
 
 function getCosmosDBAccountName(info: ResourceInfo): string {
-    return info.resourcePrefix + 'comsosdb';
+    return info.resourcePrefix + 'cosmosdb';
 }
 
 export const dbName = 'e2eTestDB';
