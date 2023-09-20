@@ -6,6 +6,7 @@ export namespace EnvVarNames {
     export const cosmosDB = 'e2eTest_cosmosDB';
     export const eventHub = 'e2eTest_eventHub';
     export const serviceBus = 'e2eTest_serviceBus';
+    export const sql = 'e2eTest_sql';
 }
 
 export const defaultTimeout = 3 * 60 * 1000;

@@ -7,6 +7,9 @@ import { validateEnvVar } from '../utils/validateEnvVar';
 export interface ResourceInfo {
     creds: EnvironmentCredential;
     subscriptionId: string;
+    tenantId: string;
+    clientId: string;
+    secret: string;
     resourceGroupName: string;
     resourcePrefix: string;
     location: string;
@@ -20,9 +23,9 @@ function getResourcePrefix(): string {
 }
 
 export function getResourceInfo(): ResourceInfo {
-    validateEnvVar('AZURE_TENANT_ID');
-    validateEnvVar('AZURE_CLIENT_ID');
-    validateEnvVar('AZURE_CLIENT_SECRET');
+    const tenantId = validateEnvVar('AZURE_TENANT_ID');
+    const clientId = validateEnvVar('AZURE_CLIENT_ID');
+    const secret = validateEnvVar('AZURE_CLIENT_SECRET');
     const subscriptionId: string = validateEnvVar('AZURE_SUBSCRIPTION_ID');
     const resourcePrefix = getResourcePrefix();
 
@@ -30,6 +33,9 @@ export function getResourceInfo(): ResourceInfo {
 
     return {
         creds,
+        tenantId,
+        clientId,
+        secret,
         subscriptionId,
         resourcePrefix,
         resourceGroupName: resourcePrefix + 'group',

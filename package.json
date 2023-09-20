@@ -36,11 +36,11 @@
         "testV4OldBundle": "node out/index.js --model v4 --oldBundle"
     },
     "dependencies": {
-        "@types/semver": "^7.3.13",
         "@azure/arm-cosmosdb": "^15.4.0",
         "@azure/arm-eventhub": "^5.1.0",
         "@azure/arm-resources": "^5.2.0",
         "@azure/arm-servicebus": "^6.1.0",
+        "@azure/arm-sql": "^10.0.0",
         "@azure/arm-storage": "^18.1.0",
         "@azure/cosmos": "^3.17.3",
         "@azure/event-hubs": "^5.10.0",
@@ -52,7 +52,10 @@
         "@types/chai-as-promised": "^7.1.5",
         "@types/minimist": "^1.2.2",
         "@types/mocha": "^9.1.1",
+        "@types/mssql": "^9.1.0",
         "@types/node": "^18.0.0",
+        "@types/semver": "^7.3.13",
+        "@types/uuid": "^9.0.4",
         "@typescript-eslint/eslint-plugin": "^5.12.1",
         "@typescript-eslint/parser": "^5.12.1",
         "chai": "^4.2.0",
@@ -69,12 +72,14 @@
         "mocha": "^9.1.1",
         "mocha-junit-reporter": "^2.0.2",
         "mocha-multi-reporters": "^1.5.1",
+        "mssql": "^9.1.0",
         "node-fetch": "^2.0.0",
         "prettier": "^2.4.1",
         "rimraf": "^5.0.0",
         "semver": "^7.5.2",
         "ts-loader": "^9.3.1",
         "ts-node": "^3.3.0",
-        "typescript": "^4.5.5"
+        "typescript": "^4.5.5",
+        "uuid": "^9.0.1"
     }
 }
