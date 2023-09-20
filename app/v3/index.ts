@@ -1,3 +1,6 @@
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT License.
+
 import * as app from '@azure/functions';
 import { registerHook } from '@azure/functions-core';
 
