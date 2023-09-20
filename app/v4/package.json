@@ -11,7 +11,7 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@azure/functions": "^4.0.0-alpha.11"
+    "@azure/functions": "^4.0.0-alpha.13"
   },
   "devDependencies": {
     "@types/long": "^4.0.0",
