@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { KnownKind, KnownSkuName, StorageManagementClient } from '@azure/arm-storage';
+import { TableClient } from '@azure/data-tables';
 import { nonNullProp, nonNullValue } from '../utils/nonNull';
 import { ResourceInfo } from './ResourceInfo';
 
@@ -18,6 +19,10 @@ export async function createStorageAccount(info: ResourceInfo): Promise<void> {
             name: KnownSkuName.StandardLRS,
         },
     });
+
+    const connectionString = await getStorageConnectionString(info);
+    const tableClient = TableClient.fromConnectionString(connectionString, 'e2etesttable');
+    await tableClient.createTable();
 }
 
 export async function getStorageConnectionString(info: ResourceInfo): Promise<string> {

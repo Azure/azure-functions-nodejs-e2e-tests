@@ -3,6 +3,7 @@
 
 import { ContainerClient } from '@azure/storage-blob';
 import { QueueClient } from '@azure/storage-queue';
+import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
 import { waitForOutput } from './global.test';
@@ -56,5 +57,27 @@ describe('storage', () => {
         await waitForOutput(
             `storageBlobTrigger2 was triggered by blob "${containerName}/e2etestblob2" with content "${message}"`
         );
+    });
+
+    type TableItem = { PartitionKey: string; RowKey: string; Name: string };
+
+    it('table input and output', async () => {
+        const rowKey = getRandomTestData();
+        const items: TableItem[] = [
+            {
+                PartitionKey: 'e2eTestPartKey',
+                RowKey: rowKey,
+                Name: 'e2eTestName',
+            },
+        ];
+        const responseOut = await fetch(getFuncUrl('tableOutput1'), { method: 'POST', body: JSON.stringify(items) });
+        expect(responseOut.status).to.equal(201);
+        await waitForOutput(`tableOutput1 was triggered`);
+
+        const responseIn = await fetch(getFuncUrl(`tableInput1/${rowKey}`), { method: 'GET' });
+        expect(responseIn.status).to.equal(200);
+        const result = await responseIn.json();
+        expect(result).to.deep.equal(items);
+        await waitForOutput(`tableInput1 was triggered`);
     });
 });
