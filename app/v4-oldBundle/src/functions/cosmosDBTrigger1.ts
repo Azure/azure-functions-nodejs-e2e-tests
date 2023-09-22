@@ -6,7 +6,7 @@ import { app, InvocationContext, output } from '@azure/functions';
 export async function cosmosDBTrigger1(documents: unknown[], context: InvocationContext): Promise<unknown[]> {
     context.log(`cosmosDBTrigger1 processed ${documents.length} documents`);
     for (const document of documents) {
-        context.log(`cosmosDBTrigger1 was triggered by "${(<any>document).message}"`);
+        context.log(`cosmosDBTrigger1 was triggered by "${(<any>document).testData}"`);
     }
     return documents;
 }

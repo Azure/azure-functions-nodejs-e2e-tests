@@ -13,7 +13,7 @@ const cosmosInput = input.cosmosDB({
 
 export async function cosmosDBInput1(_request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     const doc = context.extraInputs.get(cosmosInput);
-    return { body: (<any>doc).message };
+    return { body: (<any>doc).testData };
 }
 
 app.http('cosmosDBInput1', {
