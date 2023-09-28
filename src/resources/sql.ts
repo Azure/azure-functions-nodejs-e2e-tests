@@ -4,6 +4,7 @@
 import { SqlManagementClient } from '@azure/arm-sql';
 import * as sql from 'mssql';
 import { default as fetch } from 'node-fetch';
+import retry from 'p-retry';
 import { ResourceInfo } from './ResourceInfo';
 
 /**
@@ -56,23 +57,7 @@ async function getPublicIpAddress(): Promise<string> {
 }
 
 async function createTable(info: ResourceInfo) {
-    const serverName = getSqlAccountName(info);
-    const poolConnection = await sql.connect({
-        server: `${serverName}.database.windows.net`,
-        database: dbName,
-        port: 1433,
-        authentication: {
-            type: 'azure-active-directory-service-principal-secret',
-            options: <any>{
-                clientId: info.clientId,
-                tenantId: info.tenantId,
-                clientSecret: info.secret,
-            },
-        },
-        options: {
-            encrypt: true,
-        },
-    });
+    const poolConnection = await createPoolConnnection(info);
 
     try {
         await poolConnection
@@ -83,6 +68,46 @@ async function createTable(info: ResourceInfo) {
     } finally {
         await poolConnection.close();
     }
+}
+
+export async function createPoolConnnection(info: ResourceInfo): Promise<sql.ConnectionPool> {
+    const serverName = getSqlAccountName(info);
+
+    const retries = 5;
+    return retry(
+        async (currentAttempt: number) => {
+            if (currentAttempt > 1) {
+                console.log(`Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`);
+            }
+            return sql.connect({
+                server: `${serverName}.database.windows.net`,
+                database: dbName,
+                port: 1433,
+                authentication: {
+                    type: 'azure-active-directory-service-principal-secret',
+                    options: <any>{
+                        clientId: info.clientId,
+                        tenantId: info.tenantId,
+                        clientSecret: info.secret,
+                    },
+                },
+                options: {
+                    encrypt: true,
+                },
+            });
+        },
+        {
+            retries: retries,
+            minTimeout: 5 * 1000,
+            onFailedAttempt: (error) => {
+                if (!/ip address/i.test(error?.message || '')) {
+                    throw error; // abort for an unrecognized error
+                } else if (error.retriesLeft > 0) {
+                    console.log(`Warning: Failed to sql connect with error "${error.message}"`);
+                }
+            },
+        }
+    );
 }
 
 export async function getSqlConnectionString(info: ResourceInfo): Promise<string> {
