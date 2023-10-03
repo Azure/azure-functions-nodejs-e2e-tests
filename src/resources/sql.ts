@@ -46,6 +46,7 @@ export async function createSql(info: ResourceInfo): Promise<void> {
         }
 
         const ipAddress = match[1];
+        console.log(`Adding ip address "${ipAddress}" to sql firewall rule.`);
         await armClient.firewallRules.createOrUpdate(info.resourceGroupName, serverName, 'e2eTestFirewall', {
             startIpAddress: ipAddress,
             endIpAddress: ipAddress,
