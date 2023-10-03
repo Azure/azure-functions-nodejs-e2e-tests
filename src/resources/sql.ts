@@ -3,7 +3,6 @@
 
 import { SqlManagementClient } from '@azure/arm-sql';
 import * as sql from 'mssql';
-import { default as fetch } from 'node-fetch';
 import retry from 'p-retry';
 import { ResourceInfo } from './ResourceInfo';
 
@@ -35,11 +34,24 @@ export async function createSql(info: ResourceInfo): Promise<void> {
             login: 'e2eserviceprincipal',
         },
     });
-    const ipAddress = await getPublicIpAddress();
-    await armClient.firewallRules.createOrUpdate(info.resourceGroupName, serverName, 'e2eTestFirewall', {
-        startIpAddress: ipAddress,
-        endIpAddress: ipAddress,
-    });
+
+    try {
+        // Try to connect (which will fail) so that we can get the correct IP address to add to the firewall from the error message
+        await createPoolConnnection(info);
+    } catch (error) {
+        const regexp = /Client with IP address '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)' is not allowed to access the server/i;
+        const match = (<Error>error).message.match(regexp);
+        if (!match) {
+            throw error;
+        }
+
+        const ipAddress = match[1];
+        await armClient.firewallRules.createOrUpdate(info.resourceGroupName, serverName, 'e2eTestFirewall', {
+            startIpAddress: ipAddress,
+            endIpAddress: ipAddress,
+        });
+    }
+
     await armClient.databases.beginCreateOrUpdateAndWait(info.resourceGroupName, serverName, dbName, {
         location: info.location,
         sku: {
@@ -48,17 +60,7 @@ export async function createSql(info: ResourceInfo): Promise<void> {
         },
     });
 
-    await createTable(info);
-}
-
-async function getPublicIpAddress(): Promise<string> {
-    const response = await fetch('https://api.ipify.org/');
-    return response.text();
-}
-
-async function createTable(info: ResourceInfo) {
-    const poolConnection = await createPoolConnnection(info);
-
+    const poolConnection = await createPoolConnnectionWithRetry(info);
     try {
         await poolConnection
             .request()
@@ -70,31 +72,36 @@ async function createTable(info: ResourceInfo) {
     }
 }
 
-export async function createPoolConnnection(info: ResourceInfo): Promise<sql.ConnectionPool> {
+async function createPoolConnnection(info: ResourceInfo): Promise<sql.ConnectionPool> {
     const serverName = getSqlAccountName(info);
+    return sql.connect({
+        server: `${serverName}.database.windows.net`,
+        database: dbName,
+        port: 1433,
+        authentication: {
+            type: 'azure-active-directory-service-principal-secret',
+            options: <any>{
+                clientId: info.clientId,
+                tenantId: info.tenantId,
+                clientSecret: info.secret,
+            },
+        },
+        options: {
+            encrypt: true,
+        },
+    });
+}
 
+async function createPoolConnnectionWithRetry(info: ResourceInfo): Promise<sql.ConnectionPool> {
     const retries = 5;
     return retry(
         async (currentAttempt: number) => {
             if (currentAttempt > 1) {
-                console.log(`Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`);
+                console.log(
+                    `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
+                );
             }
-            return sql.connect({
-                server: `${serverName}.database.windows.net`,
-                database: dbName,
-                port: 1433,
-                authentication: {
-                    type: 'azure-active-directory-service-principal-secret',
-                    options: <any>{
-                        clientId: info.clientId,
-                        tenantId: info.tenantId,
-                        clientSecret: info.secret,
-                    },
-                },
-                options: {
-                    encrypt: true,
-                },
-            });
+            return createPoolConnnection(info);
         },
         {
             retries: retries,
