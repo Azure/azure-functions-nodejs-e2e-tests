@@ -3,6 +3,7 @@
 
 import { SqlManagementClient } from '@azure/arm-sql';
 import * as sql from 'mssql';
+import { default as fetch } from 'node-fetch';
 import retry from 'p-retry';
 import { ResourceInfo } from './ResourceInfo';
 
@@ -35,24 +36,12 @@ export async function createSql(info: ResourceInfo): Promise<void> {
         },
     });
 
-    try {
-        // Try to connect (which will fail) so that we can get the correct IP address to add to the firewall from the error message
-        await createPoolConnnection(info);
-    } catch (error) {
-        const regexp = /Client with IP address '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)' is not allowed to access the server/i;
-        const match = (<Error>error).message.match(regexp);
-        if (!match) {
-            throw error;
-        }
-
-        const ipAddress = match[1];
-        console.log(`Adding ip address "${ipAddress}" to sql firewall rule.`);
-        await armClient.firewallRules.createOrUpdate(info.resourceGroupName, serverName, 'e2eTestFirewall', {
-            startIpAddress: ipAddress,
-            endIpAddress: ipAddress,
-        });
-    }
-
+    const [startIpAddress, endIpAddress] = await getPublicIpAddress();
+    console.log(`Adding ip address "${startIpAddress}"-"${endIpAddress}" to sql firewall rule.`);
+    await armClient.firewallRules.createOrUpdate(info.resourceGroupName, serverName, 'e2eTestFirewall', {
+        startIpAddress,
+        endIpAddress,
+    });
     await armClient.databases.beginCreateOrUpdateAndWait(info.resourceGroupName, serverName, dbName, {
         location: info.location,
         sku: {
@@ -61,7 +50,22 @@ export async function createSql(info: ResourceInfo): Promise<void> {
         },
     });
 
-    const poolConnection = await createPoolConnnectionWithRetry(info);
+    await createTable(info);
+}
+
+async function getPublicIpAddress(): Promise<[string, string]> {
+    const response = await fetch('https://api.ipify.org/');
+    const ip = await response.text();
+    // Use a range because the host ID part of the address can change mid-run in hosted agents
+    const hostIdRegex = /\.[0-9]+$/;
+    const start = ip.replace(hostIdRegex, '.0');
+    const end = ip.replace(hostIdRegex, '.255');
+    return [start, end];
+}
+
+async function createTable(info: ResourceInfo) {
+    const poolConnection = await createPoolConnnection(info);
+
     try {
         await poolConnection
             .request()
@@ -75,25 +79,7 @@ export async function createSql(info: ResourceInfo): Promise<void> {
 
 async function createPoolConnnection(info: ResourceInfo): Promise<sql.ConnectionPool> {
     const serverName = getSqlAccountName(info);
-    return sql.connect({
-        server: `${serverName}.database.windows.net`,
-        database: dbName,
-        port: 1433,
-        authentication: {
-            type: 'azure-active-directory-service-principal-secret',
-            options: <any>{
-                clientId: info.clientId,
-                tenantId: info.tenantId,
-                clientSecret: info.secret,
-            },
-        },
-        options: {
-            encrypt: true,
-        },
-    });
-}
 
-async function createPoolConnnectionWithRetry(info: ResourceInfo): Promise<sql.ConnectionPool> {
     const retries = 5;
     return retry(
         async (currentAttempt: number) => {
@@ -102,7 +88,22 @@ async function createPoolConnnectionWithRetry(info: ResourceInfo): Promise<sql.C
                     `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
                 );
             }
-            return createPoolConnnection(info);
+            return sql.connect({
+                server: `${serverName}.database.windows.net`,
+                database: dbName,
+                port: 1433,
+                authentication: {
+                    type: 'azure-active-directory-service-principal-secret',
+                    options: <any>{
+                        clientId: info.clientId,
+                        tenantId: info.tenantId,
+                        clientSecret: info.secret,
+                    },
+                },
+                options: {
+                    encrypt: true,
+                },
+            });
         },
         {
             retries: retries,
