@@ -11,8 +11,8 @@ function getCosmosDBAccountName(info: ResourceInfo): string {
 }
 
 export const dbName = 'e2eTestDB';
-export const container1Name = 'e2eTestContainer1';
-export const container2Name = 'e2eTestContainer2';
+export const triggerAndOutputContainerName = 'e2eTestContainerTriggerAndOutput';
+export const triggerContainerName = 'e2eTestContainerTrigger';
 
 export async function createCosmosDB(info: ResourceInfo): Promise<void> {
     const accountName = getCosmosDBAccountName(info);
@@ -28,7 +28,7 @@ export async function createCosmosDB(info: ResourceInfo): Promise<void> {
         id: dbName,
         throughput: 400,
     });
-    for (const containerName of [container1Name, container2Name]) {
+    for (const containerName of [triggerAndOutputContainerName, triggerContainerName]) {
         await res.database.containers.create({
             id: containerName,
         });

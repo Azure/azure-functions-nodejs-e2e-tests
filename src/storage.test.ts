@@ -12,23 +12,23 @@ import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('storage', () => {
     it('queue trigger and output', async () => {
-        const client = new QueueClient(storageConnectionString, 'e2etestqueue1');
+        const client = new QueueClient(storageConnectionString, 'e2e-test-queue-trigger-and-output');
         await client.createIfNotExists();
 
         const message = getRandomTestData();
         await client.sendMessage(Buffer.from(message).toString('base64'));
 
-        await waitForOutput(`storageQueueTrigger1 was triggered by "${message}"`);
-        await waitForOutput(`storageQueueTrigger2 was triggered by "${message}"`);
+        await waitForOutput(`storageQueueTriggerAndOutput was triggered by "${message}"`);
+        await waitForOutput(`storageQueueTrigger was triggered by "${message}"`);
     });
 
     it('queue extra output', async () => {
-        const url = getFuncUrl('storageQueueOutput1');
+        const url = getFuncUrl('httpTriggerStorageQueueOutput');
 
         // single
         const message = getRandomTestData();
         await fetch(url, { method: 'POST', body: JSON.stringify({ output: message }) });
-        await waitForOutput(`storageQueueTrigger2 was triggered by "${message}"`);
+        await waitForOutput(`storageQueueTrigger was triggered by "${message}"`);
 
         // bulk
         const bulkMsgs: string[] = [];
@@ -37,25 +37,25 @@ describe('storage', () => {
         }
         await fetch(url, { method: 'POST', body: JSON.stringify({ output: bulkMsgs }) });
         for (const msg of bulkMsgs) {
-            await waitForOutput(`storageQueueTrigger2 was triggered by "${msg}"`);
+            await waitForOutput(`storageQueueTrigger was triggered by "${msg}"`);
         }
     });
 
     it('blob trigger and output', async () => {
-        const containerName = 'e2etestcontainer';
+        const containerName = 'e2e-test-container';
         const client = new ContainerClient(storageConnectionString, containerName);
         await client.createIfNotExists();
 
         const message = getRandomTestData();
         const messageBuffer = Buffer.from(message);
-        const blobName = 'e2etestblob1';
+        const blobName = 'e2e-test-blob-trigger-and-output';
         await client.uploadBlockBlob(blobName, messageBuffer, messageBuffer.byteLength);
 
         await waitForOutput(
-            `storageBlobTrigger1 was triggered by blob "${containerName}/${blobName}" with content "${message}"`
+            `storageBlobTriggerAndOutput was triggered by blob "${containerName}/${blobName}" with content "${message}"`
         );
         await waitForOutput(
-            `storageBlobTrigger2 was triggered by blob "${containerName}/e2etestblob2" with content "${message}"`
+            `storageBlobTrigger was triggered by blob "${containerName}/e2e-test-blob-trigger" with content "${message}"`
         );
     });
 
@@ -70,14 +70,17 @@ describe('storage', () => {
                 Name: 'e2eTestName',
             },
         ];
-        const responseOut = await fetch(getFuncUrl('tableOutput1'), { method: 'POST', body: JSON.stringify(items) });
+        const responseOut = await fetch(getFuncUrl('httpTriggerTableOutput'), {
+            method: 'POST',
+            body: JSON.stringify(items),
+        });
         expect(responseOut.status).to.equal(201);
-        await waitForOutput(`tableOutput1 was triggered`);
+        await waitForOutput(`httpTriggerTableOutput was triggered`);
 
-        const responseIn = await fetch(getFuncUrl(`tableInput1/${rowKey}`), { method: 'GET' });
+        const responseIn = await fetch(getFuncUrl(`httpTriggerTableInput/${rowKey}`), { method: 'GET' });
         expect(responseIn.status).to.equal(200);
         const result = await responseIn.json();
         expect(result).to.deep.equal(items);
-        await waitForOutput(`tableInput1 was triggered`);
+        await waitForOutput(`httpTriggerTableInput was triggered`);
     });
 });

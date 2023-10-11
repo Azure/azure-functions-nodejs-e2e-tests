@@ -1,0 +1,29 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "sql",
+      "name": "inputItem",
+      "direction": "in",
+      "connectionStringSetting": "e2eTest_sql",
+      "commandText": "select * from dbo.e2eTestTable where id = @id",
+      "commandType": "Text",
+      "parameters": "@id={Query.id}"
+    }
+  ],
+  "scriptFile": "../dist/httpTriggerSqlInput/index.js"
+}

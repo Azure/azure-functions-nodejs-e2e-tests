@@ -9,13 +9,13 @@ function getNamespaceName(info: ResourceInfo): string {
     return info.resourcePrefix + 'servicebus';
 }
 
-export const serviceBusQueue1 = 'e2etestqueue1';
-export const serviceBusQueue2 = 'e2etestqueue2';
-export const serviceBusQueueMany1 = 'e2etestqueuemany1';
-export const serviceBusQueueMany2 = 'e2etestqueuemany2';
+export const serviceBusQueueOneTriggerAndOutput = 'e2eTestQueueOneTriggerAndOutput';
+export const serviceBusQueueOneTrigger = 'e2eTestQueueOneTrigger';
+export const serviceBusQueueManyTriggerAndOutput = 'e2eTestQueueManyTriggerAndOutput';
+export const serviceBusQueueManyTrigger = 'e2eTestQueueManyTrigger';
 
-export const serviceBusTopic1 = 'e2etesttopic1';
-export const serviceBusTopic2 = 'e2etesttopic2';
+export const serviceBusTopicTriggerAndOutput = 'e2eTestTopicTriggerAndOutput';
+export const serviceBusTopicTrigger = 'e2eTestTopicTrigger';
 
 export const serviceBusSub = 'e2etestsub';
 
@@ -29,11 +29,16 @@ export async function createServiceBus(info: ResourceInfo): Promise<void> {
         },
     });
 
-    for (const queueName of [serviceBusQueue1, serviceBusQueue2, serviceBusQueueMany1, serviceBusQueueMany2]) {
+    for (const queueName of [
+        serviceBusQueueOneTriggerAndOutput,
+        serviceBusQueueOneTrigger,
+        serviceBusQueueManyTriggerAndOutput,
+        serviceBusQueueManyTrigger,
+    ]) {
         await client.queues.createOrUpdate(info.resourceGroupName, namespaceName, queueName, {});
     }
 
-    for (const topicName of [serviceBusTopic1, serviceBusTopic2]) {
+    for (const topicName of [serviceBusTopicTriggerAndOutput, serviceBusTopicTrigger]) {
         await client.topics.createOrUpdate(info.resourceGroupName, namespaceName, topicName, {});
         await client.subscriptions.createOrUpdate(info.resourceGroupName, namespaceName, topicName, serviceBusSub, {});
     }

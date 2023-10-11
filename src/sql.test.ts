@@ -18,7 +18,7 @@ describe('sql', () => {
     type SqlItem = { id: string; testData: string };
 
     it('input and output', async () => {
-        const outputUrl = getFuncUrl('sqlOutput1');
+        const outputUrl = getFuncUrl('httpTriggerSqlOutput');
 
         const id = uuid();
         const items: SqlItem[] = [
@@ -29,13 +29,13 @@ describe('sql', () => {
         ];
         const responseOut = await fetch(outputUrl, { method: 'POST', body: JSON.stringify(items) });
         expect(responseOut.status).to.equal(201);
-        await waitForOutput(`sqlOutput1 was triggered`);
+        await waitForOutput(`httpTriggerSqlOutput was triggered`);
 
-        const inputUrl = getFuncUrl('sqlInput1');
+        const inputUrl = getFuncUrl('httpTriggerSqlInput');
         const responseIn = await fetch(`${inputUrl}?id=${id}`, { method: 'GET' });
         expect(responseIn.status).to.equal(200);
         const result = await responseIn.json();
         expect(result).to.deep.equal(items);
-        await waitForOutput(`sqlInput1 was triggered`);
+        await waitForOutput(`httpTriggerSqlInput was triggered`);
     });
 });

@@ -5,6 +5,6 @@ import { waitForOutput } from './global.test';
 
 describe('timer', () => {
     it('hello world', async () => {
-        await waitForOutput('timerTrigger1 was triggered', { checkFullOutput: true });
+        await waitForOutput('timerTrigger was triggered', { checkFullOutput: true });
     });
 });

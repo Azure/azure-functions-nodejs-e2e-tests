@@ -9,7 +9,7 @@ import util from 'util';
 import { getFuncUrl } from './constants';
 import { model } from './global.test';
 
-const helloWorld1Url = getFuncUrl('helloWorld1');
+const helloWorldUrl = getFuncUrl('helloWorld');
 const httpRawBodyUrl = getFuncUrl('httpRawBody');
 
 function getContentTypeHeaders(contentType: string): HeadersInit {
@@ -24,21 +24,21 @@ const textPlainHeaders = getContentTypeHeaders('text/plain');
 
 describe('http', () => {
     it('hello world', async () => {
-        const response = await fetch(helloWorld1Url);
+        const response = await fetch(helloWorldUrl);
         const body = await response.text();
         expect(body).to.equal('Hello, world!');
         expect(response.status).to.equal(200);
     });
 
     it('hello world name in body', async () => {
-        const response = await fetch(helloWorld1Url, { method: 'POST', body: 'testName' });
+        const response = await fetch(helloWorldUrl, { method: 'POST', body: 'testName' });
         const body = await response.text();
         expect(body).to.equal('Hello, testName!');
         expect(response.status).to.equal(200);
     });
 
     it('hello world name in query', async () => {
-        const response = await fetch(`${helloWorld1Url}?name=testName`);
+        const response = await fetch(`${helloWorldUrl}?name=testName`);
         const body = await response.text();
         expect(body).to.equal('Hello, testName!');
         expect(response.status).to.equal(200);

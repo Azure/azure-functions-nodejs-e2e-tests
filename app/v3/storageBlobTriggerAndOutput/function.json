@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "name": "myBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "e2e-test-container/e2e-test-blob-trigger-and-output",
+      "connection": "e2eTest_storage"
+    },
+    {
+      "name": "$return",
+      "type": "blob",
+      "direction": "out",
+      "path": "e2e-test-container/e2e-test-blob-trigger",
+      "connection": "e2eTest_storage"
+    }
+  ],
+  "scriptFile": "../dist/storageBlobTriggerAndOutput/index.js"
+}

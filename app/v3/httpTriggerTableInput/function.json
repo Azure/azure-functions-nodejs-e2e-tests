@@ -1,0 +1,30 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ],
+      "route": "httpTriggerTableInput/{rowKey}"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "table",
+      "direction": "in",
+      "name": "inputItem",
+      "tableName": "e2etesttable",
+      "partitionKey": "e2eTestPartKey",
+      "filter": "RowKey eq '{rowKey}'",
+      "connection": "e2eTest_storage"
+    }
+  ],
+  "scriptFile": "../dist/httpTriggerTableInput/index.js"
+}
