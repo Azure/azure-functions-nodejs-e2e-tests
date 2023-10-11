@@ -4,8 +4,16 @@
 import { app, InvocationContext } from '@azure/functions';
 
 export async function eventHubManyTrigger(messages: unknown[], context: InvocationContext): Promise<void> {
-    for (const message of messages) {
-        context.log(`eventHubManyTrigger was triggered by "${message}"`);
+    for (let i = 0; i < messages.length; i++) {
+        const message = messages[i];
+        if (typeof message === 'string') {
+            context.log(`eventHubManyTrigger was triggered by string body "${message}"`);
+        } else {
+            context.log(`eventHubManyTrigger was triggered by object body "${JSON.stringify(message)}"`);
+        }
+        context.log(
+            `eventHubManyTrigger message properties: "${JSON.stringify(context.triggerMetadata.propertiesArray[i])}"`
+        );
     }
 }
 

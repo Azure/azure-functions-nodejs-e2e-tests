@@ -7,8 +7,18 @@ export async function eventHubManyTriggerAndOutput(
     messages: unknown[],
     context: InvocationContext
 ): Promise<unknown[]> {
-    for (const message of messages) {
-        context.log(`eventHubManyTriggerAndOutput was triggered by "${message}"`);
+    for (let i = 0; i < messages.length; i++) {
+        const message = messages[i];
+        if (typeof message === 'string') {
+            context.log(`eventHubManyTriggerAndOutput was triggered by string body "${message}"`);
+        } else {
+            context.log(`eventHubManyTriggerAndOutput was triggered by object body "${JSON.stringify(message)}"`);
+        }
+        context.log(
+            `eventHubManyTriggerAndOutput message properties: "${JSON.stringify(
+                context.triggerMetadata.propertiesArray[i]
+            )}"`
+        );
     }
 
     // do an extra stringify to make sure the values are JSON-parse-able otherwise it'll hit this bug:

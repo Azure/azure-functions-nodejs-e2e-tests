@@ -4,38 +4,92 @@
 import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
 import { eventHubConnectionString } from './resources/connectionStrings';
-import { eventHubManyTriggerAndOutput, eventHubOneTriggerAndOutput } from './resources/eventHub';
+import {
+    eventHubManyTrigger,
+    eventHubManyTriggerAndOutput,
+    eventHubOneTrigger,
+    eventHubOneTriggerAndOutput,
+} from './resources/eventHub';
 import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('eventHub', () => {
-    let clientOne: EventHubProducerClient;
-    let clientMany: EventHubProducerClient;
+    let clientOneTriggerAndOutput: EventHubProducerClient;
+    let clientOneTrigger: EventHubProducerClient;
+    let clientManyTriggerAndOutput: EventHubProducerClient;
+    let clientManyTrigger: EventHubProducerClient;
 
     before(() => {
-        clientOne = new EventHubProducerClient(eventHubConnectionString, eventHubOneTriggerAndOutput);
-        clientMany = new EventHubProducerClient(eventHubConnectionString, eventHubManyTriggerAndOutput);
+        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, eventHubOneTriggerAndOutput);
+        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubOneTrigger);
+        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, eventHubManyTriggerAndOutput);
+        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubManyTrigger);
     });
 
     after(async () => {
-        await Promise.all([clientOne.close(), clientMany.close()]);
+        await Promise.all([
+            clientOneTriggerAndOutput.close(),
+            clientOneTrigger.close(),
+            clientManyTriggerAndOutput.close(),
+            clientManyTrigger.close(),
+        ]);
     });
 
-    it('trigger and output, cardinality one', async () => {
-        const message = getRandomTestData();
-        await clientOne.sendBatch([{ body: message }]);
+    describe('cardinality one', () => {
+        it('trigger and output', async () => {
+            const message = getRandomTestData();
+            await clientOneTriggerAndOutput.sendBatch([{ body: message }]);
 
-        await waitForOutput(`eventHubOneTriggerAndOutput was triggered by "${message}"`);
-        await waitForOutput(`eventHubOneTrigger was triggered by "${message}"`);
+            await waitForOutput(`eventHubOneTriggerAndOutput was triggered by string body "${message}"`);
+            await waitForOutput(`eventHubOneTrigger was triggered by string body "${message}"`);
+        });
+
+        it('object message with properties', async () => {
+            const messageBody = { data: getRandomTestData() };
+            const messageProperties = { prop1: getRandomTestData() };
+            await clientOneTrigger.sendBatch([
+                {
+                    body: messageBody,
+                    properties: messageProperties,
+                },
+            ]);
+
+            await waitForOutput(`eventHubOneTrigger was triggered by object body "${JSON.stringify(messageBody)}"`);
+            await waitForOutput(`eventHubOneTrigger message properties: "${JSON.stringify(messageProperties)}"`);
+        });
     });
 
-    it('trigger and output, cardinality many', async () => {
-        const message = getRandomTestData();
-        const message2 = getRandomTestData();
-        await clientMany.sendBatch([{ body: message }, { body: message2 }]);
+    describe('cardinality many', () => {
+        it('trigger and output', async () => {
+            const message = getRandomTestData();
+            const message2 = getRandomTestData();
+            await clientManyTriggerAndOutput.sendBatch([{ body: message }, { body: message2 }]);
 
-        await waitForOutput(`eventHubManyTriggerAndOutput was triggered by "${message}"`);
-        await waitForOutput(`eventHubManyTriggerAndOutput was triggered by "${message2}"`);
-        await waitForOutput(`eventHubManyTrigger was triggered by "${message}"`);
-        await waitForOutput(`eventHubManyTrigger was triggered by "${message2}"`);
+            await waitForOutput(`eventHubManyTriggerAndOutput was triggered by string body "${message}"`);
+            await waitForOutput(`eventHubManyTriggerAndOutput was triggered by string body "${message2}"`);
+            await waitForOutput(`eventHubManyTrigger was triggered by string body "${message}"`);
+            await waitForOutput(`eventHubManyTrigger was triggered by string body "${message2}"`);
+        });
+
+        it('object message with properties', async () => {
+            const messageBody1 = { data: getRandomTestData() };
+            const messageProperties1 = { prop1: getRandomTestData() };
+            const messageBody2 = { data: getRandomTestData() };
+            const messageProperties2 = { prop1: getRandomTestData() };
+            await clientManyTrigger.sendBatch([
+                {
+                    body: messageBody1,
+                    properties: messageProperties1,
+                },
+                {
+                    body: messageBody2,
+                    properties: messageProperties2,
+                },
+            ]);
+
+            await waitForOutput(`eventHubManyTrigger was triggered by object body "${JSON.stringify(messageBody1)}"`);
+            await waitForOutput(`eventHubManyTrigger message properties: "${JSON.stringify(messageProperties1)}"`);
+            await waitForOutput(`eventHubManyTrigger was triggered by object body "${JSON.stringify(messageBody2)}"`);
+            await waitForOutput(`eventHubManyTrigger message properties: "${JSON.stringify(messageProperties2)}"`);
+        });
     });
 });
