@@ -1,0 +1,13 @@
+{
+  "bindings": [
+    {
+      "name": "mySbMsg",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "queueName": "e2eTestQueueManyTrigger",
+      "connection": "e2eTest_serviceBus",
+      "cardinality": "many"
+    }
+  ],
+  "scriptFile": "../dist/serviceBusQueueManyTrigger/index.js"
+}

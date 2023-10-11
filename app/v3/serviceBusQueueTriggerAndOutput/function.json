@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "name": "mySbMsg",
+      "type": "serviceBusTrigger",
+      "direction": "in",
+      "queueName": "e2eTestQueueOneTriggerAndOutput",
+      "connection": "e2eTest_serviceBus"
+    },
+    {
+      "name": "$return",
+      "type": "serviceBus",
+      "direction": "out",
+      "topicName": "e2eTestQueueOneTrigger",
+      "connection": "e2eTest_serviceBus"
+    }
+  ],
+  "scriptFile": "../dist/serviceBusQueueTriggerAndOutput/index.js"
+}

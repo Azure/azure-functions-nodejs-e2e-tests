@@ -1,0 +1,20 @@
+{
+  "bindings": [
+    {
+      "type": "eventHubTrigger",
+      "name": "eventHubMessages",
+      "direction": "in",
+      "eventHubName": "e2eTestHubOneTriggerAndOutput",
+      "connection": "e2eTest_eventHub",
+      "cardinality": "one"
+    },
+    {
+      "type": "eventHub",
+      "name": "$return",
+      "direction": "out",
+      "eventHubName": "e2eTestHubOneTrigger",
+      "connection": "e2eTest_eventHub"
+    }
+  ],
+  "scriptFile": "../dist/eventHubOneTriggerAndOutput/index.js"
+}

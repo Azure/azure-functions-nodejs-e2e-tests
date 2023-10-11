@@ -1,0 +1,27 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "serviceBus",
+      "name": "outputMsg",
+      "direction": "out",
+      "connection": "e2eTest_serviceBus",
+      "queueName": "e2eTestQueueOneTrigger"
+    }
+  ],
+  "scriptFile": "../dist/httpTriggerServiceBusOutput/index.js"
+}

@@ -4,7 +4,7 @@
 import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
 import { eventHubConnectionString } from './resources/connectionStrings';
-import { eventHubMany1, eventHubOne1 } from './resources/eventHub';
+import { eventHubManyTriggerAndOutput, eventHubOneTriggerAndOutput } from './resources/eventHub';
 import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('eventHub', () => {
@@ -12,8 +12,8 @@ describe('eventHub', () => {
     let clientMany: EventHubProducerClient;
 
     before(() => {
-        clientOne = new EventHubProducerClient(eventHubConnectionString, eventHubOne1);
-        clientMany = new EventHubProducerClient(eventHubConnectionString, eventHubMany1);
+        clientOne = new EventHubProducerClient(eventHubConnectionString, eventHubOneTriggerAndOutput);
+        clientMany = new EventHubProducerClient(eventHubConnectionString, eventHubManyTriggerAndOutput);
     });
 
     after(async () => {
@@ -24,8 +24,8 @@ describe('eventHub', () => {
         const message = getRandomTestData();
         await clientOne.sendBatch([{ body: message }]);
 
-        await waitForOutput(`eventHubTriggerOne1 was triggered by "${message}"`);
-        await waitForOutput(`eventHubTriggerOne2 was triggered by "${message}"`);
+        await waitForOutput(`eventHubOneTriggerAndOutput was triggered by "${message}"`);
+        await waitForOutput(`eventHubOneTrigger was triggered by "${message}"`);
     });
 
     it('trigger and output, cardinality many', async () => {
@@ -33,9 +33,9 @@ describe('eventHub', () => {
         const message2 = getRandomTestData();
         await clientMany.sendBatch([{ body: message }, { body: message2 }]);
 
-        await waitForOutput(`eventHubTriggerMany1 was triggered by "${message}"`);
-        await waitForOutput(`eventHubTriggerMany1 was triggered by "${message2}"`);
-        await waitForOutput(`eventHubTriggerMany2 was triggered by "${message}"`);
-        await waitForOutput(`eventHubTriggerMany2 was triggered by "${message2}"`);
+        await waitForOutput(`eventHubManyTriggerAndOutput was triggered by "${message}"`);
+        await waitForOutput(`eventHubManyTriggerAndOutput was triggered by "${message2}"`);
+        await waitForOutput(`eventHubManyTrigger was triggered by "${message}"`);
+        await waitForOutput(`eventHubManyTrigger was triggered by "${message2}"`);
     });
 });
