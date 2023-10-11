@@ -4,7 +4,12 @@
 import { app, InvocationContext } from '@azure/functions';
 
 export async function eventHubOneTrigger(message: unknown, context: InvocationContext): Promise<void> {
-    context.log(`eventHubOneTrigger was triggered by "${message}"`);
+    if (typeof message === 'string') {
+        context.log(`eventHubOneTrigger was triggered by string body "${message}"`);
+    } else {
+        context.log(`eventHubOneTrigger was triggered by object body "${JSON.stringify(message)}"`);
+    }
+    context.log(`eventHubOneTrigger message properties: "${JSON.stringify(context.triggerMetadata.properties)}"`);
 }
 
 app.eventHub('eventHubOneTrigger', {
