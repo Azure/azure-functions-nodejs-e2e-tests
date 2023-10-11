@@ -5,8 +5,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
+    "clean": "rimraf dist",
     "lint": "eslint . --fix",
-    "prestart": "npm run build",
+    "prestart": "npm run clean && npm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\""
   },
@@ -16,7 +17,8 @@
   "devDependencies": {
     "@types/long": "^4.0.0",
     "@types/node": "^18.x",
-    "typescript": "^4.0.0"
+    "typescript": "^4.0.0",
+    "rimraf": "^5.0.0"
   },
   "main": "dist/src/{index.js,functions/*.js}"
 }
