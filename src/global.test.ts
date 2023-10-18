@@ -102,7 +102,6 @@ async function startFuncProcess(appPath: string): Promise<void> {
                 Values: {
                     AzureWebJobsStorage: storageConnectionString,
                     FUNCTIONS_WORKER_RUNTIME: 'node',
-                    AzureWebJobsFeatureFlags: 'EnableWorkerIndexing',
                     logging__logLevel__Worker: 'debug',
                     [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
