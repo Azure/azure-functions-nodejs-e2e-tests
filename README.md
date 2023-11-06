@@ -23,6 +23,10 @@ Here is the general flow of the pipeline:
 
 ## Running locally
 
+### Install core tools
+
+1. Run `./scripts/install-func-cli.ps1` in PowerShell to install the latest nightly build of Azure Functions Core Tools
+
 ### Build
 
 1. Run `npm run install` and `npm run build` in the root directory, and in the test app folders (`app/v3` and `app/v4`)
