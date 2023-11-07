@@ -1,9 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import { getResourceInfo } from './ResourceInfo';
 import { getCosmosDBConnectionString } from './cosmosDB';
 import { getEventHubConnectionString } from './eventHub';
+import { getResourceInfo } from './ResourceInfo';
 import { getServiceBusConnectionString } from './serviceBus';
 import { getSqlConnectionString } from './sql';
 import { getStorageConnectionString } from './storage';

@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import { HttpRequest, HttpResponseInit, InvocationContext, app, output } from '@azure/functions';
+import { app, HttpRequest, HttpResponseInit, InvocationContext, output } from '@azure/functions';
 
 const serviceBusOutput = output.serviceBusQueue({
     connection: 'e2eTest_serviceBus',

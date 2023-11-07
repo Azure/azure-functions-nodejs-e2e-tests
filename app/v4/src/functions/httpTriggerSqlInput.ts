@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import { HttpRequest, HttpResponseInit, InvocationContext, app, input } from '@azure/functions';
+import { app, HttpRequest, HttpResponseInit, input, InvocationContext } from '@azure/functions';
 
 const sqlInput = input.sql({
     connectionStringSetting: 'e2eTest_sql',
