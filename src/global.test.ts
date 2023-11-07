@@ -5,8 +5,8 @@ import cp from 'child_process';
 import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
-import { EnvVarNames, combinedFolder, defaultTimeout, oldBundleSuffix } from './constants';
-import { Model, getModelArg, getOldBundleArg } from './getModelArg';
+import { combinedFolder, defaultTimeout, EnvVarNames, oldBundleSuffix } from './constants';
+import { getModelArg, getOldBundleArg, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,

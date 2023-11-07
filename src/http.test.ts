@@ -4,7 +4,7 @@
 import { expect } from 'chai';
 import { encode } from 'iconv-lite';
 // Node.js core added support for fetch in v18, but while we're testing versions <18 we'll use "node-fetch"
-import { HeadersInit, default as fetch } from 'node-fetch';
+import { default as fetch, HeadersInit } from 'node-fetch';
 import util from 'util';
 import { getFuncUrl } from './constants';
 import { model } from './global.test';

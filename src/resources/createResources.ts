@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { getResourceInfo } from './ResourceInfo';
 import { createCosmosDB } from './cosmosDB';
 import { createEventHub } from './eventHub';
+import { getResourceInfo } from './ResourceInfo';
 import { createServiceBus } from './serviceBus';
 import { createSql } from './sql';
 import { createStorageAccount } from './storage';
