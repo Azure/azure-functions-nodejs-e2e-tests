@@ -6,7 +6,7 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "npm prune (functions)",
     "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll"],
+    "editor.codeActionsOnSave": ["source.fixAll"],
     "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.importModuleSpecifier": "relative"
 }
