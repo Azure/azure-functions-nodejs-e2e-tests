@@ -26,12 +26,10 @@ describe('eventHub', () => {
     });
 
     after(async () => {
-        await Promise.all([
-            clientOneTriggerAndOutput.close(),
-            clientOneTrigger.close(),
-            clientManyTriggerAndOutput.close(),
-            clientManyTrigger.close(),
-        ]);
+        void clientOneTriggerAndOutput.close();
+        void clientOneTrigger.close();
+        void clientManyTriggerAndOutput.close();
+        void clientManyTrigger.close();
     });
 
     describe('cardinality one', () => {
