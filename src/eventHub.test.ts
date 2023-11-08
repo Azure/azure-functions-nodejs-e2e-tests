@@ -10,6 +10,7 @@ import {
     eventHubOneTrigger,
     eventHubOneTriggerAndOutput,
 } from './resources/eventHub';
+import { delay } from './utils/delay';
 import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('eventHub', () => {
@@ -25,12 +26,27 @@ describe('eventHub', () => {
         clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubManyTrigger);
     });
 
+    let clientsClosed = false;
     after(async () => {
-        void clientOneTriggerAndOutput.close();
-        void clientOneTrigger.close();
-        void clientManyTriggerAndOutput.close();
-        void clientManyTrigger.close();
+        let attempt = 1;
+        while (!clientsClosed) {
+            if (attempt > 1) {
+                console.log(`Closing event hub connections, attempt #${attempt}...`);
+            }
+            await Promise.race([closeConnections(), delay(10 * 1000)]);
+            attempt += 1;
+        }
     });
+
+    async function closeConnections(): Promise<void> {
+        await Promise.all([
+            clientOneTriggerAndOutput.close(),
+            clientOneTrigger.close(),
+            clientManyTriggerAndOutput.close(),
+            clientManyTrigger.close(),
+        ]);
+        clientsClosed = true;
+    }
 
     describe('cardinality one', () => {
         it('trigger and output', async () => {

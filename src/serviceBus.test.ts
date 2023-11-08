@@ -21,7 +21,7 @@ describe('serviceBus', () => {
     });
 
     after(async () => {
-        void client.close();
+        await client.close();
     });
 
     it('queue trigger and output', async () => {
