@@ -6,7 +6,7 @@ import { QueueClient } from '@azure/storage-queue';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
-import { waitForOutput } from './global.test';
+import { model, waitForOutput } from './global.test';
 import { storageConnectionString } from './resources/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
 
@@ -82,5 +82,26 @@ describe('storage', () => {
         const result = await responseIn.json();
         expect(result).to.deep.equal(items);
         await waitForOutput(`httpTriggerTableInput was triggered`);
+    });
+
+    // Test for bug https://github.com/Azure/azure-functions-nodejs-library/issues/179
+    it('Shared output bug', async function (this: Mocha.Context) {
+        if (model === 'v3') {
+            this.skip();
+        }
+
+        const containerName = 'e2e-test-container';
+        const client = new ContainerClient(storageConnectionString, containerName);
+        await client.createIfNotExists();
+
+        const message = getRandomTestData();
+        const messageBuffer = Buffer.from(message);
+        const blobName = 'e2e-test-blob-trigger-shared-output-bug';
+        await client.uploadBlockBlob(blobName, messageBuffer, messageBuffer.byteLength);
+
+        await waitForOutput(`storageBlobTriggerReturnOutput was triggered`);
+        await waitForOutput(`storageBlobTriggerExtraOutput was triggered`);
+        await waitForOutput(`storageQueueTrigger was triggered by "${message}-returnOutput"`);
+        await waitForOutput(`storageQueueTrigger was triggered by "${message}-extraOutput"`);
     });
 });
