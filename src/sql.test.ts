@@ -5,12 +5,12 @@ import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 import { getFuncUrl } from './constants';
-import { isOldBundle, waitForOutput } from './global.test';
+import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('sql', () => {
     before(function (this: Mocha.Context) {
-        if (isOldBundle) {
+        if (isOldConfig) {
             this.skip();
         }
     });

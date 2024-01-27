@@ -29,11 +29,11 @@
         "createCombinedApps": "node out/createCombinedApps.js",
         "deleteResources": "node out/resources/deleteResources.js",
         "test": "npm run testV3 && npm run testV4",
-        "testOldBundle": "npm run testV3OldBundle && npm run testV4OldBundle",
+        "testOldConfig": "npm run testV3OldConfig && npm run testV4OldConfig",
         "testV3": "node out/index.js --model v3",
-        "testV3OldBundle": "node out/index.js --model v3 --oldBundle",
+        "testV3OldConfig": "node out/index.js --model v3 --oldConfig",
         "testV4": "node out/index.js --model v4",
-        "testV4OldBundle": "node out/index.js --model v4 --oldBundle"
+        "testV4OldConfig": "node out/index.js --model v4 --oldConfig"
     },
     "dependencies": {
         "@azure/arm-cosmosdb": "^15.4.0",
