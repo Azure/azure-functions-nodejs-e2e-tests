@@ -71,43 +71,6 @@ describe('http', () => {
         }
     });
 
-    async function validateIndividualRequest(url: string): Promise<void> {
-        const data = getRandomTestData();
-        await addRandomDelay();
-        const response = await fetch(url, { method: 'POST', body: data });
-        const body = await response.text();
-        expect(body).to.equal(`Hello, ${data}!`);
-    }
-
-    it('http trigger concurrent requests', async function (this: Mocha.Context) {
-        funcCliSettings.hideOutput = true; // because this test is too noisy
-        try {
-            const url = getFuncUrl('httpTriggerRandomDelay');
-
-            const reqs: Promise<void>[] = [];
-            const numReqs = 1000;
-            for (let i = 0; i < numReqs; i++) {
-                reqs.push(validateIndividualRequest(url));
-            }
-            let countFailed = 0;
-            let countSucceeded = 0;
-            const results = await Promise.allSettled(reqs);
-            for (const result of results) {
-                if (result.status === 'rejected') {
-                    console.error(result.reason);
-                    countFailed += 1;
-                } else {
-                    countSucceeded += 1;
-                }
-            }
-            if (countFailed > 0) {
-                throw new Error(`${countFailed} request(s) failed, ${countSucceeded} succeeded`);
-            }
-        } finally {
-            funcCliSettings.hideOutput = false;
-        }
-    });
-
     describe('stream', () => {
         before(function (this: Mocha.Context) {
             if (isOldConfig || model === 'v3') {
@@ -146,6 +109,43 @@ describe('http', () => {
                 expect(response.status).to.equal(200);
             });
         }
+
+        async function validateIndividualRequest(url: string): Promise<void> {
+            const data = getRandomTestData();
+            await addRandomDelay();
+            const response = await fetch(url, { method: 'POST', body: data });
+            const body = await response.text();
+            expect(body).to.equal(`Hello, ${data}!`);
+        }
+
+        it('http trigger concurrent requests', async function (this: Mocha.Context) {
+            funcCliSettings.hideOutput = true; // because this test is too noisy
+            try {
+                const url = getFuncUrl('httpTriggerRandomDelay');
+
+                const reqs: Promise<void>[] = [];
+                const numReqs = 1000;
+                for (let i = 0; i < numReqs; i++) {
+                    reqs.push(validateIndividualRequest(url));
+                }
+                let countFailed = 0;
+                let countSucceeded = 0;
+                const results = await Promise.allSettled(reqs);
+                for (const result of results) {
+                    if (result.status === 'rejected') {
+                        console.error(result.reason);
+                        countFailed += 1;
+                    } else {
+                        countSucceeded += 1;
+                    }
+                }
+                if (countFailed > 0) {
+                    throw new Error(`${countFailed} request(s) failed, ${countSucceeded} succeeded`);
+                }
+            } finally {
+                funcCliSettings.hideOutput = false;
+            }
+        });
     });
 
     describe('v3 only', () => {
