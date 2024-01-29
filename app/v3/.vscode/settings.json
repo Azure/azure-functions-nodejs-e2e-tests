@@ -5,7 +5,7 @@
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.preDeployTask": "npm prune (functions)",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.fixAll"],
     "typescript.tsdk": "node_modules/typescript/lib",
     "typescript.preferences.importModuleSpecifier": "relative"

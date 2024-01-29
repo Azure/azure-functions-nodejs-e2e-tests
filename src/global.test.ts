@@ -25,6 +25,12 @@ export let isOldConfig: boolean;
 let childProc: cp.ChildProcess | undefined;
 let testsDone = false;
 
+interface FuncCliSettings {
+    hideOutput?: boolean;
+}
+
+export const funcCliSettings: FuncCliSettings = {};
+
 before(async function (this: Mocha.Context): Promise<void> {
     model = getModelArg();
     if (model === 'v4' && semver.lt(process.versions.node, '18.0.0')) {
@@ -108,6 +114,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
                     [EnvVarNames.sql]: sqlConnectionString,
+                    FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
             },
             null,
@@ -123,7 +130,9 @@ async function startFuncProcess(appPath: string): Promise<void> {
 
     childProc.stdout?.on('data', (data: string | Buffer) => {
         data = data.toString();
-        process.stdout.write(data);
+        if (!funcCliSettings.hideOutput) {
+            process.stdout.write(data);
+        }
         perTestFuncOutput += data;
         fullFuncOutput += data;
     });

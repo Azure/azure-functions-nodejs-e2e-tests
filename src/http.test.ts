@@ -5,9 +5,12 @@ import { expect } from 'chai';
 import { encode } from 'iconv-lite';
 // Node.js core added support for fetch in v18, but while we're testing versions <18 we'll use "node-fetch"
 import { default as fetch, HeadersInit } from 'node-fetch';
+import { Readable } from 'stream';
 import util from 'util';
 import { getFuncUrl } from './constants';
-import { model } from './global.test';
+import { funcCliSettings, isOldConfig, model } from './global.test';
+import { addRandomDelay, getRandomTestData } from './utils/getRandomTestData';
+import { convertMbToB, createRandomStream, receiveStreamWithProgress } from './utils/streamHttp';
 
 const helloWorldUrl = getFuncUrl('helloWorld');
 const httpRawBodyUrl = getFuncUrl('httpRawBody');
@@ -57,9 +60,92 @@ describe('http', () => {
         expect(body).to.equal('');
         expect(response.status).to.equal(200);
         const cookies = response.headers.get('Set-Cookie');
-        expect(cookies).to.equal(
-            'mycookie=myvalue; max-age=200000; path=/, mycookie2=myvalue; max-age=200000; path=/, mycookie3-expires=myvalue3-expires; max-age=0; path=/, mycookie4-samesite-lax=myvalue; path=/; samesite=lax, mycookie5-samesite-strict=myvalue; path=/; samesite=strict'
-        );
+        if (isOldConfig) {
+            expect(cookies).to.equal(
+                'mycookie=myvalue; max-age=200000; path=/, mycookie2=myvalue; max-age=200000; path=/, mycookie3-expires=myvalue3-expires; max-age=0; path=/, mycookie4-samesite-lax=myvalue; path=/; samesite=lax, mycookie5-samesite-strict=myvalue; path=/; samesite=strict'
+            );
+        } else {
+            expect(cookies?.toLowerCase()).to.equal(
+                'mycookie=myvalue; max-age=200000, mycookie2=myvalue; max-age=200000; path=/, mycookie3-expires=myvalue3-expires; max-age=0, mycookie4-samesite-lax=myvalue; samesite=lax, mycookie5-samesite-strict=myvalue; samesite=strict'
+            );
+        }
+    });
+
+    async function validateIndividualRequest(url: string): Promise<void> {
+        const data = getRandomTestData();
+        await addRandomDelay();
+        const response = await fetch(url, { method: 'POST', body: data });
+        const body = await response.text();
+        expect(body).to.equal(`Hello, ${data}!`);
+    }
+
+    it('http trigger concurrent requests', async function (this: Mocha.Context) {
+        funcCliSettings.hideOutput = true; // because this test is too noisy
+        try {
+            const url = getFuncUrl('httpTriggerRandomDelay');
+
+            const reqs: Promise<void>[] = [];
+            const numReqs = 1000;
+            for (let i = 0; i < numReqs; i++) {
+                reqs.push(validateIndividualRequest(url));
+            }
+            let countFailed = 0;
+            let countSucceeded = 0;
+            const results = await Promise.allSettled(reqs);
+            for (const result of results) {
+                if (result.status === 'rejected') {
+                    console.error(result.reason);
+                    countFailed += 1;
+                } else {
+                    countSucceeded += 1;
+                }
+            }
+            if (countFailed > 0) {
+                throw new Error(`${countFailed} request(s) failed, ${countSucceeded} succeeded`);
+            }
+        } finally {
+            funcCliSettings.hideOutput = false;
+        }
+    });
+
+    describe('stream', () => {
+        before(function (this: Mocha.Context) {
+            if (isOldConfig || model === 'v3') {
+                this.skip();
+            }
+        });
+
+        it('hello world stream', async () => {
+            const body = new Readable();
+            body._read = () => {};
+            body.push('testName-chunked');
+            body.push(null);
+
+            const response = await fetch(helloWorldUrl, { method: 'POST', body });
+            const resBody = await response.text();
+            expect(resBody).to.equal('Hello, testName-chunked!');
+            expect(response.status).to.equal(200);
+        });
+
+        for (const lengthInMb of [32, 128, 512, 2048]) {
+            it(`send stream ${lengthInMb}mb`, async () => {
+                const funcUrl = getFuncUrl('httpTriggerReceiveStream');
+                const randomStream = createRandomStream(lengthInMb);
+                const response = await fetch(funcUrl, { method: 'POST', body: randomStream });
+                const resBody = await response.text();
+                expect(resBody).to.equal(`Bytes received: ${convertMbToB(lengthInMb)}`);
+                expect(response.status).to.equal(200);
+            });
+
+            it(`receive stream ${lengthInMb}mb`, async () => {
+                const funcUrl = getFuncUrl('httpTriggerSendStream');
+                const response = await fetch(`${funcUrl}?lengthInMb=${lengthInMb}`, { method: 'GET' });
+
+                const bytesReceived = await receiveStreamWithProgress(response.body);
+                expect(bytesReceived).to.equal(convertMbToB(lengthInMb));
+                expect(response.status).to.equal(200);
+            });
+        }
     });
 
     describe('v3 only', () => {

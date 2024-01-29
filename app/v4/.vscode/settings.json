@@ -6,7 +6,7 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 4,
     "azureFunctions.preDeployTask": "npm prune (functions)",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.fixAll"],
     "typescript.tsdk": "node_modules/typescript/lib",
     "typescript.preferences.importModuleSpecifier": "relative"
