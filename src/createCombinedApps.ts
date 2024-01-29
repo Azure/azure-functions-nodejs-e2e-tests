@@ -3,14 +3,14 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { combinedFolder, oldBundleSuffix } from './constants';
+import { combinedFolder, oldConfigSuffix } from './constants';
 
 async function createCombinedApps(): Promise<void> {
     const appRoot = path.join(__dirname, '..', 'app');
     for (const model of ['v3', 'v4']) {
         const modelRoot = path.join(appRoot, model);
-        const oldBundleRoot = path.join(appRoot, model + oldBundleSuffix);
-        const combinedRoot = path.join(appRoot, combinedFolder, model + oldBundleSuffix);
+        const oldConfigRoot = path.join(appRoot, model + oldConfigSuffix);
+        const combinedRoot = path.join(appRoot, combinedFolder, model + oldConfigSuffix);
         await fs.cp(modelRoot, combinedRoot, {
             recursive: true,
             filter: (source) => {
@@ -18,7 +18,7 @@ async function createCombinedApps(): Promise<void> {
                 return !foldersToExclude.find((f) => source.includes(f));
             },
         });
-        await fs.cp(oldBundleRoot, combinedRoot, { recursive: true });
+        await fs.cp(oldConfigRoot, combinedRoot, { recursive: true });
     }
 }
 

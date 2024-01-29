@@ -5,8 +5,8 @@ import cp from 'child_process';
 import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
-import { combinedFolder, defaultTimeout, EnvVarNames, oldBundleSuffix } from './constants';
-import { getModelArg, getOldBundleArg, Model } from './getModelArg';
+import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
+import { getModelArg, getOldConfigArg, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
@@ -21,7 +21,7 @@ import findProcess = require('find-process');
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
 export let model: Model | undefined;
-export let isOldBundle: boolean;
+export let isOldConfig: boolean;
 let childProc: cp.ChildProcess | undefined;
 let testsDone = false;
 
@@ -35,9 +35,9 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    isOldBundle = getOldBundleArg();
-    const appPath = isOldBundle
-        ? path.join(__dirname, '..', 'app', combinedFolder, model + oldBundleSuffix)
+    isOldConfig = getOldConfigArg();
+    const appPath = isOldConfig
+        ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
         : path.join(__dirname, '..', 'app', model);
 
     await startFuncProcess(appPath);
