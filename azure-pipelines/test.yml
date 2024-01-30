@@ -89,9 +89,10 @@ jobs:
   - script: mv *.tgz package.tgz
     displayName: 'Rename v4 tgz file' # because the publish command below requires an exact path
     workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV4/drop'
-  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-    displayName: 'install latest v4 library'
-    workingDirectory: 'app/v4'
+  # TODO: Temporary change until actual v4 drop exists with http stream changes
+  #- script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+  #  displayName: 'install latest v4 library'
+  #  workingDirectory: 'app/v4'
   - script: npm run build
     displayName: 'build v4 app'
     workingDirectory: 'app/v4'
@@ -117,9 +118,10 @@ jobs:
   - script: npm ci
     displayName: 'install deps v4 app (oldConfig)'
     workingDirectory: 'app/combined/v4-oldConfig'
-  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-    displayName: 'install latest v4 library (oldConfig)'
-    workingDirectory: 'app/combined/v4-oldConfig'
+  # TODO: Temporary change until actual v4 drop exists with http stream changes
+  #- script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+  #  displayName: 'install latest v4 library (oldConfig)'
+  #  workingDirectory: 'app/combined/v4-oldConfig'
   - script: npm run build
     displayName: 'build v4 app (oldConfig)'
     workingDirectory: 'app/combined/v4-oldConfig'
