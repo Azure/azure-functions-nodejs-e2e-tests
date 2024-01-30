@@ -102,27 +102,27 @@ jobs:
   - script: npm run createCombinedApps
     displayName: 'Create combined apps'
 
-  # Setup v3 oldBundle app
+  # Setup v3 oldConfig app
   - script: npm ci
-    displayName: 'install deps v3 app (oldBundle)'
-    workingDirectory: 'app/combined/v3-oldBundle'
+    displayName: 'install deps v3 app (oldConfig)'
+    workingDirectory: 'app/combined/v3-oldConfig'
   - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
-    displayName: 'install latest v3 library (oldBundle)'
-    workingDirectory: 'app/combined/v3-oldBundle'
+    displayName: 'install latest v3 library (oldConfig)'
+    workingDirectory: 'app/combined/v3-oldConfig'
   - script: npm run build
-    displayName: 'build v3 app (oldBundle)'
-    workingDirectory: 'app/combined/v3-oldBundle'
+    displayName: 'build v3 app (oldConfig)'
+    workingDirectory: 'app/combined/v3-oldConfig'
 
-  # Setup v4 oldBundle app
+  # Setup v4 oldConfig app
   - script: npm ci
-    displayName: 'install deps v4 app (oldBundle)'
-    workingDirectory: 'app/combined/v4-oldBundle'
+    displayName: 'install deps v4 app (oldConfig)'
+    workingDirectory: 'app/combined/v4-oldConfig'
   - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-    displayName: 'install latest v4 library (oldBundle)'
-    workingDirectory: 'app/combined/v4-oldBundle'
+    displayName: 'install latest v4 library (oldConfig)'
+    workingDirectory: 'app/combined/v4-oldConfig'
   - script: npm run build
-    displayName: 'build v4 app (oldBundle)'
-    workingDirectory: 'app/combined/v4-oldBundle'
+    displayName: 'build v4 app (oldConfig)'
+    workingDirectory: 'app/combined/v4-oldConfig'
 
   # Run tests Node 16
   - task: NodeTool@0
@@ -154,9 +154,9 @@ jobs:
       AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
       AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
-  # Run tests for old bundle (just one Node.js version is enough)
-  - script: npm run testOldBundle
-    displayName: 'Run tests old bundle'
+  # Run tests for old config (just one Node.js version is enough)
+  - script: npm run testOldConfig
+    displayName: 'Run tests old config'
     continueOnError: true
     env:
       AZURE_TENANT_ID: $(AZURE_TENANT_ID)

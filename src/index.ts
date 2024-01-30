@@ -5,12 +5,12 @@ import globby from 'globby';
 import Mocha from 'mocha';
 import path from 'path';
 import { defaultTimeout } from './constants';
-import { getModelArg, getOldBundleArg } from './getModelArg';
+import { getModelArg, getOldConfigArg } from './getModelArg';
 
 export async function run(): Promise<void> {
     try {
-        const bundleSuffix = getOldBundleArg() ? '_oldBundle' : '';
-        const fileName = `${process.platform}_model-${getModelArg()}_Node-${process.version}${bundleSuffix}.xml`;
+        const oldConfigSuffix = getOldConfigArg() ? '_oldConfig' : '';
+        const fileName = `${process.platform}_model-${getModelArg()}_Node-${process.version}${oldConfigSuffix}.xml`;
         const options: Mocha.MochaOptions = {
             color: true,
             timeout: defaultTimeout,

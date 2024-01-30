@@ -15,8 +15,8 @@ export function getModelArg(): Model {
     }
 }
 
-export function getOldBundleArg(): boolean {
-    const flag = 'oldBundle';
+export function getOldConfigArg(): boolean {
+    const flag = 'oldConfig';
     const args = parseArgs(process.argv.slice(2), { boolean: flag });
     return args[flag];
 }

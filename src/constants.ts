@@ -12,7 +12,7 @@ export namespace EnvVarNames {
 export const defaultTimeout = 3 * 60 * 1000;
 
 export const combinedFolder = 'combined';
-export const oldBundleSuffix = '-oldBundle';
+export const oldConfigSuffix = '-oldConfig';
 
 export function getFuncUrl(routeSuffix: string): string {
     return `http://127.0.0.1:7071/api/${routeSuffix}`;
