@@ -1,10 +1,12 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
+import Agent from 'agentkeepalive';
 import { expect } from 'chai';
 import { encode } from 'iconv-lite';
 // Node.js core added support for fetch in v18, but while we're testing versions <18 we'll use "node-fetch"
 import { default as fetch, HeadersInit } from 'node-fetch';
+import * as os from 'os';
 import { Readable } from 'stream';
 import util from 'util';
 import { getFuncUrl } from './constants';
@@ -75,10 +77,19 @@ describe('http', () => {
         }
     });
 
+    // Mac seems to occasionally drop requests resulting in a timeout, potentially due to a max number of connections that appears to be much smaller by default than other OS's.
+    // To workaround this, we'll test with a keep-alive agent (a good thing to test anyways).
+    const keepaliveAgent = new Agent({ maxSockets: 128, maxFreeSockets: 64 });
+
     async function validateIndividualRequest(url: string): Promise<void> {
         const data = getRandomTestData();
-        await addRandomAsyncOrSyncDelay();
-        const response = await fetch(url, { method: 'POST', body: data });
+        await addRandomDelay();
+        const response = await fetch(url, {
+            method: 'POST',
+            body: data,
+            timeout: 30 * 1000,
+            agent: os.platform() === 'darwin' ? keepaliveAgent : undefined,
+        });
         const body = await response.text();
         expect(body).to.equal(`Hello, ${data}!`);
     }
@@ -88,23 +99,30 @@ describe('http', () => {
         const url = getFuncUrl('httpTriggerRandomDelay');
 
         const reqs: Promise<void>[] = [];
-        const numReqs = 256;
+        const numReqs = 1024;
         for (let i = 0; i < numReqs; i++) {
             reqs.push(validateIndividualRequest(url));
         }
         let countFailed = 0;
+        let countTimedOut = 0;
         let countSucceeded = 0;
         const results = await Promise.allSettled(reqs);
         for (const result of results) {
             if (result.status === 'rejected') {
-                console.error(result.reason);
-                countFailed += 1;
+                if (typeof result.reason?.message === 'string' && /timeout/i.test(result.reason.message)) {
+                    countTimedOut += 1;
+                } else {
+                    console.error(result.reason);
+                    countFailed += 1;
+                }
             } else {
                 countSucceeded += 1;
             }
         }
-        if (countFailed > 0) {
-            throw new Error(`${countFailed} request(s) failed, ${countSucceeded} succeeded`);
+        if (countFailed > 0 || countTimedOut > 0) {
+            throw new Error(
+                `${countFailed} request(s) failed, ${countTimedOut} timed out, ${countSucceeded} succeeded`
+            );
         }
     });
 
@@ -117,7 +135,7 @@ describe('http', () => {
 
         it('hello world stream', async () => {
             const body = new Readable();
-            body._read = () => { };
+            body._read = () => {};
             body.push('testName-chunked');
             body.push(null);
 
