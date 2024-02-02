@@ -23,7 +23,7 @@ export function getRandomBoolean(percentTrue: number): boolean {
     return Math.random() * 100 > percentTrue;
 }
 
-export async function addRandomDelay(): Promise<void> {
+export async function addRandomAsyncOrSyncDelay(): Promise<void> {
     if (getRandomBoolean(95)) {
         await delay(getRandomInt(0, 250));
     } else {

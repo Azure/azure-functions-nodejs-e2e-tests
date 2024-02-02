@@ -9,7 +9,7 @@ import { Readable } from 'stream';
 import util from 'util';
 import { getFuncUrl } from './constants';
 import { funcCliSettings, isOldConfig, model } from './global.test';
-import { addRandomDelay, getRandomTestData } from './utils/getRandomTestData';
+import { addRandomAsyncOrSyncDelay, getRandomTestData } from './utils/getRandomTestData';
 import { convertMbToB, createRandomStream, receiveStreamWithProgress } from './utils/streamHttp';
 
 const helloWorldUrl = getFuncUrl('helloWorld');
@@ -77,7 +77,7 @@ describe('http', () => {
 
     async function validateIndividualRequest(url: string): Promise<void> {
         const data = getRandomTestData();
-        await addRandomDelay();
+        await addRandomAsyncOrSyncDelay();
         const response = await fetch(url, { method: 'POST', body: data });
         const body = await response.text();
         expect(body).to.equal(`Hello, ${data}!`);
@@ -117,7 +117,7 @@ describe('http', () => {
 
         it('hello world stream', async () => {
             const body = new Readable();
-            body._read = () => {};
+            body._read = () => { };
             body.push('testName-chunked');
             body.push(null);
 

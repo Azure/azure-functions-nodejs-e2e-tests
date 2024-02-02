@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { addRandomDelay } from '../utils/getRandomTestData';
+import { addRandomAsyncOrSyncDelay } from '../utils/getRandomTestData';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log(`Http function processed request for url "${req.url}"`);
 
-    await addRandomDelay();
+    await addRandomAsyncOrSyncDelay();
 
     const name = req.query.name || req.body || 'world';
 
