@@ -79,6 +79,8 @@ describe('http', () => {
 
     // Mac seems to occasionally drop requests resulting in a timeout, potentially due to a max number of connections that appears to be much smaller by default than other OS's.
     // To workaround this, we'll test with a keep-alive agent (a good thing to test anyways).
+    // NOTE: The node-fetch packages has a bug starting in 2.6.8 related to this, so we have to use 2.6.7
+    // https://github.com/node-fetch/node-fetch/issues/1767
     const keepaliveAgent = new Agent({ maxSockets: 128, maxFreeSockets: 64 });
 
     async function validateIndividualRequest(url: string): Promise<void> {
