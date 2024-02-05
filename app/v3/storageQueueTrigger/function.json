@@ -1,12 +1,12 @@
 {
-  "bindings": [
-    {
-      "name": "myQueueItem",
-      "type": "queueTrigger",
-      "direction": "in",
-      "queueName": "e2e-test-queue-trigger",
-      "connection": "e2eTest_storage"
-    }
-  ],
-  "scriptFile": "../dist/storageQueueTrigger/index.js"
+    "bindings": [
+        {
+            "name": "myQueueItem",
+            "type": "queueTrigger",
+            "direction": "in",
+            "queueName": "e2e-test-queue-trigger",
+            "connection": "e2eTest_storage"
+        }
+    ],
+    "scriptFile": "../dist/storageQueueTrigger/index.js"
 }

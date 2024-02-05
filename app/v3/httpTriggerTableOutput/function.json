@@ -1,27 +1,24 @@
 {
-  "bindings": [
-    {
-      "authLevel": "anonymous",
-      "type": "httpTrigger",
-      "direction": "in",
-      "name": "req",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
-    },
-    {
-      "type": "table",
-      "direction": "out",
-      "name": "outputItem",
-      "tableName": "e2etesttable",
-      "connection": "e2eTest_storage"
-    }
-  ],
-  "scriptFile": "../dist/httpTriggerTableOutput/index.js"
+    "bindings": [
+        {
+            "authLevel": "anonymous",
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req",
+            "methods": ["get", "post"]
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        },
+        {
+            "type": "table",
+            "direction": "out",
+            "name": "outputItem",
+            "tableName": "e2etesttable",
+            "connection": "e2eTest_storage"
+        }
+    ],
+    "scriptFile": "../dist/httpTriggerTableOutput/index.js"
 }

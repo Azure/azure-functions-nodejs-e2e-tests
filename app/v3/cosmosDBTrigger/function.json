@@ -1,16 +1,16 @@
 {
-  "bindings": [
-    {
-      "type": "cosmosDBTrigger",
-      "name": "documents",
-      "direction": "in",
-      "leaseContainerName": "leases",
-      "connection": "e2eTest_cosmosDB",
-      "databaseName": "e2eTestDB",
-      "containerName": "e2eTestContainerTrigger",
-      "createLeaseContainerIfNotExists": true,
-      "leaseContainerPrefix": "2"
-    }
-  ],
-  "scriptFile": "../dist/cosmosDBTrigger/index.js"
+    "bindings": [
+        {
+            "type": "cosmosDBTrigger",
+            "name": "documents",
+            "direction": "in",
+            "leaseContainerName": "leases",
+            "connection": "e2eTest_cosmosDB",
+            "databaseName": "e2eTestDB",
+            "containerName": "e2eTestContainerTrigger",
+            "createLeaseContainerIfNotExists": true,
+            "leaseContainerPrefix": "2"
+        }
+    ],
+    "scriptFile": "../dist/cosmosDBTrigger/index.js"
 }

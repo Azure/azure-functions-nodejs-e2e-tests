@@ -1,13 +1,13 @@
 {
-  "bindings": [
-    {
-      "type": "eventHubTrigger",
-      "name": "eventHubMessages",
-      "direction": "in",
-      "eventHubName": "e2eTestHubManyTrigger",
-      "connection": "e2eTest_eventHub",
-      "cardinality": "many"
-    }
-  ],
-  "scriptFile": "../dist/eventHubManyTrigger/index.js"
+    "bindings": [
+        {
+            "type": "eventHubTrigger",
+            "name": "eventHubMessages",
+            "direction": "in",
+            "eventHubName": "e2eTestHubManyTrigger",
+            "connection": "e2eTest_eventHub",
+            "cardinality": "many"
+        }
+    ],
+    "scriptFile": "../dist/eventHubManyTrigger/index.js"
 }

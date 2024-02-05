@@ -1,24 +1,24 @@
 {
-  "bindings": [
-    {
-      "type": "cosmosDBTrigger",
-      "name": "documents",
-      "direction": "in",
-      "leaseCollectionName": "leases",
-      "connectionStringSetting": "e2eTest_cosmosDB",
-      "databaseName": "e2eTestDB",
-      "collectionName": "e2eTestContainerTriggerAndOutput",
-      "createLeaseCollectionIfNotExists": true,
-      "leaseCollectionPrefix": "1"
-    },
-    {
-      "type": "cosmosDB",
-      "name": "$return",
-      "direction": "out",
-      "connectionStringSetting": "e2eTest_cosmosDB",
-      "databaseName": "e2eTestDB",
-      "collectionName": "e2eTestContainerTrigger"
-    }
-  ],
-  "scriptFile": "../dist/cosmosDBTriggerAndOutput/index.js"
+    "bindings": [
+        {
+            "type": "cosmosDBTrigger",
+            "name": "documents",
+            "direction": "in",
+            "leaseCollectionName": "leases",
+            "connectionStringSetting": "e2eTest_cosmosDB",
+            "databaseName": "e2eTestDB",
+            "collectionName": "e2eTestContainerTriggerAndOutput",
+            "createLeaseCollectionIfNotExists": true,
+            "leaseCollectionPrefix": "1"
+        },
+        {
+            "type": "cosmosDB",
+            "name": "$return",
+            "direction": "out",
+            "connectionStringSetting": "e2eTest_cosmosDB",
+            "databaseName": "e2eTestDB",
+            "collectionName": "e2eTestContainerTrigger"
+        }
+    ],
+    "scriptFile": "../dist/cosmosDBTriggerAndOutput/index.js"
 }

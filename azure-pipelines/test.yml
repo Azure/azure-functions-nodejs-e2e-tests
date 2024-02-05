@@ -1,196 +1,196 @@
 resources:
-  pipelines:
-  - pipeline: nodeLibraryV3
-    project: 'Azure Functions'
-    source: azure-functions-nodejs-library.build
-    branch: v3.x
-  - pipeline: nodeLibraryV4
-    project: 'Azure Functions'
-    source: azure-functions-nodejs-library.build
-    branch: v4.x
+    pipelines:
+        - pipeline: nodeLibraryV3
+          project: 'Azure Functions'
+          source: azure-functions-nodejs-library.build
+          branch: v3.x
+        - pipeline: nodeLibraryV4
+          project: 'Azure Functions'
+          source: azure-functions-nodejs-library.build
+          branch: v4.x
 
 schedules:
-- cron: "0 13 * * *"
-  displayName: Nightly at 6:00 AM PT
-  always: true # Run even when there are no code changes
-  branches:
-    include:
-    - main
+    - cron: '0 13 * * *'
+      displayName: Nightly at 6:00 AM PT
+      always: true # Run even when there are no code changes
+      branches:
+          include:
+              - main
 
 pr:
-  branches:
-    include:
-      - main
+    branches:
+        include:
+            - main
 
 trigger:
-- main
+    - main
 
 jobs:
-- job: e2eTests
-  strategy:
-    matrix:
-      LINUX:
-        IMAGE_TYPE: 'ubuntu-latest'
-      WINDOWS:
-        IMAGE_TYPE: 'windows-latest'
-      MAC:
-        IMAGE_TYPE: 'macOS-latest'
-  pool:
-    vmImage: $(IMAGE_TYPE)
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: 18.x
-    displayName: 'Install Node.js'
-    retryCountOnTaskFailure: 10
-  - pwsh: |
-      .\scripts\install-func-cli.ps1
-    displayName: 'Install func cli'
+    - job: e2eTests
+      strategy:
+          matrix:
+              LINUX:
+                  IMAGE_TYPE: 'ubuntu-latest'
+              WINDOWS:
+                  IMAGE_TYPE: 'windows-latest'
+              MAC:
+                  IMAGE_TYPE: 'macOS-latest'
+      pool:
+          vmImage: $(IMAGE_TYPE)
+      steps:
+          - task: NodeTool@0
+            inputs:
+                versionSpec: 18.x
+            displayName: 'Install Node.js'
+            retryCountOnTaskFailure: 10
+          - pwsh: |
+                .\scripts\install-func-cli.ps1
+            displayName: 'Install func cli'
 
-  # Setup e2e tests
-  - script: npm ci
-    displayName: 'install deps e2e tests'
-  - script: npm run build
-    displayName: 'build e2e tests'
-  - script: npm run lint
-    displayName: 'lint e2e tests'
+          # Setup e2e tests
+          - script: npm ci
+            displayName: 'install deps e2e tests'
+          - script: npm run build
+            displayName: 'build e2e tests'
+          - script: npm run lint
+            displayName: 'lint e2e tests'
 
-  - script: npm run createResources
-    displayName: 'Create resources'
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+          - script: npm run createResources
+            displayName: 'Create resources'
+            env:
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
-  # Setup v3 app
-  - script: npm ci
-    displayName: 'install deps v3 app'
-    workingDirectory: 'app/v3'
-  - download: nodeLibraryV3
-  - script: mv *.tgz package.tgz
-    displayName: 'Rename v3 tgz file' # because the publish command below requires an exact path
-    workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV3/drop'
-  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
-    displayName: 'install latest v3 library'
-    workingDirectory: 'app/v3'
-  - script: npm run build
-    displayName: 'build v3 app'
-    workingDirectory: 'app/v3'
-  - script: npm run lint
-    displayName: 'lint v3 app'
-    workingDirectory: 'app/v3'
+          # Setup v3 app
+          - script: npm ci
+            displayName: 'install deps v3 app'
+            workingDirectory: 'app/v3'
+          - download: nodeLibraryV3
+          - script: mv *.tgz package.tgz
+            displayName: 'Rename v3 tgz file' # because the publish command below requires an exact path
+            workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV3/drop'
+          - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
+            displayName: 'install latest v3 library'
+            workingDirectory: 'app/v3'
+          - script: npm run build
+            displayName: 'build v3 app'
+            workingDirectory: 'app/v3'
+          - script: npm run lint
+            displayName: 'lint v3 app'
+            workingDirectory: 'app/v3'
 
-  # Setup v4 app
-  - script: npm ci
-    displayName: 'install deps v4 app'
-    workingDirectory: 'app/v4'
-  - download: nodeLibraryV4
-  - script: mv *.tgz package.tgz
-    displayName: 'Rename v4 tgz file' # because the publish command below requires an exact path
-    workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV4/drop'
-  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-    displayName: 'install latest v4 library'
-    workingDirectory: 'app/v4'
-  - script: npm run build
-    displayName: 'build v4 app'
-    workingDirectory: 'app/v4'
-  - script: npm run lint
-    displayName: 'lint v4 app'
-    workingDirectory: 'app/v4'
+          # Setup v4 app
+          - script: npm ci
+            displayName: 'install deps v4 app'
+            workingDirectory: 'app/v4'
+          - download: nodeLibraryV4
+          - script: mv *.tgz package.tgz
+            displayName: 'Rename v4 tgz file' # because the publish command below requires an exact path
+            workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV4/drop'
+          - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+            displayName: 'install latest v4 library'
+            workingDirectory: 'app/v4'
+          - script: npm run build
+            displayName: 'build v4 app'
+            workingDirectory: 'app/v4'
+          - script: npm run lint
+            displayName: 'lint v4 app'
+            workingDirectory: 'app/v4'
 
-  - script: npm run createCombinedApps
-    displayName: 'Create combined apps'
+          - script: npm run createCombinedApps
+            displayName: 'Create combined apps'
 
-  # Setup v3 oldConfig app
-  - script: npm ci
-    displayName: 'install deps v3 app (oldConfig)'
-    workingDirectory: 'app/combined/v3-oldConfig'
-  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
-    displayName: 'install latest v3 library (oldConfig)'
-    workingDirectory: 'app/combined/v3-oldConfig'
-  - script: npm run build
-    displayName: 'build v3 app (oldConfig)'
-    workingDirectory: 'app/combined/v3-oldConfig'
+          # Setup v3 oldConfig app
+          - script: npm ci
+            displayName: 'install deps v3 app (oldConfig)'
+            workingDirectory: 'app/combined/v3-oldConfig'
+          - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
+            displayName: 'install latest v3 library (oldConfig)'
+            workingDirectory: 'app/combined/v3-oldConfig'
+          - script: npm run build
+            displayName: 'build v3 app (oldConfig)'
+            workingDirectory: 'app/combined/v3-oldConfig'
 
-  # Setup v4 oldConfig app
-  - script: npm ci
-    displayName: 'install deps v4 app (oldConfig)'
-    workingDirectory: 'app/combined/v4-oldConfig'
-  - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-    displayName: 'install latest v4 library (oldConfig)'
-    workingDirectory: 'app/combined/v4-oldConfig'
-  - script: npm run build
-    displayName: 'build v4 app (oldConfig)'
-    workingDirectory: 'app/combined/v4-oldConfig'
+          # Setup v4 oldConfig app
+          - script: npm ci
+            displayName: 'install deps v4 app (oldConfig)'
+            workingDirectory: 'app/combined/v4-oldConfig'
+          - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+            displayName: 'install latest v4 library (oldConfig)'
+            workingDirectory: 'app/combined/v4-oldConfig'
+          - script: npm run build
+            displayName: 'build v4 app (oldConfig)'
+            workingDirectory: 'app/combined/v4-oldConfig'
 
-  # Run tests Node 16
-  - task: NodeTool@0
-    inputs:
-      versionSpec: 16.x
-    displayName: 'Install Node 16'
-    retryCountOnTaskFailure: 10
-  - script: npm test
-    displayName: 'Run tests Node 16'
-    continueOnError: true
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+          # Run tests Node 16
+          - task: NodeTool@0
+            inputs:
+                versionSpec: 16.x
+            displayName: 'Install Node 16'
+            retryCountOnTaskFailure: 10
+          - script: npm test
+            displayName: 'Run tests Node 16'
+            continueOnError: true
+            env:
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
-  # Run tests Node 18
-  - task: NodeTool@0
-    inputs:
-      versionSpec: 18.x
-    displayName: 'Install Node 18'
-    retryCountOnTaskFailure: 10
-  - script: npm test
-    displayName: 'Run tests Node 18'
-    continueOnError: true
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+          # Run tests Node 18
+          - task: NodeTool@0
+            inputs:
+                versionSpec: 18.x
+            displayName: 'Install Node 18'
+            retryCountOnTaskFailure: 10
+          - script: npm test
+            displayName: 'Run tests Node 18'
+            continueOnError: true
+            env:
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
-  # Run tests for old config (just one Node.js version is enough)
-  - script: npm run testOldConfig
-    displayName: 'Run tests old config'
-    continueOnError: true
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+          # Run tests for old config (just one Node.js version is enough)
+          - script: npm run testOldConfig
+            displayName: 'Run tests old config'
+            continueOnError: true
+            env:
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
-  # Run tests Node 20
-  - task: NodeTool@0
-    inputs:
-      versionSpec: 20.x
-    displayName: 'Install Node 20'
-    retryCountOnTaskFailure: 10
-  - script: npm test
-    displayName: 'Run tests Node 20'
-    continueOnError: true
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+          # Run tests Node 20
+          - task: NodeTool@0
+            inputs:
+                versionSpec: 20.x
+            displayName: 'Install Node 20'
+            retryCountOnTaskFailure: 10
+          - script: npm test
+            displayName: 'Run tests Node 20'
+            continueOnError: true
+            env:
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
 
-  - script: npm run deleteResources
-    displayName: 'Delete resources'
-    env:
-      AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-      AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-      AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-      AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-    condition: succeededOrFailed()
+          - script: npm run deleteResources
+            displayName: 'Delete resources'
+            env:
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            condition: succeededOrFailed()
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Unit Test Results'
-    inputs:
-      testResultsFiles: 'e2e-test-results/*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+          - task: PublishTestResults@2
+            displayName: 'Publish Unit Test Results'
+            inputs:
+                testResultsFiles: 'e2e-test-results/*.xml'
+                failTaskOnFailedTests: true
+            condition: succeededOrFailed()
