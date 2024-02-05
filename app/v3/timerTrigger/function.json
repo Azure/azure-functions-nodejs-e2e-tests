@@ -1,11 +1,11 @@
 {
-  "bindings": [
-    {
-      "name": "myTimer",
-      "type": "timerTrigger",
-      "direction": "in",
-      "schedule": "*/30 * * * * *"
-    }
-  ],
-  "scriptFile": "../dist/timerTrigger/index.js"
+    "bindings": [
+        {
+            "name": "myTimer",
+            "type": "timerTrigger",
+            "direction": "in",
+            "schedule": "*/30 * * * * *"
+        }
+    ],
+    "scriptFile": "../dist/timerTrigger/index.js"
 }

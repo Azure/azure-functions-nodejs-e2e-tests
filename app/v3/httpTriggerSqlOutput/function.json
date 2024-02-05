@@ -1,27 +1,24 @@
 {
-  "bindings": [
-    {
-      "authLevel": "anonymous",
-      "type": "httpTrigger",
-      "direction": "in",
-      "name": "req",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
-    },
-    {
-      "type": "sql",
-      "name": "outputItem",
-      "direction": "out",
-      "connectionStringSetting": "e2eTest_sql",
-      "commandText": "dbo.e2eTestTable"
-    }
-  ],
-  "scriptFile": "../dist/httpTriggerSqlOutput/index.js"
+    "bindings": [
+        {
+            "authLevel": "anonymous",
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req",
+            "methods": ["get", "post"]
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        },
+        {
+            "type": "sql",
+            "name": "outputItem",
+            "direction": "out",
+            "connectionStringSetting": "e2eTest_sql",
+            "commandText": "dbo.e2eTestTable"
+        }
+    ],
+    "scriptFile": "../dist/httpTriggerSqlOutput/index.js"
 }

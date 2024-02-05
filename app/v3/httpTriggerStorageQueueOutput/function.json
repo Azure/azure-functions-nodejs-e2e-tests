@@ -1,27 +1,24 @@
 {
-  "bindings": [
-    {
-      "authLevel": "anonymous",
-      "type": "httpTrigger",
-      "direction": "in",
-      "name": "req",
-      "methods": [
-        "get",
-        "post"
-      ]
-    },
-    {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
-    },
-    {
-      "type": "queue",
-      "name": "outputMsg",
-      "direction": "out",
-      "connection": "e2eTest_storage",
-      "queueName": "e2e-test-queue-trigger"
-    }
-  ],
-  "scriptFile": "../dist/httpTriggerStorageQueueOutput/index.js"
+    "bindings": [
+        {
+            "authLevel": "anonymous",
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req",
+            "methods": ["get", "post"]
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        },
+        {
+            "type": "queue",
+            "name": "outputMsg",
+            "direction": "out",
+            "connection": "e2eTest_storage",
+            "queueName": "e2e-test-queue-trigger"
+        }
+    ],
+    "scriptFile": "../dist/httpTriggerStorageQueueOutput/index.js"
 }

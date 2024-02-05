@@ -10,7 +10,5 @@
         "baseUrl": "./",
         "esModuleInterop": true
     },
-    "include": [
-        "src"
-    ]
+    "include": ["src"]
 }
