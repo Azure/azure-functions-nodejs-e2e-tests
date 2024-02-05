@@ -23,6 +23,7 @@
     "scripts": {
         "build": "tsc",
         "clean": "rimraf out",
+        "format": "prettier . --write",
         "lint": "eslint . --fix",
         "watch": "tsc -w",
         "createResources": "node out/resources/createResources.js",

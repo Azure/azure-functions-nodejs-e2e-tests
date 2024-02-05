@@ -1,0 +1,8 @@
+out
+dist
+node_modules
+e2e-test-results
+func-cli
+
+# Exclude markdown until this bug is fixed: https://github.com/prettier/prettier/issues/5019
+*.md
