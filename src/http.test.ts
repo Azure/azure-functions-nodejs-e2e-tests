@@ -65,6 +65,9 @@ describe('http', () => {
         expect(body).to.equal('');
         expect(response.status).to.equal(200);
         const cookies = response.headers.get('Set-Cookie');
+
+        // Cookie logic changed slightly with the http streaming feature, although it should be functionally the same
+        // The old logic adds the default "path=/" to every cookie and the new logic only adds the path if it's explicitly specified
         if (isOldConfig || model === 'v3') {
             expect(cookies).to.equal(
                 'mycookie=myvalue; max-age=200000; path=/, mycookie2=myvalue; max-age=200000; path=/, mycookie3-expires=myvalue3-expires; max-age=0; path=/, mycookie4-samesite-lax=myvalue; path=/; samesite=lax, mycookie5-samesite-strict=myvalue; path=/; samesite=strict'

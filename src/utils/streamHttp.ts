@@ -5,6 +5,8 @@ import * as crypto from 'crypto';
 import { Readable } from 'stream';
 import { delay } from './delay';
 
+const oneMb = 1024 * 1024;
+
 export function createRandomStream(lengthInMb: number): Readable {
     const stream = new Readable();
     stream._read = () => {};
@@ -45,8 +47,6 @@ export async function receiveStreamWithProgress(stream: {
     }
     return bytesReceived;
 }
-
-const oneMb = 1024 * 1024;
 
 export function convertMbToB(mb: number): number {
     return mb * oneMb;
