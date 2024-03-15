@@ -59,6 +59,52 @@ describe('http', () => {
         expect(response.status).to.equal(404);
     });
 
+    it('route parameters', async () => {
+        const funcUrl = getFuncUrl('httpTriggerRouteParams');
+        const response = await fetch(`${funcUrl}/testName`);
+        const body = await response.json();
+        expect(body).to.deep.equal({ name: 'testName' });
+        expect(response.status).to.equal(200);
+    });
+
+    it('headers', async () => {
+        const funcUrl = getFuncUrl('httpTriggerHeaders');
+        const response = await fetch(funcUrl, { headers: { TESTHEADER: 'TestValue' } });
+        const body = await response.json();
+        expect(body).to.deep.equal({
+            accept: '*/*',
+            'accept-encoding': 'gzip,deflate',
+            connection: 'close',
+            host: '127.0.0.1:7071',
+            testheader: 'TestValue',
+            'user-agent': 'node-fetch/1.0 (+https://github.com/bitinn/node-fetch)',
+        });
+        expect(response.status).to.equal(200);
+    });
+
+    it('query', async () => {
+        const funcUrl = getFuncUrl('httpTriggerQuery');
+        const response = await fetch(`${funcUrl}?name=testName&dupe=1&dupe=2`);
+        const body = await response.json();
+        if (isOldConfig || model === 'v3') {
+            // NOTE: more info on dupe query behavior here:
+            // https://github.com/Azure/azure-functions-nodejs-library/issues/168
+            expect(body).to.deep.equal({
+                query: { name: 'testName', dupe: '1,2' },
+                dupe: '1,2',
+                dupeAll: ['1,2'],
+            });
+        } else {
+            // dupe query behavior was fixed for v4 stream requests
+            expect(body).to.deep.equal({
+                query: { name: 'testName', dupe: '2' },
+                dupe: '1',
+                dupeAll: ['1', '2'],
+            });
+        }
+        expect(response.status).to.equal(200);
+    });
+
     it('Cookies', async () => {
         const response = await fetch(getFuncUrl('httpCookies'));
         const body = await response.text();
