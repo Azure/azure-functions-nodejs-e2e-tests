@@ -5,7 +5,7 @@ import { app, HttpRequest, HttpResponseInit, input, InvocationContext } from '@a
 
 const sqlInput = input.sql({
     connectionStringSetting: 'e2eTest_sql',
-    commandText: 'select * from dbo.e2eTestTable where id = @id',
+    commandText: 'select * from dbo.e2eSqlNonTriggerTable where id = @id',
     commandType: 'Text',
     parameters: '@id={Query.id}',
 });

@@ -20,6 +20,8 @@ function getSqlAccountName(info: ResourceInfo): string {
 }
 
 export const dbName = 'e2eTestDB';
+export const sqlTriggerTable = 'e2eSqlTriggerTable';
+export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
 
 export async function createSql(info: ResourceInfo): Promise<void> {
     const serverName = getSqlAccountName(info);
@@ -50,7 +52,7 @@ export async function createSql(info: ResourceInfo): Promise<void> {
         },
     });
 
-    await createTable(info);
+    await runSetupQueries(info);
 }
 
 async function getPublicIpAddress(): Promise<[string, string]> {
@@ -63,23 +65,31 @@ async function getPublicIpAddress(): Promise<[string, string]> {
     return [start, end];
 }
 
-async function createTable(info: ResourceInfo) {
-    const poolConnection = await createPoolConnnection(info);
+/**
+ * create tables and enable change tracking for trigger
+ */
+async function runSetupQueries(info: ResourceInfo) {
+    const poolConnection = await createPoolConnnection(getSqlConnectionConfig(info));
 
     try {
         await poolConnection
             .request()
-            .query(
-                `CREATE TABLE dbo.e2eTestTable ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
-            );
+            .query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
+
+        for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
+            await poolConnection
+                .request()
+                .query(
+                    `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
+                );
+            await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+        }
     } finally {
         await poolConnection.close();
     }
 }
 
-async function createPoolConnnection(info: ResourceInfo): Promise<sql.ConnectionPool> {
-    const serverName = getSqlAccountName(info);
-
+export async function createPoolConnnection(config: sql.config): Promise<sql.ConnectionPool> {
     const retries = 5;
     return retry(
         async (currentAttempt: number) => {
@@ -88,22 +98,7 @@ async function createPoolConnnection(info: ResourceInfo): Promise<sql.Connection
                     `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
                 );
             }
-            return sql.connect({
-                server: `${serverName}.database.windows.net`,
-                database: dbName,
-                port: 1433,
-                authentication: {
-                    type: 'azure-active-directory-service-principal-secret',
-                    options: <any>{
-                        clientId: info.clientId,
-                        tenantId: info.tenantId,
-                        clientSecret: info.secret,
-                    },
-                },
-                options: {
-                    encrypt: true,
-                },
-            });
+            return sql.connect(config);
         },
         {
             retries: retries,
@@ -122,4 +117,28 @@ async function createPoolConnnection(info: ResourceInfo): Promise<sql.Connection
 export async function getSqlConnectionString(info: ResourceInfo): Promise<string> {
     const serverName = getSqlAccountName(info);
     return `Server=${serverName}.database.windows.net; Authentication=Active Directory Service Principal; Encrypt=True; Database=${dbName}; User Id=${info.clientId}; Password=${info.secret}`;
+}
+
+/**
+ * connection string support in mssql npm package doesn't work, have to use config
+ * https://github.com/tediousjs/node-mssql/issues/1400
+ */
+export function getSqlConnectionConfig(info: ResourceInfo): sql.config {
+    const serverName = getSqlAccountName(info);
+    return {
+        server: `${serverName}.database.windows.net`,
+        database: dbName,
+        port: 1433,
+        authentication: {
+            type: 'azure-active-directory-service-principal-secret',
+            options: <any>{
+                clientId: info.clientId,
+                tenantId: info.tenantId,
+                clientSecret: info.secret,
+            },
+        },
+        options: {
+            encrypt: true,
+        },
+    };
 }
