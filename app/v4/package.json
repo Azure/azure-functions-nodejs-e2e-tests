@@ -12,7 +12,7 @@
         "test": "echo \"No tests yet...\""
     },
     "dependencies": {
-        "@azure/functions": "^4.3.0"
+        "@azure/functions": "file:azure-functions-4.3.0.tgz"
     },
     "devDependencies": {
         "@types/long": "^4.0.0",

@@ -89,9 +89,6 @@ jobs:
           - script: mv *.tgz package.tgz
             displayName: 'Rename v4 tgz file' # because the publish command below requires an exact path
             workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV4/drop'
-          - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-            displayName: 'install latest v4 library'
-            workingDirectory: 'app/v4'
           - script: npm run build
             displayName: 'build v4 app'
             workingDirectory: 'app/v4'
