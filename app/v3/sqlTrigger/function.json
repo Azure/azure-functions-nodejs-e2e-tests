@@ -1,0 +1,12 @@
+{
+    "bindings": [
+        {
+            "type": "sqlTrigger",
+            "name": "changes",
+            "direction": "in",
+            "tableName": "dbo.e2eSqlTriggerTable",
+            "connectionStringSetting": "e2eTest_sql"
+        }
+    ],
+    "scriptFile": "../dist/sqlTrigger/index.js"
+}

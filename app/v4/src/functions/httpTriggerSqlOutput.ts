@@ -5,7 +5,7 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext, output } from '@
 
 const sqlOutput = output.sql({
     connectionStringSetting: 'e2eTest_sql',
-    commandText: 'dbo.e2eTestTable',
+    commandText: 'dbo.e2eSqlNonTriggerTable',
 });
 
 export async function httpTriggerSqlOutput(
