@@ -114,9 +114,6 @@ jobs:
           - script: npm ci
             displayName: 'install deps v4 app (oldConfig)'
             workingDirectory: 'app/combined/v4-oldConfig'
-          - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
-            displayName: 'install latest v4 library (oldConfig)'
-            workingDirectory: 'app/combined/v4-oldConfig'
           - script: npm run build
             displayName: 'build v4 app (oldConfig)'
             workingDirectory: 'app/combined/v4-oldConfig'
