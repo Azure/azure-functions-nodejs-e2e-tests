@@ -18,7 +18,7 @@ const sqlTrigger: AzureFunction = async function (context: Context, changes: any
                 operation = 'delete';
                 break;
             default:
-                throw RangeError(change.Operation);
+                throw RangeError(`Unrecognized operation "${change.Operation}"`);
         }
         context.log(`sqlTrigger was triggered by operation "${operation}" for "${JSON.stringify(change.Item)}"`);
     }
