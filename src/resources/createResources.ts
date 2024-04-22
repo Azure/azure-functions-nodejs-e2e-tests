@@ -11,7 +11,7 @@ import { createStorageAccount } from './storage';
 
 async function createResources(): Promise<void> {
     try {
-        const info = getResourceInfo();
+        const info = await getResourceInfo();
 
         const resourceClient = new ResourceManagementClient(info.creds, info.subscriptionId);
         await resourceClient.resourceGroups.createOrUpdate(info.resourceGroupName, { location: info.location });

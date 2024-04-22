@@ -30,11 +30,10 @@ export async function createSql(info: ResourceInfo): Promise<void> {
         location: info.location,
         administrators: {
             administratorType: 'ActiveDirectory',
-            principalType: 'Application',
-            sid: info.clientId,
-            tenantId: info.tenantId,
+            principalType: 'User',
+            sid: info.userId,
             azureADOnlyAuthentication: true,
-            login: 'e2eserviceprincipal',
+            login: info.userName,
         },
     });
 
@@ -116,7 +115,7 @@ export async function createPoolConnnection(config: sql.config): Promise<sql.Con
 
 export async function getSqlConnectionString(info: ResourceInfo): Promise<string> {
     const serverName = getSqlAccountName(info);
-    return `Server=${serverName}.database.windows.net; Authentication=Active Directory Service Principal; Encrypt=True; Database=${dbName}; User Id=${info.clientId}; Password=${info.secret}`;
+    return `Server=${serverName}.database.windows.net; Authentication=Active Directory Default; Encrypt=True; Database=${dbName};`;
 }
 
 /**
@@ -130,12 +129,8 @@ export function getSqlConnectionConfig(info: ResourceInfo): sql.config {
         database: dbName,
         port: 1433,
         authentication: {
-            type: 'azure-active-directory-service-principal-secret',
-            options: <any>{
-                clientId: info.clientId,
-                tenantId: info.tenantId,
-                clientSecret: info.secret,
-            },
+            type: 'azure-active-directory-default',
+            options: {},
         },
         options: {
             encrypt: true,
