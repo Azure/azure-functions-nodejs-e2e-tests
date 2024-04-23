@@ -17,7 +17,7 @@ export let sqlConnectionString: string;
 export let sqlConnectionConfig: sql.config;
 
 export async function initializeConnectionStrings(): Promise<void> {
-    const info = getResourceInfo();
+    const info = await getResourceInfo();
     [
         storageConnectionString,
         eventHubConnectionString,

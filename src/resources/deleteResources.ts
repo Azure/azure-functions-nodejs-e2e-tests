@@ -6,7 +6,7 @@ import { getResourceInfo } from './ResourceInfo';
 
 async function deleteResources(): Promise<void> {
     try {
-        const info = getResourceInfo();
+        const info = await getResourceInfo();
 
         const resourceClient = new ResourceManagementClient(info.creds, info.subscriptionId);
         await resourceClient.resourceGroups.beginDelete(info.resourceGroupName);

@@ -55,13 +55,13 @@ jobs:
           - script: npm run lint
             displayName: 'lint e2e tests'
 
-          - script: npm run createResources
+          - task: AzureCLI@2
             displayName: 'Create resources'
-            env:
-                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            inputs:
+                azureSubscription: 'azure-functions-nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm run createResources'
 
           # Setup v3 app
           - script: npm ci
@@ -130,14 +130,14 @@ jobs:
                 versionSpec: 16.x
             displayName: 'Install Node 16'
             retryCountOnTaskFailure: 10
-          - script: npm test
+          - task: AzureCLI@2
             displayName: 'Run tests Node 16'
             continueOnError: true
-            env:
-                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            inputs:
+                azureSubscription: 'azure-functions-nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm test'
 
           # Run tests Node 18
           - task: NodeTool@0
@@ -145,24 +145,24 @@ jobs:
                 versionSpec: 18.x
             displayName: 'Install Node 18'
             retryCountOnTaskFailure: 10
-          - script: npm test
+          - task: AzureCLI@2
             displayName: 'Run tests Node 18'
             continueOnError: true
-            env:
-                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            inputs:
+                azureSubscription: 'azure-functions-nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm test'
 
           # Run tests for old config (just one Node.js version is enough)
-          - script: npm run testOldConfig
+          - task: AzureCLI@2
             displayName: 'Run tests old config'
             continueOnError: true
-            env:
-                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            inputs:
+                azureSubscription: 'azure-functions-nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm run testOldConfig'
 
           # Run tests Node 20
           - task: NodeTool@0
@@ -170,22 +170,22 @@ jobs:
                 versionSpec: 20.x
             displayName: 'Install Node 20'
             retryCountOnTaskFailure: 10
-          - script: npm test
+          - task: AzureCLI@2
             displayName: 'Run tests Node 20'
             continueOnError: true
-            env:
-                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            inputs:
+                azureSubscription: 'azure-functions-nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm test'
 
-          - script: npm run deleteResources
+          - task: AzureCLI@2
             displayName: 'Delete resources'
-            env:
-                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-                AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            inputs:
+                azureSubscription: 'azure-functions-nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm run deleteResources'
             condition: succeededOrFailed()
 
           - task: PublishTestResults@2

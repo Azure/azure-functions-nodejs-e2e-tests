@@ -36,11 +36,7 @@ Here is the general flow of the pipeline:
 You need to create resources once in your subscription, but then you can reuse the same resources for many different test runs. The CI pipeline will create and delete resources each time, but you don't need to do that.
 
 1. Set the environment variable `BUILD_BUILDNUMBER` to any number like `20230520.1`. You want it to be reasonably unique because this will be used as a prefix for your Azure resources.
-2. [Create a service principal](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) and give it access to create resources in your subscription. Set the following environment variables based on the service principal:
-    - `AZURE_TENANT_ID`
-    - `AZURE_CLIENT_ID`
-    - `AZURE_CLIENT_SECRET`
-    - `AZURE_SUBSCRIPTION_ID`
+2. Run `az login` and `az account set -s <subscription id>` if you're not already logged in to the [Azure CLI](https://learn.microsoft.com/cli/azure/get-started-with-azure-cli). The tests will use these credentials.
 3. Run `npm run createResources`
 4. Validate the resources were created. You should see a resource group in your subscription like `e2edarwin202305201group` with several resources
 
