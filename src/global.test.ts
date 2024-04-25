@@ -87,7 +87,11 @@ export async function waitForOutput(data: string, options?: WaitForOutputOptions
         if (!options?.ignoreFailures) {
             const failedMatch = perTestFuncOutput.match(/Executed 'Functions\.([^']+)' \(Failed/i);
             if (failedMatch) {
-                throw new Error(`Function "${failedMatch[1]}" failed`);
+                const functionName = failedMatch[1];
+                // throw error for any function that isn't supposed to fail
+                if (functionName !== 'timerTriggerWithRetry') {
+                    throw new Error(`Function "${functionName}" failed`);
+                }
             }
         }
 
