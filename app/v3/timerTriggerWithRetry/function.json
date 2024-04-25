@@ -1,0 +1,16 @@
+{
+    "bindings": [
+        {
+            "name": "myTimer",
+            "type": "timerTrigger",
+            "direction": "in",
+            "schedule": "*/30 * * * * *"
+        }
+    ],
+    "retry": {
+        "strategy": "fixedDelay",
+        "delayInterval": "00:00:01",
+        "maxRetryCount": 5
+    },
+    "scriptFile": "../dist/timerTriggerWithRetry/index.js"
+}
