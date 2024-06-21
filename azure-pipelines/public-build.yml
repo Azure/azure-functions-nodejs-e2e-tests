@@ -1,0 +1,43 @@
+# This build is used for public PR and CI builds.
+trigger:
+    batch: true
+    branches:
+        include:
+            - main
+
+pr:
+    branches:
+        include:
+            - main
+
+resources:
+    pipelines:
+        - pipeline: nodeLibraryV3
+          project: public
+          source: nodejs-library.public
+          branch: v3.x
+        - pipeline: nodeLibraryV4
+          project: public
+          source: nodejs-library.public
+          branch: v4.x
+    repositories:
+        - repository: 1es
+          type: git
+          name: 1ESPipelineTemplates/1ESPipelineTemplates
+          ref: refs/tags/release
+
+extends:
+    template: v1/1ES.Unofficial.PipelineTemplate.yml@1es
+    parameters:
+        pool:
+            name: 1es-pool-azfunc-public
+            image: 1es-windows-2022
+            os: windows
+
+        stages:
+            - stage: build
+              jobs:
+                  - job:
+                    steps:
+                        - template: /azure-pipelines/templates/build.yml@self
+                        - template: /azure-pipelines/templates/build-apps.yml@self

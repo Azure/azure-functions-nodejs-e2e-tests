@@ -4,6 +4,7 @@
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { createCosmosDB } from './cosmosDB';
 import { createEventHub } from './eventHub';
+import { createKeyVault } from './keyVault';
 import { getResourceInfo } from './ResourceInfo';
 import { createServiceBus } from './serviceBus';
 import { createSql } from './sql';
@@ -15,6 +16,8 @@ async function createResources(): Promise<void> {
 
         const resourceClient = new ResourceManagementClient(info.creds, info.subscriptionId);
         await resourceClient.resourceGroups.createOrUpdate(info.resourceGroupName, { location: info.location });
+
+        await createKeyVault(info);
 
         await Promise.all([
             createStorageAccount(info),

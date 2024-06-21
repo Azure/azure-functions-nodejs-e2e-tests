@@ -7,7 +7,7 @@ import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 import { getFuncUrl } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
-import { sqlConnectionConfig } from './resources/connectionStrings';
+import { sqlConnectionString } from './resources/connectionStrings';
 import { createPoolConnnection, sqlTriggerTable } from './resources/sql';
 import { getRandomTestData } from './utils/getRandomTestData';
 
@@ -18,7 +18,7 @@ describe('sql', () => {
             this.skip();
         }
 
-        poolConnection = await createPoolConnnection(sqlConnectionConfig);
+        poolConnection = await createPoolConnnection(sqlConnectionString);
     });
 
     after(async () => {

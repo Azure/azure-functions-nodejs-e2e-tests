@@ -1,7 +1,5 @@
 # Azure Functions Node.js E2E Tests
 
-[![Test Status](https://img.shields.io/azure-devops/tests/azfunc/Azure%2520Functions/247/main?compact_message)](https://azfunc.visualstudio.com/Azure%20Functions/_build/latest?definitionId=247&branchName=main)
-
 This repo contains end-to-end tests for Node.js on Azure Functions. These are automated tests designed to run regularly against prerelease versions of all the various pieces that make up the Node.js experience on Azure Functions, including:
 
 - [Azure Functions Host](https://github.com/Azure/azure-functions-host)

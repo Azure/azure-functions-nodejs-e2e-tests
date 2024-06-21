@@ -5,6 +5,7 @@ import { SqlManagementClient } from '@azure/arm-sql';
 import * as sql from 'mssql';
 import { default as fetch } from 'node-fetch';
 import retry from 'p-retry';
+import { createSecret, getSecret } from './keyVault';
 import { ResourceInfo } from './ResourceInfo';
 
 /**
@@ -22,19 +23,16 @@ function getSqlAccountName(info: ResourceInfo): string {
 export const dbName = 'e2eTestDB';
 export const sqlTriggerTable = 'e2eSqlTriggerTable';
 export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
+export const sqlSecretName = 'e2eSqlSecret';
 
 export async function createSql(info: ResourceInfo): Promise<void> {
     const serverName = getSqlAccountName(info);
     const armClient = new SqlManagementClient(info.creds, info.subscriptionId);
+    const password = await createSecret(info, sqlSecretName);
     await armClient.servers.beginCreateOrUpdateAndWait(info.resourceGroupName, serverName, {
         location: info.location,
-        administrators: {
-            administratorType: 'ActiveDirectory',
-            principalType: 'User',
-            sid: info.userId,
-            azureADOnlyAuthentication: true,
-            login: info.userName,
-        },
+        administratorLogin: info.userName,
+        administratorLoginPassword: password,
     });
 
     const [startIpAddress, endIpAddress] = await getPublicIpAddress();
@@ -68,7 +66,8 @@ async function getPublicIpAddress(): Promise<[string, string]> {
  * create tables and enable change tracking for trigger
  */
 async function runSetupQueries(info: ResourceInfo) {
-    const poolConnection = await createPoolConnnection(getSqlConnectionConfig(info));
+    const connectionString = await getSqlConnectionString(info);
+    const poolConnection = await createPoolConnnection(connectionString);
 
     try {
         await poolConnection
@@ -88,7 +87,7 @@ async function runSetupQueries(info: ResourceInfo) {
     }
 }
 
-export async function createPoolConnnection(config: sql.config): Promise<sql.ConnectionPool> {
+export async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
     const retries = 5;
     return retry(
         async (currentAttempt: number) => {
@@ -97,7 +96,7 @@ export async function createPoolConnnection(config: sql.config): Promise<sql.Con
                     `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
                 );
             }
-            return sql.connect(config);
+            return sql.connect(connectionString);
         },
         {
             retries: retries,
@@ -115,25 +114,6 @@ export async function createPoolConnnection(config: sql.config): Promise<sql.Con
 
 export async function getSqlConnectionString(info: ResourceInfo): Promise<string> {
     const serverName = getSqlAccountName(info);
-    return `Server=${serverName}.database.windows.net; Authentication=Active Directory Default; Encrypt=True; Database=${dbName};`;
-}
-
-/**
- * connection string support in mssql npm package doesn't work, have to use config
- * https://github.com/tediousjs/node-mssql/issues/1400
- */
-export function getSqlConnectionConfig(info: ResourceInfo): sql.config {
-    const serverName = getSqlAccountName(info);
-    return {
-        server: `${serverName}.database.windows.net`,
-        database: dbName,
-        port: 1433,
-        authentication: {
-            type: 'azure-active-directory-default',
-            options: {},
-        },
-        options: {
-            encrypt: true,
-        },
-    };
+    const password = await getSecret(info, sqlSecretName);
+    return `Server=${serverName}.database.windows.net;Database=${dbName};User Id=${info.userName}@${serverName};Password=${password};Encrypt=true`;
 }
