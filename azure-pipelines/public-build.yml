@@ -10,6 +10,14 @@ pr:
         include:
             - main
 
+schedules:
+    - cron: '30 11 * * *'
+      displayName: Nightly at 4:30 AM PT
+      always: true
+      branches:
+          include:
+              - main
+
 resources:
     pipelines:
         - pipeline: nodeLibraryV3
