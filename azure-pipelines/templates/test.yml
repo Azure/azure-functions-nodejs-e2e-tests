@@ -57,6 +57,21 @@ jobs:
                 scriptLocation: 'inlineScript'
                 inlineScript: 'npm test'
 
+          # Run tests Node 22
+          - task: NodeTool@0
+            inputs:
+                versionSpec: 22.x
+            displayName: 'Install Node 22'
+            retryCountOnTaskFailure: 10
+          - task: AzureCLI@2
+            displayName: 'Run tests Node 22'
+            continueOnError: true
+            inputs:
+                azureSubscription: 'nodejs-e2e-tests'
+                scriptType: 'bash'
+                scriptLocation: 'inlineScript'
+                inlineScript: 'npm test'
+
           - task: AzureCLI@2
             displayName: 'Delete resources'
             inputs:
