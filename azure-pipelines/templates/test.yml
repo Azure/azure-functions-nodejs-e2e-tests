@@ -21,12 +21,6 @@ jobs:
             parameters:
                 nodeVersion: 18.x
 
-          # Run tests for old config (just one Node.js version is enough)
-          - template: /azure-pipelines/templates/test-node-version.yml@self
-            parameters:
-                nodeVersion: 18.x
-                testCommand: testOldConfig
-
           - template: /azure-pipelines/templates/test-node-version.yml@self
             parameters:
                 nodeVersion: 20.x
@@ -34,6 +28,12 @@ jobs:
           - template: /azure-pipelines/templates/test-node-version.yml@self
             parameters:
                 nodeVersion: 22.x
+
+          # Run tests for old config (just one Node.js version is enough)
+          - template: /azure-pipelines/templates/test-node-version.yml@self
+            parameters:
+                nodeVersion: 18.x
+                testCommand: testOldConfig
 
           - task: AzureCLI@2
             displayName: 'Delete resources'
