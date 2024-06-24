@@ -1,0 +1,21 @@
+parameters:
+    - name: nodeVersion
+      type: string
+    - name: testCommand
+      type: string
+      default: test
+
+steps:
+    - task: NodeTool@0
+      inputs:
+          versionSpec: ${{ parameters.nodeVersion }}
+      displayName: 'Install Node ${{ parameters.nodeVersion }}'
+      retryCountOnTaskFailure: 10
+    - task: AzureCLI@2
+      displayName: 'Run tests Node ${{ parameters.nodeVersion }}'
+      continueOnError: true
+      inputs:
+          azureSubscription: 'nodejs-e2e-tests'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: 'npm run ${{ parameters.testCommand }}'

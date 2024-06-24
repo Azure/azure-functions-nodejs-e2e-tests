@@ -17,60 +17,23 @@ jobs:
 
           - template: /azure-pipelines/templates/build-apps.yml@self
 
-          # Run tests Node 18
-          - task: NodeTool@0
-            inputs:
-                versionSpec: 18.x
-            displayName: 'Install Node 18'
-            retryCountOnTaskFailure: 10
-          - task: AzureCLI@2
-            displayName: 'Run tests Node 18'
-            continueOnError: true
-            inputs:
-                azureSubscription: 'nodejs-e2e-tests'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: 'npm test'
+          - template: /azure-pipelines/templates/test-node-version.yml@self
+            parameters:
+                nodeVersion: 18.x
 
           # Run tests for old config (just one Node.js version is enough)
-          - task: AzureCLI@2
-            displayName: 'Run tests old config'
-            continueOnError: true
-            inputs:
-                azureSubscription: 'nodejs-e2e-tests'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: 'npm run testOldConfig'
+          - template: /azure-pipelines/templates/test-node-version.yml@self
+            parameters:
+                nodeVersion: 18.x
+                testCommand: testOldConfig
 
-          # Run tests Node 20
-          - task: NodeTool@0
-            inputs:
-                versionSpec: 20.x
-            displayName: 'Install Node 20'
-            retryCountOnTaskFailure: 10
-          - task: AzureCLI@2
-            displayName: 'Run tests Node 20'
-            continueOnError: true
-            inputs:
-                azureSubscription: 'nodejs-e2e-tests'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: 'npm test'
+          - template: /azure-pipelines/templates/test-node-version.yml@self
+            parameters:
+                nodeVersion: 20.x
 
-          # Run tests Node 22
-          - task: NodeTool@0
-            inputs:
-                versionSpec: 22.x
-            displayName: 'Install Node 22'
-            retryCountOnTaskFailure: 10
-          - task: AzureCLI@2
-            displayName: 'Run tests Node 22'
-            continueOnError: true
-            inputs:
-                azureSubscription: 'nodejs-e2e-tests'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: 'npm test'
+          - template: /azure-pipelines/templates/test-node-version.yml@self
+            parameters:
+                nodeVersion: 22.x
 
           - task: AzureCLI@2
             displayName: 'Delete resources'
