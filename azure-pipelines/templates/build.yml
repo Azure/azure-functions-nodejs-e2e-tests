@@ -1,0 +1,13 @@
+steps:
+    - task: NodeTool@0
+      inputs:
+          versionSpec: 18.x
+      displayName: 'Install Node.js'
+      retryCountOnTaskFailure: 10
+
+    - script: npm ci
+      displayName: 'install deps e2e tests'
+    - script: npm run build
+      displayName: 'build e2e tests'
+    - script: npm run lint
+      displayName: 'lint e2e tests'

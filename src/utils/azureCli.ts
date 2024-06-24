@@ -7,18 +7,21 @@ export async function getSubscriptionId(): Promise<string> {
     return executeCommand('az account show --query id -o tsv');
 }
 
+export async function getTenantId(): Promise<string> {
+    return executeCommand('az account show --query tenantId -o tsv');
+}
+
 export async function getUserName(): Promise<string> {
     return executeCommand('az account show --query user.name -o tsv');
 }
 
-export async function getUserId(userName: string): Promise<string> {
-    const userType = await executeCommand('az account show --query user.type -o tsv');
-    if (userType === 'user') {
-        return executeCommand(`az ad user show --id ${userName} --query id -o tsv`);
-    } else {
-        // In Azure Pipelines the userType will be 'servicePrincipal' and the userName will already be the id we need
-        return userName;
-    }
+export async function getUserType(): Promise<string> {
+    return executeCommand('az account show --query user.type -o tsv');
+}
+
+export async function getObjectId(userName: string): Promise<string> {
+    const adCmd = (await getUserType()) === 'user' ? 'user' : 'sp';
+    return executeCommand(`az ad ${adCmd} show --id ${userName} --query id -o tsv`);
 }
 
 async function executeCommand(command: string): Promise<string> {

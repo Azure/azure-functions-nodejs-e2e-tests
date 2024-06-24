@@ -1,0 +1,61 @@
+steps:
+    # Setup v3 app
+    - script: npm ci
+      displayName: 'install deps v3 app'
+      workingDirectory: 'app/v3'
+    - download: nodeLibraryV3
+    - script: mv *.tgz package.tgz
+      displayName: 'Rename v3 tgz file' # because the install command below requires an exact path
+      workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV3/drop'
+    - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
+      displayName: 'install latest v3 library'
+      workingDirectory: 'app/v3'
+    - script: npm run build
+      displayName: 'build v3 app'
+      workingDirectory: 'app/v3'
+    - script: npm run lint
+      displayName: 'lint v3 app'
+      workingDirectory: 'app/v3'
+
+    # Setup v4 app
+    - script: npm ci
+      displayName: 'install deps v4 app'
+      workingDirectory: 'app/v4'
+    - download: nodeLibraryV4
+    - script: mv *.tgz package.tgz
+      displayName: 'Rename v4 tgz file' # because the install command below requires an exact path
+      workingDirectory: '$(Pipeline.Workspace)/nodeLibraryV4/drop'
+    - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+      displayName: 'install latest v4 library'
+      workingDirectory: 'app/v4'
+    - script: npm run build
+      displayName: 'build v4 app'
+      workingDirectory: 'app/v4'
+    - script: npm run lint
+      displayName: 'lint v4 app'
+      workingDirectory: 'app/v4'
+
+    - script: npm run createCombinedApps
+      displayName: 'Create combined apps'
+
+    # Setup v3 oldConfig app
+    - script: npm ci
+      displayName: 'install deps v3 app (oldConfig)'
+      workingDirectory: 'app/combined/v3-oldConfig'
+    - script: npm install "$(Pipeline.Workspace)/nodeLibraryV3/drop/package.tgz"
+      displayName: 'install latest v3 library (oldConfig)'
+      workingDirectory: 'app/combined/v3-oldConfig'
+    - script: npm run build
+      displayName: 'build v3 app (oldConfig)'
+      workingDirectory: 'app/combined/v3-oldConfig'
+
+    # Setup v4 oldConfig app
+    - script: npm ci
+      displayName: 'install deps v4 app (oldConfig)'
+      workingDirectory: 'app/combined/v4-oldConfig'
+    - script: npm install "$(Pipeline.Workspace)/nodeLibraryV4/drop/package.tgz"
+      displayName: 'install latest v4 library (oldConfig)'
+      workingDirectory: 'app/combined/v4-oldConfig'
+    - script: npm run build
+      displayName: 'build v4 app (oldConfig)'
+      workingDirectory: 'app/combined/v4-oldConfig'

@@ -1,15 +1,16 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import { DefaultAzureCredential } from '@azure/identity';
-import { getSubscriptionId, getUserId, getUserName } from '../utils/azureCli';
+import { AzureCliCredential } from '@azure/identity';
+import { getObjectId, getSubscriptionId, getTenantId, getUserName } from '../utils/azureCli';
 import { validateEnvVar } from '../utils/validateEnvVar';
 
 export interface ResourceInfo {
-    creds: DefaultAzureCredential;
+    creds: AzureCliCredential;
     subscriptionId: string;
+    tenantId: string;
     userName: string;
-    userId: string;
+    objectId: string;
     resourceGroupName: string;
     resourcePrefix: string;
     location: string;
@@ -23,19 +24,23 @@ function getResourcePrefix(): string {
 }
 
 export async function getResourceInfo(): Promise<ResourceInfo> {
-    const creds = new DefaultAzureCredential();
+    // NOTE: Using `AzureCliCredential` instead of `DefaultAzureCredential` to avoid "InvalidAuthenticationTokenTenant" error on 1es build agents
+    // These creds automatically handle `additionallyAllowedTenantIds` for us, while not all other creds do
+    const creds = new AzureCliCredential();
 
     const subscriptionId = await getSubscriptionId();
+    const tenantId = await getTenantId();
     const userName = await getUserName();
-    const userId = await getUserId(userName);
+    const objectId = await getObjectId(userName);
 
     const resourcePrefix = getResourcePrefix();
 
     return {
         creds,
         subscriptionId,
+        tenantId,
         userName,
-        userId,
+        objectId,
         resourcePrefix,
         resourceGroupName: resourcePrefix + 'group',
         location: 'eastus',
