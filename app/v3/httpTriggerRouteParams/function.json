@@ -6,7 +6,7 @@
             "direction": "in",
             "name": "req",
             "methods": ["get", "post"],
-            "route": "httpTriggerRouteParams/{name}"
+            "route": "httpTriggerRouteParams/{name}/{id}"
         },
         {
             "type": "http",

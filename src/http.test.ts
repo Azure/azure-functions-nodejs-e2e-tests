@@ -59,11 +59,12 @@ describe('http', () => {
         expect(response.status).to.equal(404);
     });
 
+    // Related: https://github.com/Azure/azure-functions-nodejs-library/issues/285
     it('route parameters', async () => {
         const funcUrl = getFuncUrl('httpTriggerRouteParams');
-        const response = await fetch(`${funcUrl}/testName`);
+        const response = await fetch(`${funcUrl}/testName/5`);
         const body = await response.json();
-        expect(body).to.deep.equal({ name: 'testName' });
+        expect(body).to.deep.equal({ name: 'testName', id: '5' });
         expect(response.status).to.equal(200);
     });
 

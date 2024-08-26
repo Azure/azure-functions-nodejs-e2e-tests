@@ -12,7 +12,7 @@ export async function httpTriggerRouteParams(
 
 app.http('httpTriggerRouteParams', {
     methods: ['GET', 'POST'],
-    route: 'httpTriggerRouteParams/{name}',
+    route: 'httpTriggerRouteParams/{name}/{id}',
     authLevel: 'anonymous',
     handler: httpTriggerRouteParams,
 });
