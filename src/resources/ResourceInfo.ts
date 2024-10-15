@@ -43,6 +43,6 @@ export async function getResourceInfo(): Promise<ResourceInfo> {
         objectId,
         resourcePrefix,
         resourceGroupName: resourcePrefix + 'group',
-        location: 'eastus',
+        location: 'westus',
     };
 }

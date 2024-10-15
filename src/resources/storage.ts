@@ -18,6 +18,7 @@ export async function createStorageAccount(info: ResourceInfo): Promise<void> {
         sku: {
             name: KnownSkuName.StandardLRS,
         },
+        allowBlobPublicAccess: false,
     });
 
     const connectionString = await getStorageConnectionString(info);
