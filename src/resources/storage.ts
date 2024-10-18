@@ -3,7 +3,6 @@
 
 import { KnownKind, KnownSkuName, StorageManagementClient } from '@azure/arm-storage';
 import { TableClient } from '@azure/data-tables';
-import { nonNullProp, nonNullValue } from '../utils/nonNull';
 import { ResourceInfo } from './ResourceInfo';
 
 function getAccountName(info: ResourceInfo): string {
@@ -26,10 +25,6 @@ export async function createStorageAccount(info: ResourceInfo): Promise<void> {
     await tableClient.createTable();
 }
 
-export async function getStorageConnectionString(info: ResourceInfo): Promise<string> {
-    const client = new StorageManagementClient(info.creds, info.subscriptionId);
-    const accountName = getAccountName(info);
-    const keys = await client.storageAccounts.listKeys(info.resourceGroupName, accountName);
-    const key = nonNullValue(nonNullProp(keys, 'keys')[0]?.value, 'storageKey');
-    return `DefaultEndpointsProtocol=https;AccountName=${accountName};AccountKey=${key};EndpointSuffix=core.windows.net`;
+export async function getStorageConnectionString(_info: ResourceInfo): Promise<string> {
+    return 'UseDevelopmentStorage=true';
 }

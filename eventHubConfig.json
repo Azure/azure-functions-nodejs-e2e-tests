@@ -1,0 +1,31 @@
+{
+    "UserConfig": {
+        "NamespaceConfig": [
+            {
+                "Type": "EventHub",
+                "Name": "emulatorns1",
+                "Entities": [
+                    {
+                        "Name": "e2eTestHubOneTriggerAndOutput",
+                        "PartitionCount": "2"
+                    },
+                    {
+                        "Name": "e2eTestHubManyTriggerAndOutput",
+                        "PartitionCount": "2"
+                    },
+                    {
+                        "Name": "e2eTestHubOneTrigger",
+                        "PartitionCount": "2"
+                    },
+                    {
+                        "Name": "e2eTestHubManyTrigger",
+                        "PartitionCount": "2"
+                    }
+                ]
+            }
+        ],
+        "LoggingConfig": {
+            "Type": "File"
+        }
+    }
+}
