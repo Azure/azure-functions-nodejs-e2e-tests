@@ -8,10 +8,8 @@ import semver from 'semver';
 import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
 import { getModelArg, getOldConfigArg, Model } from './getModelArg';
 import {
-    cosmosDBConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
-    serviceBusConnectionString,
     sqlConnectionString,
     storageConnectionString,
 } from './resources/connectionStrings';
@@ -115,8 +113,6 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     logging__logLevel__Worker: 'debug',
                     [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
-                    [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
-                    [EnvVarNames.serviceBus]: serviceBusConnectionString,
                     [EnvVarNames.sql]: sqlConnectionString,
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
@@ -126,8 +122,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
         )
     );
 
-    const funcPath = path.join(__dirname, '..', 'func-cli', 'func');
-    childProc = cp.spawn(funcPath, ['start'], {
+    childProc = cp.spawn('func', ['start'], {
         cwd: appPath,
         shell: true,
     });
