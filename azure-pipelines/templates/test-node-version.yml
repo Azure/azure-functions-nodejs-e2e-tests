@@ -15,7 +15,7 @@ steps:
       displayName: 'Run tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
       inputs:
-          azureSubscription: 'nodejs-e2e-tests'
+          azureSubscription: 'SimpleBatchNodeE2ESC'
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: 'npm run ${{ parameters.testCommand }}'

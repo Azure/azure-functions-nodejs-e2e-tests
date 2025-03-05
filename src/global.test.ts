@@ -126,8 +126,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
         )
     );
 
-    const funcPath = path.join(__dirname, '..', 'func-cli', 'func');
-    childProc = cp.spawn(funcPath, ['start'], {
+    childProc = cp.spawn('func', ['start'], {
         cwd: appPath,
         shell: true,
     });
