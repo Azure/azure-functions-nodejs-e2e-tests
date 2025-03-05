@@ -6,13 +6,13 @@ jobs:
           - task: AzureCLI@2
             displayName: 'Create resources'
             inputs:
-                azureSubscription: 'nodejs-e2e-tests'
+                azureSubscription: 'SimpleBatchNodeE2ESC'
                 scriptType: 'bash'
                 scriptLocation: 'inlineScript'
                 inlineScript: 'npm run createResources'
 
           - pwsh: |
-                .\scripts\install-func-cli.ps1
+                npm i -g azure-functions-core-tools@4 --unsafe-perm true
             displayName: 'Install func cli'
 
           - template: /azure-pipelines/templates/build-apps.yml@self
@@ -38,7 +38,7 @@ jobs:
           - task: AzureCLI@2
             displayName: 'Delete resources'
             inputs:
-                azureSubscription: 'nodejs-e2e-tests'
+                azureSubscription: 'SimpleBatchNodeE2ESC'
                 scriptType: 'bash'
                 scriptLocation: 'inlineScript'
                 inlineScript: 'npm run deleteResources'

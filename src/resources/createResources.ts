@@ -2,11 +2,9 @@
 // Licensed under the MIT License.
 
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { createCosmosDB } from './cosmosDB';
 import { createEventHub } from './eventHub';
 import { createKeyVault } from './keyVault';
 import { getResourceInfo } from './ResourceInfo';
-import { createServiceBus } from './serviceBus';
 import { createSql } from './sql';
 import { createStorageAccount } from './storage';
 
@@ -19,13 +17,7 @@ async function createResources(): Promise<void> {
 
         await createKeyVault(info);
 
-        await Promise.all([
-            createStorageAccount(info),
-            createEventHub(info),
-            createCosmosDB(info),
-            createServiceBus(info),
-            createSql(info),
-        ]);
+        await Promise.all([createStorageAccount(info), createEventHub(info), createSql(info)]);
     } catch (err) {
         console.error(err);
         console.error('Create resources failed');
