@@ -10,9 +10,8 @@ import { getModelArg, getOldConfigArg, Model } from './getModelArg';
 import {
     eventHubConnectionString,
     initializeConnectionStrings,
-    sqlConnectionString,
-    storageConnectionString,
-} from './resources/connectionStrings';
+    storageConnectionString
+} from './utils/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
@@ -108,12 +107,10 @@ async function startFuncProcess(appPath: string): Promise<void> {
             {
                 IsEncrypted: false,
                 Values: {
-                    AzureWebJobsStorage: storageConnectionString,
+                    [EnvVarNames.storage]: storageConnectionString,
                     FUNCTIONS_WORKER_RUNTIME: 'node',
                     logging__logLevel__Worker: 'debug',
-                    [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
-                    [EnvVarNames.sql]: sqlConnectionString,
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
             },
@@ -122,7 +119,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
         )
     );
 
-    childProc = cp.spawn('func', ['start'], {
+    childProc = cp.spawn('func', ['start --verbose'], {
         cwd: appPath,
         shell: true,
     });

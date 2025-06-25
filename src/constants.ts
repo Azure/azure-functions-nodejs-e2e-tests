@@ -2,11 +2,8 @@
 // Licensed under the MIT License.
 
 export namespace EnvVarNames {
-    export const storage = 'e2eTest_storage';
-    export const cosmosDB = 'e2eTest_cosmosDB';
-    export const eventHub = 'e2eTest_eventHub';
-    export const serviceBus = 'e2eTest_serviceBus';
-    export const sql = 'e2eTest_sql';
+    export const storage = 'AzureWebJobsStorage';
+    export const eventHub = 'EventHubConnection';
 }
 
 export const defaultTimeout = 3 * 60 * 1000;

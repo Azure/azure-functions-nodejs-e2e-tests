@@ -20,10 +20,10 @@ schedules:
 
 resources:
     pipelines:
-        - pipeline: nodeLibraryV3
-          project: public
-          source: nodejs-library.public
-          branch: v3.x
+        # - pipeline: nodeLibraryV3
+        #   project: public
+        #   source: nodejs-library.public
+        #   branch: v3.x
         - pipeline: nodeLibraryV4
           project: public
           source: nodejs-library.public
@@ -53,9 +53,6 @@ extends:
             skipBuildTagsForGitHubPullRequests: ${{ variables['System.PullRequest.IsFork'] }}
 
         stages:
-            - stage: build
+            - stage: e2etests
               jobs:
-                  - job:
-                    steps:
-                        - template: /azure-pipelines/templates/build.yml@self
-                        - template: /azure-pipelines/templates/build-apps.yml@self
+                - template: /azure-pipelines/templates/test.yml@self

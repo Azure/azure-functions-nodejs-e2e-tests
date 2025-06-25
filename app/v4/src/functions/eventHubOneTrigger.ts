@@ -13,8 +13,9 @@ export async function eventHubOneTrigger(message: unknown, context: InvocationCo
 }
 
 app.eventHub('eventHubOneTrigger', {
-    connection: 'e2eTest_eventHub',
-    eventHubName: 'e2eTestHubOneTrigger',
+    connection: 'EventHubConnection',
+    eventHubName: 'e2e-test-hub-one-trigger',
     cardinality: 'one',
+    consumerGroup: 'cg1',
     handler: eventHubOneTrigger,
 });

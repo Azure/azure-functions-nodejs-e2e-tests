@@ -1,0 +1,51 @@
+{
+    "UserConfig": {
+        "NamespaceConfig": [
+        {
+            "Type": "EventHub",
+            "Name": "emulatorNs1",
+            "Entities": [
+            {
+                "Name": "e2e-test-hub-one-trigger",
+                "PartitionCount": "2",
+                "ConsumerGroups": [
+                {
+                    "Name": "cg1"
+                }
+                ]
+            },
+            {
+                "Name": "e2e-test-hub-many-trigger",
+                "PartitionCount": "2",
+                "ConsumerGroups": [
+                {
+                    "Name": "cg1"
+                }
+                ]
+            },
+            {
+                "Name": "e2e-test-hub-one-trigger-and-output",
+                "PartitionCount": "2",
+                "ConsumerGroups": [
+                {
+                    "Name": "cg1"
+                }
+                ]
+            },
+            {
+                "Name": "e2e-test-hub-many-trigger-and-output",
+                "PartitionCount": "2",
+                "ConsumerGroups": [
+                {
+                    "Name": "cg1"
+                }
+                ]
+            }
+            ]
+        }
+        ], 
+        "LoggingConfig": {
+            "Type": "File"
+        }
+    }
+}

@@ -3,13 +3,7 @@
 
 import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
-import { eventHubConnectionString } from './resources/connectionStrings';
-import {
-    eventHubManyTrigger,
-    eventHubManyTriggerAndOutput,
-    eventHubOneTrigger,
-    eventHubOneTriggerAndOutput,
-} from './resources/eventHub';
+import { eventHubConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('eventHub', () => {
@@ -18,11 +12,12 @@ describe('eventHub', () => {
     let clientManyTriggerAndOutput: EventHubProducerClient;
     let clientManyTrigger: EventHubProducerClient;
 
+
     before(() => {
-        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, eventHubOneTriggerAndOutput);
-        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubOneTrigger);
-        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, eventHubManyTriggerAndOutput);
-        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubManyTrigger);
+        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-one-trigger-and-output");
+        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-one-trigger");
+        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-many-trigger-and-output");
+        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-many-trigger");
     });
 
     after(async () => {
@@ -48,7 +43,7 @@ describe('eventHub', () => {
                 {
                     body: messageBody,
                     properties: messageProperties,
-                },
+                }
             ]);
 
             await waitForOutput(`eventHubOneTrigger was triggered by object body "${JSON.stringify(messageBody)}"`);

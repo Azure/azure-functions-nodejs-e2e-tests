@@ -50,7 +50,7 @@ const hookToDispose = app.hook.preInvocation((context) => {
 });
 hookToDispose.dispose();
 
-app.hook.postInvocation((context) => {
+app.hook.postInvocation(async (context) => {
     if (context.invocationContext.functionName === 'httpTriggerForHooks') {
         const resultString = JSON.stringify(context.result);
         context.invocationContext.log(
