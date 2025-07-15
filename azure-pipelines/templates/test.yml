@@ -1,6 +1,6 @@
 jobs:
   - job: "e2etests"
-    displayName: "Run Node Emulator Tests - Linux Only"
+    displayName: "Run Node Emulator Tests"
 
     pool:
       name: 1es-pool-azfunc-public
@@ -8,11 +8,6 @@ jobs:
       os: linux
 
     steps:
-      - bash: |
-          docker version
-          docker info
-        displayName: "Check Docker availability"
-
       - template: /azure-pipelines/templates/build.yml@self
 
       - pwsh: |
@@ -23,21 +18,21 @@ jobs:
 
       - template: /azure-pipelines/templates/test-node-version.yml@self
         parameters:
+            nodeVersion: 18.x
+
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
+            nodeVersion: 20.x
+
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
             nodeVersion: 22.x
 
-      # - template: /azure-pipelines/templates/test-node-version.yml@self
-      #   parameters:
-      #       nodeVersion: 20.x
-
-      # - template: /azure-pipelines/templates/test-node-version.yml@self
-      #   parameters:
-      #       nodeVersion: 22.x
-
       # Run tests for old config (just one Node.js version is enough)
-      # - template: /azure-pipelines/templates/test-node-version.yml@self
-      #   parameters:
-      #       nodeVersion: 18.x
-      #       testCommand: testOldConfig
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
+            nodeVersion: 18.x
+            testCommand: testOldConfig
 
       - task: PublishTestResults@2
         displayName: 'Publish Unit Test Results'

@@ -4,8 +4,8 @@
             "type": "eventHubTrigger",
             "name": "eventHubMessages",
             "direction": "in",
-            "eventHubName": "e2eTestHubOneTrigger",
-            "connection": "e2eTest_eventHub",
+            "eventHubName": "e2e-test-hub-one-trigger",
+            "connection": "EventHubConnection",
             "cardinality": "one"
         }
     ],

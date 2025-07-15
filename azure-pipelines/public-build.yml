@@ -20,10 +20,10 @@ schedules:
 
 resources:
     pipelines:
-        # - pipeline: nodeLibraryV3
-        #   project: public
-        #   source: nodejs-library.public
-        #   branch: v3.x
+        - pipeline: nodeLibraryV3
+          project: public
+          source: nodejs-library.public
+          branch: v3.x
         - pipeline: nodeLibraryV4
           project: public
           source: nodejs-library.public
