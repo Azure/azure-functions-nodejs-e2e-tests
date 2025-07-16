@@ -38,10 +38,11 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    isOldConfig = getOldConfigArg();
-    const appPath = isOldConfig
-        ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
-        : path.join(__dirname, '..', 'app', model);
+    // isOldConfig = getOldConfigArg();
+    // const appPath = isOldConfig
+    //     ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
+    //     : path.join(__dirname, '..', 'app', model);
+    const appPath = path.join(__dirname, '..', 'app', model)
 
     await startFuncProcess(appPath);
     await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });

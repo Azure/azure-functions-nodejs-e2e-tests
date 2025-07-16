@@ -27,7 +27,7 @@
         "lint": "eslint . --fix",
         "watch": "tsc -w",
         "createCombinedApps": "node out/createCombinedApps.js",
-        "test": "npm run testV4",
+        "test": "npm run testV3 && npm run testV4",
         "testOldConfig": "npm run testV3OldConfig && npm run testV4OldConfig",
         "testV3": "node out/index.js --model v3",
         "testV3OldConfig": "node out/index.js --model v3 --oldConfig",
