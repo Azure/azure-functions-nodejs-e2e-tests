@@ -16,7 +16,7 @@
             "type": "queue",
             "name": "outputMsg",
             "direction": "out",
-            "connection": "e2eTest_storage",
+            "connection": "AzureWebJobsStorage",
             "queueName": "e2e-test-queue-trigger"
         }
     ],
