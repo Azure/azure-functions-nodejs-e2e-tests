@@ -1,14 +1,14 @@
-// // Copyright (c) .NET Foundation. All rights reserved.
-// // Licensed under the MIT License.
+// Copyright (c) .NET Foundation. All rights reserved.
+// Licensed under the MIT License.
 
-// import { ContainerClient } from '@azure/storage-blob';
-// import { QueueClient } from '@azure/storage-queue';
-// import { expect } from 'chai';
-// import { default as fetch } from 'node-fetch';
-// import { getFuncUrl } from './constants';
-// import { model, waitForOutput } from './global.test';
-// import { storageConnectionString } from './resources/connectionStrings';
-// import { getRandomTestData } from './utils/getRandomTestData';
+import { ContainerClient } from '@azure/storage-blob';
+import { QueueClient } from '@azure/storage-queue';
+import { expect } from 'chai';
+import { default as fetch } from 'node-fetch';
+import { getFuncUrl } from './constants';
+import { model, waitForOutput } from './global.test';
+import { storageConnectionString } from './resources/connectionStrings';
+import { getRandomTestData } from './utils/getRandomTestData';
 
 // describe('storage', () => {
 //     it('queue trigger and output', async () => {
@@ -41,23 +41,23 @@
 //         }
 //     });
 
-//     it('blob trigger and output', async () => {
-//         const containerName = 'e2e-test-container';
-//         const client = new ContainerClient(storageConnectionString, containerName);
-//         await client.createIfNotExists();
+    it('blob trigger and output', async () => {
+        const containerName = 'e2e-test-container';
+        const client = new ContainerClient(storageConnectionString, containerName);
+        await client.createIfNotExists();
 
-//         const message = getRandomTestData();
-//         const messageBuffer = Buffer.from(message);
-//         const blobName = 'e2e-test-blob-trigger-and-output';
-//         await client.uploadBlockBlob(blobName, messageBuffer, messageBuffer.byteLength);
+        const message = getRandomTestData();
+        const messageBuffer = Buffer.from(message);
+        const blobName = 'e2e-test-blob-trigger-and-output';
+        await client.uploadBlockBlob(blobName, messageBuffer, messageBuffer.byteLength);
 
-//         await waitForOutput(
-//             `storageBlobTriggerAndOutput was triggered by blob "${containerName}/${blobName}" with content "${message}"`
-//         );
-//         await waitForOutput(
-//             `storageBlobTrigger was triggered by blob "${containerName}/e2e-test-blob-trigger" with content "${message}"`
-//         );
-//     });
+        await waitForOutput(
+            `storageBlobTriggerAndOutput was triggered by blob "${containerName}/${blobName}" with content "${message}"`
+        );
+        await waitForOutput(
+            `storageBlobTrigger was triggered by blob "${containerName}/e2e-test-blob-trigger" with content "${message}"`
+        );
+    });
 
 //     type TableItem = { PartitionKey: string; RowKey: string; Name: string };
 
