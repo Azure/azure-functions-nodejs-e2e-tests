@@ -76,7 +76,7 @@ describe('eventHub', () => {
                 {
                     body: messageBody2,
                     properties: messageProperties2,
-                },
+                }
             ]);
 
             await waitForOutput(`eventHubManyTrigger was triggered by object body "${JSON.stringify(messageBody1)}"`);

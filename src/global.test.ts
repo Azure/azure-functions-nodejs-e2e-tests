@@ -42,7 +42,6 @@ before(async function (this: Mocha.Context): Promise<void> {
     const appPath = isOldConfig
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
         : path.join(__dirname, '..', 'app', model);
-    // const appPath = path.join(__dirname, '..', 'app', model)
 
     await startFuncProcess(appPath);
     await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });
@@ -120,7 +119,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
         )
     );
 
-    childProc = cp.spawn('func', ['start --verbose'], {
+    childProc = cp.spawn('func', ['start'], {
         cwd: appPath,
         shell: true,
     });

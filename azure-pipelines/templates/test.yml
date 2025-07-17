@@ -28,6 +28,7 @@ jobs:
         parameters:
             nodeVersion: 22.x
 
+      # These all use Cosmos - so we will come back and emulate this
       # Run tests for old config (just one Node.js version is enough)
       # - template: /azure-pipelines/templates/test-node-version.yml@self
       #   parameters:
