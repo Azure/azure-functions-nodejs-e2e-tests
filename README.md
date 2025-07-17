@@ -12,7 +12,7 @@ This repo contains end-to-end tests for Node.js on Azure Functions. These are au
 Here is the general flow of the pipeline:
 
 1. Install node modules and build both the tests themselves and the test apps
-2. Emulate several resources in Azure that will be used for testing different bindings. A unique resource prefix is generated for each individual build so that builds aren't sharing resources
+2. Emulate several resources in Azure that will be used for testing different bindings
 3. Run the tests. A few notes:
     1. These are run in parallel by OS, but in serial by Node.js version and programming model version. Theoretically every combination could be run in parallel, but that would use a ton of Azure Pipelines agents and create a lot of Azure resources for minimal gain in time.
     2. The primary method of validation is to run core tools against the test app and validate the output
