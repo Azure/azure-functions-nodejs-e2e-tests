@@ -6,6 +6,13 @@ export namespace EnvVarNames {
     export const eventHub = 'EventHubConnection';
 }
 
+export namespace EventHub {
+    export const eventHubOneTriggerAndOutput = 'e2e-test-hub-one-trigger-and-output';
+    export const eventHubManyTriggerAndOutput = 'e2e-test-hub-many-trigger-and-output';
+    export const eventHubOneTrigger = 'e2e-test-hub-one-trigger';
+    export const eventHubManyTrigger = 'e2e-test-hub-many-trigger';
+}
+
 export const defaultTimeout = 3 * 60 * 1000;
 
 export const combinedFolder = 'combined';

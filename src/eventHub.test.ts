@@ -5,6 +5,7 @@ import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
 import { eventHubConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
+import { EventHub } from './constants';
 
 describe('eventHub', () => {
     let clientOneTriggerAndOutput: EventHubProducerClient;
@@ -14,10 +15,10 @@ describe('eventHub', () => {
 
 
     before(() => {
-        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-one-trigger-and-output");
-        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-one-trigger");
-        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-many-trigger-and-output");
-        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, "e2e-test-hub-many-trigger");
+        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTriggerAndOutput);
+        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTrigger);
+        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTriggerAndOutput);
+        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTrigger);
     });
 
     after(async () => {
