@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 import { ContainerClient } from '@azure/storage-blob';
-import { QueueClient } from '@azure/storage-queue';
-import { expect } from 'chai';
-import { default as fetch } from 'node-fetch';
-import { getFuncUrl } from './constants';
-import { model, waitForOutput } from './global.test';
-import { storageConnectionString } from './resources/connectionStrings';
+// import { QueueClient } from '@azure/storage-queue';
+// import { expect } from 'chai';
+// import { default as fetch } from 'node-fetch';
+// import { getFuncUrl } from './constants';
+import { waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
+import { storageConnectionString } from './utils/connectionStrings';
 
 // describe('storage', () => {
 //     it('queue trigger and output', async () => {
