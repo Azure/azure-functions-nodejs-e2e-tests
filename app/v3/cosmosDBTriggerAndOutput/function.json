@@ -5,7 +5,7 @@
             "name": "documents",
             "direction": "in",
             "leaseContainerName": "leases",
-            "connection": "e2eTest_cosmosDB",
+            "connection": "CosmosDBConnection",
             "databaseName": "e2eTestDB",
             "containerName": "e2eTestContainerTriggerAndOutput",
             "createLeaseContainerIfNotExists": true,
@@ -15,7 +15,7 @@
             "type": "cosmosDB",
             "name": "$return",
             "direction": "out",
-            "connection": "e2eTest_cosmosDB",
+            "connection": "CosmosDBConnection",
             "databaseName": "e2eTestDB",
             "containerName": "e2eTestContainerTrigger"
         }

@@ -11,7 +11,7 @@
 // }
 
 // app.cosmosDB('cosmosDBTrigger', {
-//     connection: 'e2eTest_cosmosDB',
+//     connection: 'CosmosDBConnection',
 //     databaseName: 'e2eTestDB',
 //     containerName: 'e2eTestContainerTrigger',
 //     createLeaseContainerIfNotExists: true,

@@ -16,7 +16,7 @@
             "type": "cosmosDB",
             "name": "inputDoc",
             "direction": "in",
-            "connection": "e2eTest_cosmosDB",
+            "connection": "CosmosDBConnection",
             "databaseName": "e2eTestDB",
             "containerName": "e2eTestContainerTriggerAndOutput",
             "partitionKey": "testPartKey",

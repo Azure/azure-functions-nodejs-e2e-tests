@@ -8,7 +8,7 @@
 //     collectionName: 'e2eTestContainerTriggerAndOutput',
 //     id: '{Query.id}',
 //     partitionKey: 'testPartKey',
-//     connectionStringSetting: 'e2eTest_cosmosDB',
+//     connectionStringSetting: 'CosmosDBConnection',
 // });
 
 // export async function httpTriggerCosmosDBInput(

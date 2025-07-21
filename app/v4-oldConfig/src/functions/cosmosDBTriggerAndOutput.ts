@@ -12,13 +12,13 @@
 // }
 
 // app.cosmosDB('cosmosDBTriggerAndOutput', {
-//     connectionStringSetting: 'e2eTest_cosmosDB',
+//     connectionStringSetting: 'CosmosDBConnection',
 //     databaseName: 'e2eTestDB',
 //     collectionName: 'e2eTestContainerTriggerAndOutput',
 //     createLeaseCollectionIfNotExists: true,
 //     leaseCollectionPrefix: '1',
 //     return: output.cosmosDB({
-//         connectionStringSetting: 'e2eTest_cosmosDB',
+//         connectionStringSetting: 'CosmosDBConnection',
 //         databaseName: 'e2eTestDB',
 //         collectionName: 'e2eTestContainerTrigger',
 //     }),

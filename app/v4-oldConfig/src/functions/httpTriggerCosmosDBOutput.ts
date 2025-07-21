@@ -6,7 +6,7 @@
 // const cosmosOutput = output.cosmosDB({
 //     databaseName: 'e2eTestDB',
 //     collectionName: 'e2eTestContainerTrigger',
-//     connectionStringSetting: 'e2eTest_cosmosDB',
+//     connectionStringSetting: 'CosmosDBConnection',
 // });
 
 // export async function httpTriggerCosmosDBOutput(
