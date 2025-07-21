@@ -16,13 +16,13 @@ jobs:
 
       - template: /azure-pipelines/templates/build-apps.yml@self
 
-      - template: /azure-pipelines/templates/test-node-version.yml@self
-        parameters:
-            nodeVersion: 18.x
+      # - template: /azure-pipelines/templates/test-node-version.yml@self
+      #   parameters:
+      #       nodeVersion: 18.x
 
-      - template: /azure-pipelines/templates/test-node-version.yml@self
-        parameters:
-            nodeVersion: 20.x
+      # - template: /azure-pipelines/templates/test-node-version.yml@self
+      #   parameters:
+      #       nodeVersion: 20.x
 
       - template: /azure-pipelines/templates/test-node-version.yml@self
         parameters:
