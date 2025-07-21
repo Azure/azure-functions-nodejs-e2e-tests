@@ -18,8 +18,9 @@ export async function eventHubManyTrigger(messages: unknown[], context: Invocati
 }
 
 app.eventHub('eventHubManyTrigger', {
-    connection: 'e2eTest_eventHub',
-    eventHubName: 'e2eTestHubManyTrigger',
+    connection: 'EventHubConnection',
+    eventHubName: 'e2e-test-hub-many-trigger',
     cardinality: 'many',
+    consumerGroup: 'cg1',
     handler: eventHubManyTrigger,
 });

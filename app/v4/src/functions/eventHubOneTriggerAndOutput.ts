@@ -16,12 +16,13 @@ export async function eventHubOneTriggerAndOutput(message: unknown, context: Inv
 }
 
 app.eventHub('eventHubOneTriggerAndOutput', {
-    connection: 'e2eTest_eventHub',
-    eventHubName: 'e2eTestHubOneTriggerAndOutput',
+    connection: 'EventHubConnection',
+    eventHubName: 'e2e-test-hub-one-trigger-and-output',
     cardinality: 'one',
+    consumerGroup: 'cg1',
     return: output.eventHub({
-        connection: 'e2eTest_eventHub',
-        eventHubName: 'e2eTestHubOneTrigger',
+        connection: 'EventHubConnection',
+        eventHubName: 'e2e-test-hub-one-trigger',
     }),
     handler: eventHubOneTriggerAndOutput,
 });

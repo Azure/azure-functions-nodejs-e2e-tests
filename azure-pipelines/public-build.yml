@@ -53,9 +53,6 @@ extends:
             skipBuildTagsForGitHubPullRequests: ${{ variables['System.PullRequest.IsFork'] }}
 
         stages:
-            - stage: build
+            - stage: e2etests
               jobs:
-                  - job:
-                    steps:
-                        - template: /azure-pipelines/templates/build.yml@self
-                        - template: /azure-pipelines/templates/build-apps.yml@self
+                - template: /azure-pipelines/templates/test.yml@self

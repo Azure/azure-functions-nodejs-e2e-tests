@@ -4,16 +4,16 @@
             "type": "eventHubTrigger",
             "name": "eventHubMessages",
             "direction": "in",
-            "eventHubName": "e2eTestHubOneTriggerAndOutput",
-            "connection": "e2eTest_eventHub",
+            "eventHubName": "e2e-test-hub-one-trigger-and-output",
+            "connection": "EventHubConnection",
             "cardinality": "one"
         },
         {
             "type": "eventHub",
             "name": "$return",
             "direction": "out",
-            "eventHubName": "e2eTestHubOneTrigger",
-            "connection": "e2eTest_eventHub"
+            "eventHubName": "e2e-test-hub-one-trigger",
+            "connection": "EventHubConnection"
         }
     ],
     "scriptFile": "../dist/eventHubOneTriggerAndOutput/index.js"

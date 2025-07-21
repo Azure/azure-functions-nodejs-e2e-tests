@@ -5,7 +5,7 @@
             "type": "blobTrigger",
             "direction": "in",
             "path": "e2e-test-container/e2e-test-blob-trigger",
-            "connection": "e2eTest_storage"
+            "connection": "AzureWebJobsStorage"
         }
     ],
     "scriptFile": "../dist/storageBlobTrigger/index.js"

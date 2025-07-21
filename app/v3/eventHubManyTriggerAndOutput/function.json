@@ -4,16 +4,16 @@
             "type": "eventHubTrigger",
             "name": "eventHubMessages",
             "direction": "in",
-            "eventHubName": "e2eTestHubManyTriggerAndOutput",
-            "connection": "e2eTest_eventHub",
+            "eventHubName": "e2e-test-hub-many-trigger-and-output",
+            "connection": "EventHubConnection",
             "cardinality": "many"
         },
         {
             "type": "eventHub",
             "name": "$return",
             "direction": "out",
-            "eventHubName": "e2eTestHubManyTrigger",
-            "connection": "e2eTest_eventHub"
+            "eventHubName": "e2e-test-hub-many-trigger",
+            "connection": "EventHubConnection"
         }
     ],
     "scriptFile": "../dist/eventHubManyTriggerAndOutput/index.js"

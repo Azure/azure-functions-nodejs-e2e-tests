@@ -27,12 +27,13 @@ export async function eventHubManyTriggerAndOutput(
 }
 
 app.eventHub('eventHubManyTriggerAndOutput', {
-    connection: 'e2eTest_eventHub',
-    eventHubName: 'e2eTestHubManyTriggerAndOutput',
+    connection: 'EventHubConnection',
+    eventHubName: 'e2e-test-hub-many-trigger-and-output',
     cardinality: 'many',
+    consumerGroup: 'cg1',
     return: output.eventHub({
-        connection: 'e2eTest_eventHub',
-        eventHubName: 'e2eTestHubManyTrigger',
+        connection: 'EventHubConnection',
+        eventHubName: 'e2e-test-hub-many-trigger',
     }),
     handler: eventHubManyTriggerAndOutput,
 });

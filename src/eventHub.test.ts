@@ -3,14 +3,9 @@
 
 import { EventHubProducerClient } from '@azure/event-hubs';
 import { waitForOutput } from './global.test';
-import { eventHubConnectionString } from './resources/connectionStrings';
-import {
-    eventHubManyTrigger,
-    eventHubManyTriggerAndOutput,
-    eventHubOneTrigger,
-    eventHubOneTriggerAndOutput,
-} from './resources/eventHub';
+import { eventHubConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
+import { EventHub } from './constants';
 
 describe('eventHub', () => {
     let clientOneTriggerAndOutput: EventHubProducerClient;
@@ -18,11 +13,12 @@ describe('eventHub', () => {
     let clientManyTriggerAndOutput: EventHubProducerClient;
     let clientManyTrigger: EventHubProducerClient;
 
+
     before(() => {
-        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, eventHubOneTriggerAndOutput);
-        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubOneTrigger);
-        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, eventHubManyTriggerAndOutput);
-        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, eventHubManyTrigger);
+        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTriggerAndOutput);
+        clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTrigger);
+        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTriggerAndOutput);
+        clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTrigger);
     });
 
     after(async () => {

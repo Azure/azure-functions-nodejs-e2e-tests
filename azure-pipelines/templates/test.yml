@@ -1,52 +1,43 @@
 jobs:
-    - job:
-      steps:
-          - template: /azure-pipelines/templates/build.yml@self
+  - job: "e2etests"
+    displayName: "Run Node Emulator Tests"
 
-          - task: AzureCLI@2
-            displayName: 'Create resources'
-            inputs:
-                azureSubscription: 'SimpleBatchNodeE2ESC'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: 'npm run createResources'
+    pool:
+      name: 1es-pool-azfunc-public
+      image: 1es-ubuntu-22.04
+      os: linux
 
-          - pwsh: |
-                npm i -g azure-functions-core-tools@4 --unsafe-perm true
-            displayName: 'Install func cli'
+    steps:
+      - template: /azure-pipelines/templates/build.yml@self
 
-          - template: /azure-pipelines/templates/build-apps.yml@self
+      - pwsh: |
+            npm i -g azure-functions-core-tools@4 --unsafe-perm true
+        displayName: 'Install func cli'
 
-          - template: /azure-pipelines/templates/test-node-version.yml@self
-            parameters:
-                nodeVersion: 18.x
+      - template: /azure-pipelines/templates/build-apps.yml@self
 
-          - template: /azure-pipelines/templates/test-node-version.yml@self
-            parameters:
-                nodeVersion: 20.x
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
+            nodeVersion: 18.x
 
-          - template: /azure-pipelines/templates/test-node-version.yml@self
-            parameters:
-                nodeVersion: 22.x
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
+            nodeVersion: 20.x
 
-          # Run tests for old config (just one Node.js version is enough)
-          - template: /azure-pipelines/templates/test-node-version.yml@self
-            parameters:
-                nodeVersion: 18.x
-                testCommand: testOldConfig
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
+            nodeVersion: 22.x
 
-          - task: AzureCLI@2
-            displayName: 'Delete resources'
-            inputs:
-                azureSubscription: 'SimpleBatchNodeE2ESC'
-                scriptType: 'bash'
-                scriptLocation: 'inlineScript'
-                inlineScript: 'npm run deleteResources'
-            condition: succeededOrFailed()
+      # These all use Cosmos - so we will come back and emulate this
+      # Run tests for old config (just one Node.js version is enough)
+      # - template: /azure-pipelines/templates/test-node-version.yml@self
+      #   parameters:
+      #       nodeVersion: 18.x
+      #       testCommand: testOldConfig
 
-          - task: PublishTestResults@2
-            displayName: 'Publish Unit Test Results'
-            inputs:
-                testResultsFiles: 'e2e-test-results/*.xml'
-                failTaskOnFailedTests: true
-            condition: succeededOrFailed()
+      - task: PublishTestResults@2
+        displayName: 'Publish Unit Test Results'
+        inputs:
+            testResultsFiles: 'e2e-test-results/*.xml'
+            failTaskOnFailedTests: true
+        condition: succeededOrFailed()

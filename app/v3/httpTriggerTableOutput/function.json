@@ -17,7 +17,7 @@
             "direction": "out",
             "name": "outputItem",
             "tableName": "e2etesttable",
-            "connection": "e2eTest_storage"
+            "connection": "AzureWebJobsStorage"
         }
     ],
     "scriptFile": "../dist/httpTriggerTableOutput/index.js"

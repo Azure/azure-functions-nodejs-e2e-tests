@@ -20,7 +20,7 @@
             "tableName": "e2etesttable",
             "partitionKey": "e2eTestPartKey",
             "filter": "RowKey eq '{rowKey}'",
-            "connection": "e2eTest_storage"
+            "connection": "AzureWebJobsStorage"
         }
     ],
     "scriptFile": "../dist/httpTriggerTableInput/index.js"

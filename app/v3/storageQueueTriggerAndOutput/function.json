@@ -5,14 +5,14 @@
             "type": "queueTrigger",
             "direction": "in",
             "queueName": "e2e-test-queue-trigger-and-output",
-            "connection": "e2eTest_storage"
+            "connection": "AzureWebJobsStorage"
         },
         {
             "name": "$return",
             "type": "queue",
             "direction": "out",
             "queueName": "e2e-test-queue-trigger",
-            "connection": "e2eTest_storage"
+            "connection": "AzureWebJobsStorage"
         }
     ],
     "scriptFile": "../dist/storageQueueTriggerAndOutput/index.js"

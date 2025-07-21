@@ -2,11 +2,15 @@
 // Licensed under the MIT License.
 
 export namespace EnvVarNames {
-    export const storage = 'e2eTest_storage';
-    export const cosmosDB = 'e2eTest_cosmosDB';
-    export const eventHub = 'e2eTest_eventHub';
-    export const serviceBus = 'e2eTest_serviceBus';
-    export const sql = 'e2eTest_sql';
+    export const storage = 'AzureWebJobsStorage';
+    export const eventHub = 'EventHubConnection';
+}
+
+export namespace EventHub {
+    export const eventHubOneTriggerAndOutput = 'e2e-test-hub-one-trigger-and-output';
+    export const eventHubManyTriggerAndOutput = 'e2e-test-hub-many-trigger-and-output';
+    export const eventHubOneTrigger = 'e2e-test-hub-one-trigger';
+    export const eventHubManyTrigger = 'e2e-test-hub-many-trigger';
 }
 
 export const defaultTimeout = 3 * 60 * 1000;
