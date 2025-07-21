@@ -10,7 +10,7 @@ import { waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { storageConnectionString } from './utils/connectionStrings';
 
-// describe('storage', () => {
+describe('storage', () => {
 //     it('queue trigger and output', async () => {
 //         const client = new QueueClient(storageConnectionString, 'e2e-test-queue-trigger-and-output');
 //         await client.createIfNotExists();
