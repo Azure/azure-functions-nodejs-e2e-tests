@@ -6,16 +6,9 @@ import Mocha from 'mocha';
 import path from 'path';
 import { defaultTimeout } from './constants';
 import { getModelArg, getOldConfigArg } from './getModelArg';
-import yargs from 'yargs';
 
 export async function run(): Promise<void> {
     try {
-        const argv = yargs(process.argv.slice(2)).option('exclude', {
-            type: 'string',
-            description: 'Glob pattern of tests to exclude',
-        }).parseSync();
-        const excludePattern = argv.exclude ? [argv.exclude] : [];
-
         const oldConfigSuffix = getOldConfigArg() ? '_oldConfig' : '';
         const fileName = `${process.platform}_model-${getModelArg()}_Node-${process.version}${oldConfigSuffix}.xml`;
         const options: Mocha.MochaOptions = {
@@ -34,7 +27,7 @@ export async function run(): Promise<void> {
 
         const mocha = new Mocha(options);
 
-        const files: string[] = await globby(['**/**.test.js', ...excludePattern.map(p => `!${p}`)], { cwd: __dirname });
+        const files: string[] = await globby('**/**.test.js', { cwd: __dirname });
 
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
 
