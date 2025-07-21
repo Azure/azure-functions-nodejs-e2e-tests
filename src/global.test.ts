@@ -8,6 +8,7 @@ import semver from 'semver';
 import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
 import { getModelArg, getOldConfigArg, Model } from './getModelArg';
 import {
+    cosmosDBConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
     storageConnectionString
@@ -107,9 +108,10 @@ async function startFuncProcess(appPath: string): Promise<void> {
             {
                 IsEncrypted: false,
                 Values: {
-                    [EnvVarNames.storage]: storageConnectionString,
                     FUNCTIONS_WORKER_RUNTIME: 'node',
                     logging__logLevel__Worker: 'debug',
+                    [EnvVarNames.storage]: storageConnectionString,
+                    [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
