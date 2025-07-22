@@ -12,6 +12,7 @@ export namespace CosmosDB {
     export const triggerAndOutputContainerName = 'e2eTestContainerTriggerAndOutput';
     export const triggerContainerName = 'e2eTestContainerTrigger';
     export const triggerDatabaseName = 'e2eTestDB';
+    export const partitionKey = 'testPartKey';
 }
 
 export namespace EventHub {

@@ -14,7 +14,7 @@ describe('cosmosDB', () => {
         const client = new CosmosClient(cosmosDBConnectionString);
         const container = client.database(CosmosDB.dbName).container(CosmosDB.triggerAndOutputContainerName);
         const testData = getRandomTestData();
-        const createdItem = await container.items.create({ testData, testPartKey: 'testPartKey' });
+        const createdItem = await container.items.create({ testData, testPartKey: CosmosDB.partitionKey });
 
         await waitForOutput(`cosmosDBTriggerAndOutput processed 1 documents`);
         await waitForOutput(`cosmosDBTriggerAndOutput was triggered by "${testData}"`);
