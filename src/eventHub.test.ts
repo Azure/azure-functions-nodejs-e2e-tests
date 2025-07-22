@@ -28,10 +28,10 @@ describe('eventHub', () => {
     });
 
     after(async () => {
-        void clientOneTriggerAndOutput.close();
-        void clientOneTrigger.close();
-        void clientManyTriggerAndOutput.close();
-        void clientManyTrigger.close();
+        void clientOneTriggerAndOutput?.close();
+        void clientOneTrigger?.close();
+        void clientManyTriggerAndOutput?.close();
+        void clientManyTrigger?.close();
     });
 
     describe('cardinality one', () => {
