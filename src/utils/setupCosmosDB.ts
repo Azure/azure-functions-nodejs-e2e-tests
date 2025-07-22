@@ -12,5 +12,8 @@ import { CosmosDB } from '../constants';
 export async function setupCosmosDB() {
   const client = new CosmosClient(cosmosDBConnectionString);
   await client.databases.createIfNotExists({ id: CosmosDB.triggerDatabaseName });
-  await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({ id: CosmosDB.triggerAndOutputContainerName });
+  await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
+    id: CosmosDB.triggerAndOutputContainerName,
+    partitionKey: { paths: ['/testPartKey'] },
+  });
 }
