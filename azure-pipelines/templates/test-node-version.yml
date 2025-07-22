@@ -21,9 +21,6 @@ steps:
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
       displayName: 'Install Azurite and Start EventHub Emulator'
     - bash: |
-        docker logs azurite
-      displayName: 'Show Azurite Logs'
-    - bash: |
         npm run ${{ parameters.testCommand }}
       displayName: 'Run tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
