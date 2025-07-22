@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { EventHubProducerClient } from '@azure/event-hubs';
-import { waitForOutput } from './global.test';
+import { isOldConfig, waitForOutput } from './global.test';
 import { eventHubConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { EventHub } from './constants';
@@ -14,7 +14,13 @@ describe('eventHub', () => {
     let clientManyTrigger: EventHubProducerClient;
 
 
-    before(() => {
+    before(function (this: Mocha.Context) {
+        // Old config (Exts bundles < 4.0.0) cannot use EventHub emulator
+        // Microsoft.Azure.Functions.Worker.Extensions.EventHubs bundle must be >= 6.3.0
+        // https://github.com/Azure/azure-event-hubs-emulator-installer/issues/15
+        if (isOldConfig) {
+            this.skip();
+        }
         clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTriggerAndOutput);
         clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTrigger);
         clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTriggerAndOutput);

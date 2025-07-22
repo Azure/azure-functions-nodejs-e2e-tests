@@ -3,7 +3,7 @@
 
 import { ContainerClient } from '@azure/storage-blob';
 import { QueueClient } from '@azure/storage-queue';
-// import { expect } from 'chai';
+import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
 import { model, waitForOutput } from './global.test';
@@ -59,30 +59,30 @@ describe('storage', () => {
         );
     });
 
-    // type TableItem = { PartitionKey: string; RowKey: string; Name: string };
+    type TableItem = { PartitionKey: string; RowKey: string; Name: string };
 
-    // it('table input and output', async () => {
-    //     const rowKey = getRandomTestData();
-    //     const items: TableItem[] = [
-    //         {
-    //             PartitionKey: 'e2eTestPartKey',
-    //             RowKey: rowKey,
-    //             Name: 'e2eTestName',
-    //         },
-    //     ];
-    //     const responseOut = await fetch(getFuncUrl('httpTriggerTableOutput'), {
-    //         method: 'POST',
-    //         body: JSON.stringify(items),
-    //     });
-    //     expect(responseOut.status).to.equal(201);
-    //     await waitForOutput(`httpTriggerTableOutput was triggered`);
+    it('table input and output', async () => {
+        const rowKey = getRandomTestData();
+        const items: TableItem[] = [
+            {
+                PartitionKey: 'e2eTestPartKey',
+                RowKey: rowKey,
+                Name: 'e2eTestName',
+            },
+        ];
+        const responseOut = await fetch(getFuncUrl('httpTriggerTableOutput'), {
+            method: 'POST',
+            body: JSON.stringify(items),
+        });
+        expect(responseOut.status).to.equal(201);
+        await waitForOutput(`httpTriggerTableOutput was triggered`);
 
-    //     const responseIn = await fetch(getFuncUrl(`httpTriggerTableInput/${rowKey}`), { method: 'GET' });
-    //     expect(responseIn.status).to.equal(200);
-    //     const result = await responseIn.json();
-    //     expect(result).to.deep.equal(items);
-    //     await waitForOutput(`httpTriggerTableInput was triggered`);
-    // });
+        const responseIn = await fetch(getFuncUrl(`httpTriggerTableInput/${rowKey}`), { method: 'GET' });
+        expect(responseIn.status).to.equal(200);
+        const result = await responseIn.json();
+        expect(result).to.deep.equal(items);
+        await waitForOutput(`httpTriggerTableInput was triggered`);
+    });
 
     // Test for bug https://github.com/Azure/azure-functions-nodejs-library/issues/179
     it('Shared output bug', async function (this: Mocha.Context) {

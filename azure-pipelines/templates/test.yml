@@ -29,10 +29,10 @@ jobs:
             nodeVersion: 22.x
 
       # Run tests for old config (just one Node.js version is enough)
-      # - template: /azure-pipelines/templates/test-node-version.yml@self
-      #   parameters:
-      #       nodeVersion: 18.x
-      #       testCommand: testOldConfig
+      - template: /azure-pipelines/templates/test-node-version.yml@self
+        parameters:
+            nodeVersion: 18.x
+            testCommand: testOldConfig
 
       - task: PublishTestResults@2
         displayName: 'Publish Unit Test Results'
