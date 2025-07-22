@@ -13,6 +13,10 @@ export async function setupCosmosDB() {
   const client = new CosmosClient(cosmosDBConnectionString);
   await client.databases.createIfNotExists({ id: CosmosDB.triggerDatabaseName });
   await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
+    id: CosmosDB.triggerContainerName,
+    partitionKey: { paths: ['/testPartKey'], kind: PartitionKeyKind.Hash }
+  });
+  await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
     id: CosmosDB.triggerAndOutputContainerName,
     partitionKey: { paths: ['/testPartKey'], kind: PartitionKeyKind.Hash }
   });
