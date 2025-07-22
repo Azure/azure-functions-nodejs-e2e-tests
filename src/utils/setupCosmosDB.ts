@@ -5,7 +5,7 @@
 // Otherwise the following error will occur:
 // Microsoft.Azure.Cosmos.Client: This builder instance has already been used to build a processor. Create a new instance to build another.
 
-import { CosmosClient } from '@azure/cosmos';
+import { CosmosClient, PartitionKeyKind } from '@azure/cosmos';
 import { cosmosDBConnectionString } from './connectionStrings';
 import { CosmosDB } from '../constants';
 
@@ -14,6 +14,6 @@ export async function setupCosmosDB() {
   await client.databases.createIfNotExists({ id: CosmosDB.triggerDatabaseName });
   await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
     id: CosmosDB.triggerAndOutputContainerName,
-    partitionKey: { paths: ['/testPartKey'] },
+    partitionKey: { paths: ['/testPartKey'], kind: PartitionKeyKind.Hash }
   });
 }
