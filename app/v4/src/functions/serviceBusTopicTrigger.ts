@@ -10,6 +10,6 @@ export async function serviceBusTopicTrigger(message: unknown, context: Invocati
 app.serviceBusTopic('serviceBusTopicTrigger', {
     connection: 'ServiceBusConnection',
     topicName: 'e2e-test-topic-trigger',
-    subscriptionName: 'e2etestsub',
+    subscriptionName: 'e2e-test-sub',
     handler: serviceBusTopicTrigger,
 });

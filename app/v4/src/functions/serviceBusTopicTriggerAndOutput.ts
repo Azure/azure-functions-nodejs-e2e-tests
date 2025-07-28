@@ -11,7 +11,7 @@ export async function serviceBusTopicTriggerAndOutput(message: unknown, context:
 app.serviceBusTopic('serviceBusTopicTriggerAndOutput', {
     connection: 'ServiceBusConnection',
     topicName: 'e2e-test-topic-trigger-and-output',
-    subscriptionName: 'e2etestsub',
+    subscriptionName: 'e2e-test-sub',
     return: output.serviceBusTopic({
         connection: 'ServiceBusConnection',
         topicName: 'e2e-test-topic-trigger',

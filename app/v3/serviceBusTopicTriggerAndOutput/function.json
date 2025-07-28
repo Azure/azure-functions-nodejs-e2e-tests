@@ -5,7 +5,7 @@
             "type": "serviceBusTrigger",
             "direction": "in",
             "topicName": "e2e-test-topic-trigger-and-output",
-            "subscriptionName": "e2etestsub",
+            "subscriptionName": "e2e-test-sub",
             "connection": "ServiceBusConnection"
         },
         {
