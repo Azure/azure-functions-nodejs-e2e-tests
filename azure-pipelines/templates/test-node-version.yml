@@ -19,7 +19,12 @@ steps:
     - bash: |
         docker compose -f src/utils/eventhub/docker-compose.yml pull
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
-      displayName: 'Install Azurite and Start EventHub Emulator'
+      displayName: 'Start Azurite and EventHub Emulator'
+      condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
+    - bash: |
+        docker compose -f src/utils/servicebus/docker-compose.yml pull
+        docker compose -f src/utils/servicebus/docker-compose.yml up -d
+      displayName: 'Start Azurite ServiceBus Emulator'
       condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
     - bash: |
         npm run ${{ parameters.testCommand }}
