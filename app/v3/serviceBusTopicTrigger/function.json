@@ -4,9 +4,9 @@
             "name": "mySbMsg",
             "type": "serviceBusTrigger",
             "direction": "in",
-            "topicName": "e2eTestTopicTrigger",
+            "topicName": "e2e-test-topic-trigger",
             "subscriptionName": "e2etestsub",
-            "connection": "e2eTest_serviceBus"
+            "connection": "ServiceBusConnection"
         }
     ],
     "scriptFile": "../dist/serviceBusTopicTrigger/index.js"

@@ -5,6 +5,7 @@ export namespace EnvVarNames {
     export const storage = 'AzureWebJobsStorage';
     export const cosmosDB = 'CosmosDBConnection';
     export const eventHub = 'EventHubConnection';
+    export const serviceBus = 'ServiceBusConnection';
 }
 
 export namespace CosmosDB {
@@ -20,6 +21,15 @@ export namespace EventHub {
     export const eventHubManyTriggerAndOutput = 'e2e-test-hub-many-trigger-and-output';
     export const eventHubOneTrigger = 'e2e-test-hub-one-trigger';
     export const eventHubManyTrigger = 'e2e-test-hub-many-trigger';
+}
+
+export namespace ServiceBus {
+    export const serviceBusQueueOneTriggerAndOutput = 'e2e-test-queue-one-trigger-and-output';
+    export const serviceBusQueueOneTrigger = 'e2e-test-queue-one-trigger';
+    export const serviceBusQueueManyTriggerAndOutput = 'e2e-test-queue-many-trigger-and-output';
+    export const serviceBusQueueManyTrigger = 'e2e-test-queue-many-trigger';
+    export const serviceBusTopicTriggerAndOutput = 'e2e-test-topic-trigger-and-output';
+    export const serviceBusTopicTrigger = 'e2e-test-topic-trigger';
 }
 
 export const defaultTimeout = 3 * 60 * 1000;

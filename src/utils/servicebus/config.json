@@ -1,0 +1,70 @@
+{
+    "UserConfig": {
+     "Namespaces": [
+       {
+         "Name": "sbemulatorns",
+         "Queues": [
+           {
+             "Name": "e2e-test-queue-one-trigger",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           },
+           {
+             "Name": "e2e-test-queue-many-trigger",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           },
+           {
+             "Name": "e2e-test-queue-one-trigger-and-output",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           },
+           {
+             "Name": "e2e-test-queue-many-trigger-and-output",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           }
+         ]
+       }
+     ],
+     "Logging": {
+       "Type": "File"
+     }
+  }
+}

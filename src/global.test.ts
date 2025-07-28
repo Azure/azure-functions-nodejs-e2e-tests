@@ -11,6 +11,7 @@ import {
     cosmosDBConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
+    serviceBusConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
 import { setupCosmosDB } from './utils/setupCosmosDB';
@@ -116,6 +117,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
+                    [EnvVarNames.serviceBus]: serviceBusConnectionString,
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
             },
