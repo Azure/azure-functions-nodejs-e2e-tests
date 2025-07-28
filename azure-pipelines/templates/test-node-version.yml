@@ -17,16 +17,25 @@ steps:
         docker ps
       displayName: "Start CosmosDB Emulator"
     # - bash: |
-    #     docker compose -f src/utils/eventhub/docker-compose.yml pull
-    #     docker compose -f src/utils/eventhub/docker-compose.yml up -d
-    #   displayName: 'Start Azurite and EventHub Emulator'
+    #     docker run -d \
+    #       --name shared-azurite \
+    #       -p 10000:10000 \
+    #       -p 10001:10001 \
+    #       -p 10002:10002 \
+    #       mcr.microsoft.com/azure-storage/azurite:latest
+    #   displayName: 'Start Shared Azurite Emulator'
     #   condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
+    - bash: |
+        docker compose -f src/utils/eventhub/docker-compose.yml pull
+        docker compose -f src/utils/eventhub/docker-compose.yml up -d
+      displayName: 'Start EventHub Emulator'
+      condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
       env:
         AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
-      displayName: 'Start Azurite and ServiceBus Emulator'
+      displayName: 'Start ServiceBus Emulator'
       condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
     - bash: |
         npm run ${{ parameters.testCommand }}
