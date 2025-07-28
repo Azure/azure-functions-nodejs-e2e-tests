@@ -25,11 +25,11 @@ steps:
     #       mcr.microsoft.com/azure-storage/azurite:latest
     #   displayName: 'Start Shared Azurite Emulator'
     #   condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
-    - bash: |
-        docker compose -f src/utils/eventhub/docker-compose.yml pull
-        docker compose -f src/utils/eventhub/docker-compose.yml up -d
-      displayName: 'Start EventHub Emulator'
-      condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
+    # - bash: |
+    #     docker compose -f src/utils/eventhub/docker-compose.yml pull
+    #     docker compose -f src/utils/eventhub/docker-compose.yml up -d
+    #   displayName: 'Start EventHub Emulator'
+    #   condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
