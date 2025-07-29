@@ -42,7 +42,7 @@
         "@azure/arm-servicebus": "^6.1.0",
         "@azure/arm-sql": "^10.0.0",
         "@azure/arm-storage": "^18.1.0",
-        "@azure/cosmos": "^3.17.3",
+        "@azure/cosmos": "^4.5.0",
         "@azure/data-tables": "^13.2.2",
         "@azure/event-hubs": "^5.10.0",
         "@azure/identity": "^3.4.2",
