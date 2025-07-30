@@ -27,54 +27,33 @@ export async function runSqlSetupQueries() {
         await poolConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
         await poolConnection.changeUser({ database: dbName });
 
-        for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
-          await poolConnection.query(`
-            CREATE TABLE IF NOT EXISTS \`${table}_changes\` (
-              id CHAR(36),
-              action ENUM('INSERT', 'UPDATE', 'DELETE'),
-              changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-          `);
+        // for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
+        //   await poolConnection.query(`
+        //     CREATE TABLE IF NOT EXISTS \`${table}_changes\` (
+        //       id CHAR(36),
+        //       action ENUM('INSERT', 'UPDATE', 'DELETE'),
+        //       changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        //     );
+        //   `);
 
-          await poolConnection.query(`
-            CREATE TRIGGER IF NOT EXISTS ${table}_after_insert
-            AFTER INSERT ON \`${table}\`
-            FOR EACH ROW
-            INSERT INTO \`${table}_changes\` (id, action) VALUES (NEW.id, 'INSERT');
-          `);
-        }
+        //   await poolConnection.query(`
+        //     CREATE TRIGGER IF NOT EXISTS ${table}_after_insert
+        //     AFTER INSERT ON \`${table}\`
+        //     FOR EACH ROW
+        //     INSERT INTO \`${table}_changes\` (id, action) VALUES (NEW.id, 'INSERT');
+        //   `);
+        // }
     } finally {
         await poolConnection.end();
     }
 }
 
 export async function createPoolConnnection(): Promise<mysql.Connection> {
-    const retries = 5;
-    return retry(
-        async (currentAttempt: number) => {
-            if (currentAttempt > 1) {
-                console.log(
-                    `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
-                );
-            }
-            return mysql.createConnection({
-                host: 'localhost',
-                user: 'user',
-                password: 'password',
-                database: 'e2eTestDB',
-                port: 3307
-            });
-        },
-        {
-            retries: retries,
-            minTimeout: 5 * 1000,
-            onFailedAttempt: (error) => {
-                if (!/ip address/i.test(error?.message || '')) {
-                    throw error; // abort for an unrecognized error
-                } else if (error.retriesLeft > 0) {
-                    console.log(`Warning: Failed to sql connect with error "${error.message}"`);
-                }
-            },
-        }
-    );
+    return mysql.createConnection({
+      host: 'localhost',
+      user: 'user',
+      password: 'password',
+      database: 'testdb',
+      port: 3307
+  });
 }
