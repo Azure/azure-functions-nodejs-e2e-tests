@@ -51,7 +51,7 @@ export async function createPoolConnnection(): Promise<mysql.Connection> {
                 host: 'localhost',
                 user: 'user',
                 password: 'password',
-                database: 'testdb',
+                database: 'e2eTestDB',
                 port: 3307
             });
         },
