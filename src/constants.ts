@@ -6,14 +6,7 @@ export namespace EnvVarNames {
     export const cosmosDB = 'CosmosDBConnection';
     export const eventHub = 'EventHubConnection';
     export const serviceBus = 'ServiceBusConnection';
-}
-
-export namespace CosmosDB {
-    export const dbName = 'e2eTestDB';
-    export const triggerAndOutputContainerName = 'e2eTestContainerTriggerAndOutput';
-    export const triggerContainerName = 'e2eTestContainerTrigger';
-    export const triggerDatabaseName = 'e2eTestDB';
-    export const partitionKey = 'testPartKey';
+    export const sql = 'SqlConnection';
 }
 
 export namespace CosmosDB {

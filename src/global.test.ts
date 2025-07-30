@@ -12,9 +12,11 @@ import {
     eventHubConnectionString,
     initializeConnectionStrings,
     serviceBusConnectionString,
+    sqlConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+import { runSqlSetupQueries } from './utils/sql/setupSql';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
@@ -42,6 +44,8 @@ before(async function (this: Mocha.Context): Promise<void> {
     await initializeConnectionStrings();
 
     await setupCosmosDB();
+
+    await runSqlSetupQueries();
 
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig
@@ -118,6 +122,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
+                    [EnvVarNames.sql]: sqlConnectionString,
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
             },
