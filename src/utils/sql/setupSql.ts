@@ -5,8 +5,6 @@ import { SqlManagementClient } from '@azure/arm-sql';
 import * as sql from 'mssql';
 import { default as fetch } from 'node-fetch';
 import retry from 'p-retry';
-import { createSecret, getSecret } from './keyVault';
-import { ResourceInfo } from './ResourceInfo';
 
 /**
  * Various helpful sql docs:
