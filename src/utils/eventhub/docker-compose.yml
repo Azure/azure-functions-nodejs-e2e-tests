@@ -6,7 +6,7 @@ services:
     volumes:
       - "./config.json:/Eventhubs_Emulator/ConfigFiles/Config.json"
     ports:
-      - "5672:5672"
+      - "6672:5672"
       - "9092:9092"
       - "5300:5300"
     environment:

@@ -6,7 +6,7 @@ services:
     volumes:
       - "./config.json:/ServiceBus_Emulator/ConfigFiles/Config.json"
     ports:
-      - "5673:5673"
+      - "5672:5672"
     environment:
       SQL_SERVER: sqledge
       MSSQL_SA_PASSWORD: $(AzureWebJobsSQLPassword)

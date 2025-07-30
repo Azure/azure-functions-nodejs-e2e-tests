@@ -6,8 +6,8 @@
 // Microsoft.Azure.Cosmos.Client: This builder instance has already been used to build a processor. Create a new instance to build another.
 
 import { CosmosClient, PartitionKeyKind } from '@azure/cosmos';
-import { cosmosDBConnectionString } from './connectionStrings';
-import { CosmosDB } from '../constants';
+import { cosmosDBConnectionString } from '../connectionStrings';
+import { CosmosDB } from '../../constants';
 
 export async function setupCosmosDB() {
   const partitionKeyPath = `/${CosmosDB.partitionKey}`;

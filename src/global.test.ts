@@ -14,7 +14,7 @@ import {
     serviceBusConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
-import { setupCosmosDB } from './utils/setupCosmosDB';
+import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
