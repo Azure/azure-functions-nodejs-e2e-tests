@@ -78,6 +78,7 @@
         "mocha-junit-reporter": "^2.0.2",
         "mocha-multi-reporters": "^1.5.1",
         "mssql": "^10.0.2",
+        "mysql2": "^3.14.3",
         "node-fetch": "2.6.7",
         "p-retry": "^4.0.0",
         "prettier": "^2.4.1",

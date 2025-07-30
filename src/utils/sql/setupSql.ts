@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as sql from 'mssql';
+import mysql from 'mysql2/promise';
 import retry from 'p-retry';
-import { sqlConnectionString } from '../connectionStrings';
 
 /**
  * Various helpful sql docs:
@@ -25,24 +24,21 @@ export async function runSqlSetupQueries() {
     const poolConnection = await createPoolConnnection();
 
     try {
-        await poolConnection
-            .request()
-            .query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
+        await poolConnection.query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
 
         for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
             await poolConnection
-                .request()
                 .query(
                     `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
                 );
-            await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+            await poolConnection.query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
         }
     } finally {
-        await poolConnection.close();
+        await poolConnection.end();
     }
 }
 
-export async function createPoolConnnection(): Promise<sql.ConnectionPool> {
+export async function createPoolConnnection(): Promise<mysql.Connection> {
     const retries = 5;
     return retry(
         async (currentAttempt: number) => {
@@ -51,7 +47,13 @@ export async function createPoolConnnection(): Promise<sql.ConnectionPool> {
                     `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
                 );
             }
-            return sql.connect(sqlConnectionString);
+            return mysql.createConnection({
+                host: 'localhost',
+                user: 'user',
+                password: 'password',
+                database: 'testdb',
+                port: 3307
+            });
         },
         {
             retries: retries,

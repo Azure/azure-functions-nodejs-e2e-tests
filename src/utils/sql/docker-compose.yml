@@ -1,36 +1,17 @@
-# name: mysql-database
-# services:
-#   mysql:
-#     container_name: "mysql"
-#     image: "mysql:8.0"
-#     ports:
-#       - "3307:3306"
-#     environment:
-#       MYSQL_ROOT_PASSWORD: password
-#       MYSQL_DATABASE: testdb
-#       MYSQL_USER: user
-#       MYSQL_PASSWORD: password
-#     networks:
-#       - mysql-network
-# networks:
-#   mysql-network:
-#     driver: bridge
-
-version: '3.8'
-
+name: mysql-database
 services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: mssql
-    environment:
-      SA_PASSWORD: "YourStrong!Passw0rd"
-      ACCEPT_EULA: "Y"
+  mysql:
+    container_name: "mysql"
+    image: "mysql:8.0"
     ports:
-      - "1433:1433"
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     networks:
-      - mssql-network
-    restart: unless-stopped
-
+      - mysql-network
 networks:
-  mssql-network:
+  mysql-network:
     driver: bridge
