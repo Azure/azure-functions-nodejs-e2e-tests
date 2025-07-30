@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import mysql from 'mysql2/promise';
-import retry from 'p-retry';
 
 /**
  * Various helpful sql docs:
