@@ -24,14 +24,24 @@ export async function runSqlSetupQueries() {
     const poolConnection = await createPoolConnnection();
 
     try {
-        await poolConnection.query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
+        await poolConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
+        await poolConnection.changeUser({ database: dbName });
 
         for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
-            await poolConnection
-                .query(
-                    `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
-                );
-            await poolConnection.query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+          await poolConnection.query(`
+            CREATE TABLE IF NOT EXISTS \`${table}_changes\` (
+              id CHAR(36),
+              action ENUM('INSERT', 'UPDATE', 'DELETE'),
+              changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+          `);
+
+          await poolConnection.query(`
+            CREATE TRIGGER IF NOT EXISTS ${table}_after_insert
+            AFTER INSERT ON \`${table}\`
+            FOR EACH ROW
+            INSERT INTO \`${table}_changes\` (id, action) VALUES (NEW.id, 'INSERT');
+          `);
         }
     } finally {
         await poolConnection.end();
