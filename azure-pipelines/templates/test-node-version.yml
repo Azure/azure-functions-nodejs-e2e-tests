@@ -9,6 +9,11 @@ steps:
       displayName: 'Install Node ${{ parameters.nodeVersion }}'
       retryCountOnTaskFailure: 10
     - bash: |
+        docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+        docker run --detach --publish 8081:8081 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+        docker ps
+      displayName: "Start CosmosDB Emulator"
+    - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
       env:
@@ -23,11 +28,6 @@ steps:
         docker compose -f src/utils/eventhub/docker-compose.yml pull
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
-    - bash: |
-        docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
-        docker run --detach --publish 8081:8081 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
-        docker ps
-      displayName: "Start CosmosDB Emulator"
     # - bash: |
     #     docker compose -f src/utils/sql/docker-compose.yml pull
     #     docker compose -f src/utils/sql/docker-compose.yml up -d
