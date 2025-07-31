@@ -5,7 +5,7 @@ import globby from 'globby';
 import Mocha from 'mocha';
 import path from 'path';
 import { defaultTimeout } from './constants';
-import { getModelArg, getOldConfigArg } from './getModelArg';
+import { getModelArg, getOldConfigArg, getTestFileFilter } from './getModelArg';
 
 export async function run(): Promise<void> {
     try {
@@ -28,13 +28,11 @@ export async function run(): Promise<void> {
         const mocha = new Mocha(options);
 
         let files: string[] = await globby('**/*.test.js', { cwd: __dirname });
-        const onlyTest = process.env.ONLY_TEST;
-        const excludeTest = process.env.EXCLUDE_TEST;
-
-        if (onlyTest) {
-            files = files.filter((f) => f.endsWith(onlyTest));
-        } else if (excludeTest) {
-            files = files.filter((f) => !f.endsWith(excludeTest));
+        const { only, exclude } = getTestFileFilter();
+        if (only) {
+            files = files.filter(f => f.endsWith(only));
+        } else if (exclude) {
+            files = files.filter(f => !f.endsWith(exclude));
         }
 
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
