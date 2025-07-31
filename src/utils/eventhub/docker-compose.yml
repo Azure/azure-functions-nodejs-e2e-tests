@@ -20,7 +20,7 @@ services:
         aliases:
           - "eventhubs-emulator"
   azurite:
-    container_name: "azurite"
+    container_name: "azurite-eh"
     image: "mcr.microsoft.com/azure-storage/azurite:latest"
     ports:
       - "10003:10003"
@@ -29,6 +29,6 @@ services:
     networks:
       eh-emulator:
         aliases:
-          - "azurite"
+          - "azurite-eh"
 networks:
   eh-emulator:
