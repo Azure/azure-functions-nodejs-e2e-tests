@@ -16,7 +16,6 @@ import {
     storageConnectionString
 } from './utils/connectionStrings';
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
-import { runSqlSetupQueries } from './utils/sql/setupSql';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 
