@@ -53,6 +53,6 @@ export async function createPoolConnnection(): Promise<mysql.Connection> {
       user: 'user',
       password: 'password',
       database: 'testdb',
-      port: 3307
+      port: 3307,
   });
 }

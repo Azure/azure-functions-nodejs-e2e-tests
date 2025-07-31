@@ -45,7 +45,7 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await setupCosmosDB();
 
-    await runSqlSetupQueries();
+    // await runSqlSetupQueries();
 
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig
