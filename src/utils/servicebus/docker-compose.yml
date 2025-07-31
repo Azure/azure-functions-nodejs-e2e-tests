@@ -16,7 +16,7 @@ services:
     networks:
       sb-emulator:
         aliases:
-          - "sb-emulator"
+          - "servicebus-emulator"
   sqledge:
         container_name: "sqledge"
         image: "mcr.microsoft.com/azure-sql-edge:latest"

@@ -1,47 +1,37 @@
 parameters:
     - name: nodeVersion
       type: string
-    - name: testCommand
-      type: string
-      default: test
 
 steps:
     - task: NodeTool@0
       inputs:
-          versionSpec: ${{ parameters.nodeVersion }}
+        versionSpec: ${{ parameters.nodeVersion }}
       displayName: 'Install Node ${{ parameters.nodeVersion }}'
       retryCountOnTaskFailure: 10
+    - bash: |
+        docker compose -f src/utils/servicebus/docker-compose.yml pull
+        docker compose -f src/utils/servicebus/docker-compose.yml up -d
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+      displayName: 'Start ServiceBus Emulator'
+    - bash: npm run testServiceBus
+      displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
+      continueOnError: true
+    - bash: |
+        docker stop servicebus-emulator
+        docker container rm --force servicebus-emulator
+        docker compose -f src/utils/eventhub/docker-compose.yml pull
+        docker compose -f src/utils/eventhub/docker-compose.yml up -d
+      displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
     - bash: |
         docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
         docker run --detach --publish 8081:8081 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
         docker ps
       displayName: "Start CosmosDB Emulator"
-    - bash: |
-        docker compose -f src/utils/sql/docker-compose.yml pull
-        docker compose -f src/utils/sql/docker-compose.yml up -d
-      displayName: "Start MySQL Service"
     # - bash: |
-    #     docker run -d \
-    #       --name shared-azurite \
-    #       -p 10000:10000 \
-    #       -p 10001:10001 \
-    #       -p 10002:10002 \
-    #       mcr.microsoft.com/azure-storage/azurite:latest
-    #   displayName: 'Start Shared Azurite Emulator'
-    #   condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
-    - bash: |
-        docker compose -f src/utils/eventhub/docker-compose.yml pull
-        docker compose -f src/utils/eventhub/docker-compose.yml up -d
-      displayName: 'Start EventHub Emulator'
-      condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
-    # - bash: |
-    #     docker compose -f src/utils/servicebus/docker-compose.yml pull
-    #     docker compose -f src/utils/servicebus/docker-compose.yml up -d
-    #   env:
-    #     AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
-    #   displayName: 'Start ServiceBus Emulator'
-    #   condition: and(succeeded(), ne('${{ parameters.testCommand }}', 'testOldConfig'))
-    - bash: |
-        npm run ${{ parameters.testCommand }}
-      displayName: 'Run tests Node ${{ parameters.nodeVersion }}'
+    #     docker compose -f src/utils/sql/docker-compose.yml pull
+    #     docker compose -f src/utils/sql/docker-compose.yml up -d
+    #   displayName: "Start MySQL Service"
+    - bash: npm run testAllExceptServiceBus
+      displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true

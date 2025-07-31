@@ -27,7 +27,15 @@ export async function run(): Promise<void> {
 
         const mocha = new Mocha(options);
 
-        const files: string[] = await globby('**/**.test.js', { cwd: __dirname });
+        let files: string[] = await globby('**/*.test.js', { cwd: __dirname });
+        const onlyTest = process.env.ONLY_TEST;
+        const excludeTest = process.env.EXCLUDE_TEST;
+
+        if (onlyTest) {
+            files = files.filter((f) => f.endsWith(onlyTest));
+        } else if (excludeTest) {
+            files = files.filter((f) => !f.endsWith(excludeTest));
+        }
 
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
 
