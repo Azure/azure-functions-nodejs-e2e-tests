@@ -71,7 +71,7 @@ export async function getSqlConnectionString(): Promise<string> {
     const server = 'localhost'; // or 'sqlserver' if running in another container
     const port = 1433;
     const user = 'sa';
-    const password = process.env.AzureWebJobsSQLPassword || 'yourStrong(!)Password'; // use your actual password
+    const password = process.env.AzureWebJobsSQLPassword || 'thispassworddoesntmatter457!'; // use your actual password
     const database = dbName;
 
     return `Server=${server},${port};Database=${database};User Id=${user};Password=${password};Encrypt=false;TrustServerCertificate=true;`;
