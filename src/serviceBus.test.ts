@@ -4,7 +4,7 @@
 import { ServiceBusClient } from '@azure/service-bus';
 import { default as fetch } from 'node-fetch';
 import { getFuncUrl } from './constants';
-import { waitForOutput } from './global.test';
+import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { serviceBusConnectionString } from './utils/connectionStrings';
 import { ServiceBus } from './constants';
@@ -12,12 +12,15 @@ import { ServiceBus } from './constants';
 describe('serviceBus', () => {
     let client: ServiceBusClient;
 
-    before(() => {
+    before(function (this: Mocha.Context) {
+        if (isOldConfig) {
+          this.skip();
+        }
         client = new ServiceBusClient(serviceBusConnectionString);
     });
 
     after(async () => {
-        void client.close();
+        void client?.close();
     });
 
     it('queue trigger and output', async () => {
