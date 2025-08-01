@@ -1,6 +1,9 @@
 parameters:
     - name: nodeVersion
       type: string
+    - name: runOldConfig
+      type: boolean
+      default: false
 
 steps:
     - task: NodeTool@0
@@ -36,3 +39,7 @@ steps:
       continueOnError: 
     - bash: docker stop eventhubs-emulator
       displayName: 'Stop EventHub Emulator'
+    - bash: npm run testOldConfig
+      displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
+      condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))
+      continueOnError: true
