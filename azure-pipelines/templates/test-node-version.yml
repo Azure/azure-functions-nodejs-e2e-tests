@@ -1,9 +1,6 @@
 parameters:
     - name: nodeVersion
       type: string
-    - name: runOldConfig
-      type: boolean
-      default: false
 
 steps:
     - task: NodeTool@0
@@ -31,14 +28,11 @@ steps:
       continueOnError: true
     - bash: |
         docker stop servicebus-emulator
-        docker container rm --force servicebus-emulator
         docker compose -f src/utils/eventhub/docker-compose.yml pull
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
     - bash: npm run testAllExceptServiceBus
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
-      continueOnError: true
-    - bash: npm run testOldConfig
-      displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
-      condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))
-      continueOnError: true
+      continueOnError: 
+    - bash: docker stop eventhubs-emulator
+      displayName: 'Stop EventHub Emulator'
