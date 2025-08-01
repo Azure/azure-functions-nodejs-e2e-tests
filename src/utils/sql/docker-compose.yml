@@ -1,17 +1,16 @@
-name: mysql-database
+name: mssql-database
 services:
-  mysql:
-    container_name: "mysql"
-    image: "mysql:8.0"
-    ports:
-      - "3307:3306"
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: sqlserver
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: testdb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MSSQL_SA_PASSWORD: $(AzureWebJobsSQLPassword)
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
     networks:
-      - mysql-network
+      - sqlnetwork
+
 networks:
-  mysql-network:
+  sqlnetwork:
     driver: bridge

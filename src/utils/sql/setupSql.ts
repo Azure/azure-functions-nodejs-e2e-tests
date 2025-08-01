@@ -1,7 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import mysql from 'mysql2/promise';
+import * as sql from 'mssql';
+import retry from 'p-retry';
 
 /**
  * Various helpful sql docs:
@@ -20,39 +21,58 @@ export const sqlSecretName = 'e2eSqlSecret';
  * create tables and enable change tracking for trigger
  */
 export async function runSqlSetupQueries() {
-    const poolConnection = await createPoolConnnection();
+    const connectionString = await getSqlConnectionString();
+    const poolConnection = await createPoolConnnection(connectionString);
 
     try {
-        await poolConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
-        await poolConnection.changeUser({ database: dbName });
+        await poolConnection
+            .request()
+            .query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
 
-        // for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
-        //   await poolConnection.query(`
-        //     CREATE TABLE IF NOT EXISTS \`${table}_changes\` (
-        //       id CHAR(36),
-        //       action ENUM('INSERT', 'UPDATE', 'DELETE'),
-        //       changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        //     );
-        //   `);
-
-        //   await poolConnection.query(`
-        //     CREATE TRIGGER IF NOT EXISTS ${table}_after_insert
-        //     AFTER INSERT ON \`${table}\`
-        //     FOR EACH ROW
-        //     INSERT INTO \`${table}_changes\` (id, action) VALUES (NEW.id, 'INSERT');
-        //   `);
-        // }
+        for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
+            await poolConnection
+                .request()
+                .query(
+                    `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
+                );
+            await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+        }
     } finally {
-        await poolConnection.end();
+        await poolConnection.close();
     }
 }
 
-export async function createPoolConnnection(): Promise<mysql.Connection> {
-    return mysql.createConnection({
-      host: 'localhost',
-      user: 'user',
-      password: 'password',
-      database: 'testdb',
-      port: 3307,
-  });
+export async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
+    const retries = 5;
+    return retry(
+        async (currentAttempt: number) => {
+            if (currentAttempt > 1) {
+                console.log(
+                    `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
+                );
+            }
+            return sql.connect(connectionString);
+        },
+        {
+            retries: retries,
+            minTimeout: 5 * 1000,
+            onFailedAttempt: (error) => {
+                if (!/ip address/i.test(error?.message || '')) {
+                    throw error; // abort for an unrecognized error
+                } else if (error.retriesLeft > 0) {
+                    console.log(`Warning: Failed to sql connect with error "${error.message}"`);
+                }
+            },
+        }
+    );
+}
+
+export async function getSqlConnectionString(): Promise<string> {
+    const server = 'localhost'; // or 'sqlserver' if running in another container
+    const port = 1433;
+    const user = 'sa';
+    const password = process.env.AzureWebJobsSQLPassword || 'yourStrong(!)Password'; // use your actual password
+    const database = dbName;
+
+    return `Server=${server},${port};Database=${database};User Id=${user};Password=${password};Encrypt=false;TrustServerCertificate=true;`;
 }

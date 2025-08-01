@@ -17,14 +17,15 @@ steps:
         sleep 60
         docker ps
       displayName: "Start CosmosDB Emulator"
-    # - bash: |
-    #     docker compose -f src/utils/sql/docker-compose.yml pull
-    #     docker compose -f src/utils/sql/docker-compose.yml up -d
-    #   displayName: "Start MySQL Service"
+    - bash: |
+        docker compose -f src/utils/sql/docker-compose.yml pull
+        docker compose -f src/utils/sql/docker-compose.yml up -d
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+      displayName: "Start MSSQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
-        sleep 30
       env:
         AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
       displayName: 'Start ServiceBus Emulator'
@@ -36,7 +37,6 @@ steps:
         docker rm -f servicebus-emulator || true
         docker compose -f src/utils/eventhub/docker-compose.yml pull
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
-        sleep 30
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
     - bash: npm run testAllExceptServiceBus
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
@@ -50,4 +50,5 @@ steps:
         docker rm -f cosmosdb-emulator || true
         docker compose -f src/utils/eventhub/docker-compose.yml down -v
         docker compose -f src/utils/servicebus/docker-compose.yml down -v
-      displayName: 'Stop all emulators'
+        docker compose -f src/utils/sql/docker-compose.yml down -v
+      displayName: 'Stop all resources'

@@ -7,8 +7,9 @@
 // import { v4 as uuid } from 'uuid';
 // import { getFuncUrl } from './constants';
 // import { isOldConfig, waitForOutput } from './global.test';
+// import { sqlConnectionString } from './resources/connectionStrings';
+// import { createPoolConnnection, sqlTriggerTable } from './resources/sql';
 // import { getRandomTestData } from './utils/getRandomTestData';
-// import { createPoolConnnection } from './utils/sql/setupSql';
 
 // describe('sql', () => {
 //     let poolConnection: ConnectionPool | undefined;
@@ -17,7 +18,7 @@
 //             this.skip();
 //         }
 
-//         poolConnection = await createPoolConnnection();
+//         poolConnection = await createPoolConnnection(sqlConnectionString);
 //     });
 
 //     after(async () => {
