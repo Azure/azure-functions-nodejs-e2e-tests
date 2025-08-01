@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as sql from 'mssql';
-import retry from 'p-retry';
+// import retry from 'p-retry';
 
 /**
  * Various helpful sql docs:
