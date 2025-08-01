@@ -21,7 +21,8 @@ steps:
         docker compose -f src/utils/sql/docker-compose.yml pull
         docker compose -f src/utils/sql/docker-compose.yml up -d
       env:
-        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+        MSSQL_SA_PASSWORD: "placeholderForContainer@1475"
+        SA_PASSWORD: "placeholderForContainer@1475"
       displayName: "Start MSSQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
