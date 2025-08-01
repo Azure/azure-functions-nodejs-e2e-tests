@@ -36,7 +36,7 @@ steps:
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
     - bash: npm run testAllExceptServiceBus
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
-      continueOnError: 
+      continueOnError: true
     - bash: docker stop eventhubs-emulator
       displayName: 'Stop EventHub Emulator'
     - bash: npm run testOldConfig
