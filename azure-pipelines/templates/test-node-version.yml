@@ -34,9 +34,7 @@ steps:
       continueOnError: true
     - bash: |
         docker logs sqlserver
-      env:
-        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
-      displayName: 'Start ServiceBus Emulator'
+      displayName: 'SQL server logs'
     - bash: |
         docker stop servicebus-emulator || true
         docker rm -f servicebus-emulator || true
