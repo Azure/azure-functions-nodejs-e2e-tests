@@ -33,6 +33,11 @@ steps:
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
+        docker logs sqlserver
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+      displayName: 'Start ServiceBus Emulator'
+    - bash: |
         docker stop servicebus-emulator || true
         docker rm -f servicebus-emulator || true
         docker compose -f src/utils/eventhub/docker-compose.yml pull
