@@ -13,7 +13,8 @@ steps:
       retryCountOnTaskFailure: 10
     - bash: |
         docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
-        docker run --detach --publish 8081:8081 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+        docker run --detach --publish 8081:8081 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-
+        sleep 60
         docker ps
       displayName: "Start CosmosDB Emulator"
     # - bash: |
@@ -23,6 +24,7 @@ steps:
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
+        sleep 30
       env:
         AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
       displayName: 'Start ServiceBus Emulator'
@@ -30,15 +32,21 @@ steps:
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
-        docker stop servicebus-emulator
+        docker stop servicebus-emulator || true
+        docker rm -f servicebus-emulator || true
         docker compose -f src/utils/eventhub/docker-compose.yml pull
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
+        sleep 30
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
     - bash: npm run testAllExceptServiceBus
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
-    - bash: docker stop eventhubs-emulator
-      displayName: 'Stop EventHub Emulator'
+    - bash: |
+        docker stop cosmosdb-emulator || true
+        docker rm -f cosmosdb-emulator || true
+        docker compose -f src/utils/eventhub/docker-compose.yml down -v
+        docker compose -f src/utils/servicebus/docker-compose.yml down -v
+      displayName: 'Stop all emulators'
     - bash: npm run testOldConfig
       displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
       condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))
