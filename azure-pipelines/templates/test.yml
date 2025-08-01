@@ -19,12 +19,7 @@ jobs:
       - template: /azure-pipelines/templates/test-node-version.yml@self
         parameters:
             nodeVersion: 18.x
-            runOldConfig: true
-
-      # Run tests for old config (just one Node.js version (18) is enough)
-      - bash: npm run testOldConfig
-        displayName: 'Run oldConfig tests Node 18.x'
-        continueOnError: true
+            runOldConfig: true        # Run tests for old config (just one Node.js version (18) is enough)
 
       - template: /azure-pipelines/templates/test-node-version.yml@self
         parameters:
