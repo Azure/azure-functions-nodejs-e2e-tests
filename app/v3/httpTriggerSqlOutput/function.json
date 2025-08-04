@@ -16,8 +16,8 @@
             "type": "sql",
             "name": "outputItem",
             "direction": "out",
-            "connectionStringSetting": "e2eTest_sql",
-            "commandText": "dbo.e2eSqlNonTriggerTable"
+            "connectionStringSetting": "SqlConnection",
+            "commandText": "e2eSqlNonTriggerTable"
         }
     ],
     "scriptFile": "../dist/httpTriggerSqlOutput/index.js"

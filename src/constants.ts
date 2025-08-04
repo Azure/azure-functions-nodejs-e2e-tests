@@ -33,6 +33,13 @@ export namespace ServiceBus {
     export const serviceBusTopicTrigger = 'e2e-test-topic-trigger';
 }
 
+export namespace Sql {
+    export const dbName = 'e2eTestDB';
+    export const sqlTriggerTable = 'e2eSqlTriggerTable';
+    export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
+    export const sqlSecretName = 'e2eSqlSecret';
+}
+
 export const defaultTimeout = 3 * 60 * 1000;
 
 export const combinedFolder = 'combined';
