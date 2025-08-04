@@ -17,25 +17,25 @@ steps:
         sleep 60
         docker ps
       displayName: "Start CosmosDB Emulator"
-    - bash: |
-        docker compose -f src/utils/sql/docker-compose.yml pull
-        docker compose -f src/utils/sql/docker-compose.yml up -d
-      env:
-        MSSQL_SA_PASSWORD: "placeholderForContainer1475"
-        SA_PASSWORD: "placeholderForContainer1475"
-      displayName: "Start MSSQL Service"
+    # - bash: |
+    #     docker compose -f src/utils/sql/docker-compose.yml pull
+    #     docker compose -f src/utils/sql/docker-compose.yml up -d
+    #   env:
+    #     MSSQL_SA_PASSWORD: "placeholderForContainer1475"
+    #     SA_PASSWORD: "placeholderForContainer1475"
+    #   displayName: "Start MSSQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
       env:
-        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+        AzureWebJobsSQLPassword: ${AzureWebJobsSQLPassword}
       displayName: 'Start ServiceBus Emulator'
     - bash: npm run testServiceBus
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
-        docker logs sqlserver
-      displayName: 'SQL server logs'
+        docker logs sqledge
+      displayName: 'SQL edge logs'
     - bash: |
         docker stop servicebus-emulator || true
         docker rm -f servicebus-emulator || true

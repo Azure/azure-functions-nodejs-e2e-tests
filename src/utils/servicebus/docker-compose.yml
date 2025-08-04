@@ -9,7 +9,7 @@ services:
       - "5672:5672"
     environment:
       SQL_SERVER: sqledge
-      MSSQL_SA_PASSWORD: $(AzureWebJobsSQLPassword)
+      MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
       ACCEPT_EULA: Y
     depends_on:
       - sqledge
@@ -26,7 +26,7 @@ services:
               - "sqledge"
         environment:
           ACCEPT_EULA: Y
-          MSSQL_SA_PASSWORD: $(AzureWebJobsSQLPassword)
+          MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
   # Service for the Azurite Storage Emulator
   azurite:
     container_name: "azurite"
