@@ -1,17 +1,17 @@
-# name: mssql-database
-# services:
-#   sqlserver:
-#     image: mcr.microsoft.com/mssql/server:2025-latest
-#     container_name: sqlserver
-#     environment:
-#       MSSQL_SA_PASSWORD: "placeholderForContainer1475"
-#       SA_PASSWORD: "placeholderForContainer1475"
-#       ACCEPT_EULA: "Y"
-#     ports:
-#       - "1433:1433"
-#     networks:
-#       - sqlnetwork
-
-# networks:
-#   sqlnetwork:
-#     driver: bridge
+name: mysql-database
+services:
+  mysql:
+    container_name: "mysql"
+    image: "mysql:8.0"
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - mysql-network
+networks:
+  mysql-network:
+    driver: bridge

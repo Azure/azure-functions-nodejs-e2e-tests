@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import * as sql from 'mssql';
+import mysql from 'mysql2/promise';
 // import retry from 'p-retry';
 
 /**
@@ -22,36 +22,42 @@ export const sqlSecretName = 'e2eSqlSecret';
  */
 export async function runSqlSetupQueries() {
     // const connectionString = await getSqlConnectionString();
-    const config: sql.config = {
-        user: 'sa',
-        password: 'placeholderForContainer1475',
-        server: 'localhost', // or 'sqlserver' if running from another container
-        database: dbName, // or create your own
-        port: 1433,
-        options: {
-            encrypt: false, // set to true if using Azure or SSL
-            trustServerCertificate: true,
-        }
-    };
-    const poolConnection = await sql.connect(config)
+    const pool = mysql.createPool({
+        host: 'localhost',
+        port: 3307,
+        user: 'root',
+        password: 'password',
+        database: 'testdb',
+    });
+    
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS person (
+        id INT NOT NULL AUTO_INCREMENT,
+        name VARCHAR(100) NOT NULL,
+        address VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id)
+      ) ENGINE=InnoDB;
+    `;
+    await pool.query(createTableQuery)
+
     // const poolConnection = await createPoolConnnection();
 
-    try {
-        await poolConnection
-            .request()
-            .query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
+    // try {
+    //     await poolConnection
+    //         .request()
+    //         .query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
 
-        for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
-            await poolConnection
-                .request()
-                .query(
-                    `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
-                );
-            await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
-        }
-    } finally {
-        await poolConnection.close();
-    }
+    //     for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
+    //         await poolConnection
+    //             .request()
+    //             .query(
+    //                 `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
+    //             );
+    //         await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+    //     }
+    // } finally {
+    //     await poolConnection.close();
+    // }
 }
 
 // export async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
