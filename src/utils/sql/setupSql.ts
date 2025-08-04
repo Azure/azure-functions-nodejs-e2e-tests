@@ -40,7 +40,7 @@ export async function runSqlSetupQueries() {
     `;
     await pool.query(createTableQuery)
     console.log('Table "person" created or already exists.');
-    pool.end();
+    await pool.end();
 
     // const poolConnection = await createPoolConnnection();
 
@@ -85,14 +85,4 @@ export async function runSqlSetupQueries() {
 //             },
 //         }
 //     );
-// }
-
-// export async function getSqlConnectionString(): Promise<string> {
-//     const server = 'localhost'; // or 'sqlserver' if running in another container
-//     const port = 1433;
-//     const user = 'sa';
-//     const password = 'thisPasswordDoesntMatter@1475';
-//     const database = dbName;
-
-//     return `Server=${server},${port};Database=${database};User Id=${user};Password=${password};Encrypt=false;TrustServerCertificate=true;`;
 // }
