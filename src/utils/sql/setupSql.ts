@@ -24,7 +24,7 @@ export async function runSqlSetupQueries() {
     // const connectionString = await getSqlConnectionString();
     const config: sql.config = {
         user: 'sa',
-        password: 'placeholderForContainer@1475',
+        password: 'placeholderForContainer1475',
         server: 'localhost', // or 'sqlserver' if running from another container
         database: dbName, // or create your own
         port: 1433,
