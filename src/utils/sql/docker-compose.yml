@@ -7,7 +7,7 @@ services:
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: testdb
+      MYSQL_DATABASE: e2eTestDB
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     networks:
