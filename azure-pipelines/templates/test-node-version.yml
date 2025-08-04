@@ -18,10 +18,6 @@ steps:
         docker ps
       displayName: "Start CosmosDB Emulator"
     - bash: |
-        docker compose -f src/utils/sql/docker-compose.yml pull
-        docker compose -f src/utils/sql/docker-compose.yml up -d
-      displayName: "Start SQL Service"
-    - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
       env:
@@ -31,17 +27,22 @@ steps:
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
-        docker logs mysql
-      displayName: 'SQL logs'
-    - bash: |
         docker stop servicebus-emulator || true
         docker rm -f servicebus-emulator || true
         docker compose -f src/utils/eventhub/docker-compose.yml pull
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
+    - bash: |
+        docker compose -f src/utils/sql/docker-compose.yml pull
+        docker compose -f src/utils/sql/docker-compose.yml up -d
+        sleep 60
+      displayName: "Start SQL Service"
     - bash: npm run testAllExceptServiceBus
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
+    - bash: |
+        docker logs mysql
+      displayName: 'SQL logs'
     - bash: npm run testOldConfig
       displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
       condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))
