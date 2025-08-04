@@ -20,8 +20,6 @@ steps:
     - bash: |
         docker compose -f src/utils/sql/docker-compose.yml pull
         docker compose -f src/utils/sql/docker-compose.yml up -d
-      env:
-        MySqlConnectionString: "Server=localhost;UserID =root;Password=password;Database=testdb;Port=3307"
       displayName: "Start SQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull

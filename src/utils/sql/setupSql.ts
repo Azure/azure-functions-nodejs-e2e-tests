@@ -39,6 +39,8 @@ export async function runSqlSetupQueries() {
       ) ENGINE=InnoDB;
     `;
     await pool.query(createTableQuery)
+    console.log('Table "person" created or already exists.');
+    pool.end();
 
     // const poolConnection = await createPoolConnnection();
 
