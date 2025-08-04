@@ -123,6 +123,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
                     [EnvVarNames.sql]: sqlConnectionString,
+                    WEBSITE_SITE_NAME: 'azure-functions-nodejs-e2e-tests',
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
             },
