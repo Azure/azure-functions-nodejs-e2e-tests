@@ -1,17 +1,24 @@
-name: mysql-database
+name: scratch-mssql
+
 services:
-  mysql:
-    container_name: "mysql"
-    image: "mysql:8.0"
-    ports:
-      - "3307:3306"
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-CU12-ubuntu-22.04
+    restart: no
+    hostname: scratch-mssql
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: e2eTestDB
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    networks:
-      - mysql-network
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${AzureWebJobsSQLPassword}
+      - MSSQL_PID=Developer
+      - MSSQL_BACKUP_DIR=/var/opt/mssql/backups
+      - MSSQL_LCID=1033
+      - TZ=Etc/UTC
+    ports:
+      - 14330:1433
+    volumes:
+      - ./data/mssql/backups:/var/opt/mssql/backups
+      - ./data/mssql/data:/var/opt/mssql/data
+      - ./data/mssql/log:/var/opt/mssql/log
+
 networks:
-  mysql-network:
-    driver: bridge
+  default:
+    name: scratch-mssql-net

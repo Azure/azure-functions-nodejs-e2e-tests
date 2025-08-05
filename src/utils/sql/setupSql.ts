@@ -1,28 +1,26 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-import mysql from 'mysql2/promise';
+// import mysql from 'mysql2/promise';
+import * as sql from 'mssql';
 import { Sql } from '../../constants';
 
-export async function runSqlSetupQueries(): Promise<mysql.Pool> {
-    // const connectionString = await getSqlConnectionString();
-    const pool = mysql.createPool({
-        host: 'localhost',
-        port: 3307,
-        user: 'root',
-        password: 'password',
-        database: Sql.dbName,
-    });
+export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
+    const config = {
+    user: 'sa',
+    password: process.env.AzureWebJobsSQLPassword,
+    server: 'localhost',
+    port: 14330,
+    database: 'master',
+    options: {
+        encrypt: false, // true for Azure; false for local/dev
+        trustServerCertificate: true, // required for local development
+    },
+    };
 
-    for (const table of [Sql.sqlTriggerTable, Sql.sqlNonTriggerTable]) {
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS ${table} (
-                id CHAR(36) PRIMARY KEY, 
-                testData VARCHAR(200) NOT NULL, 
-                az_func_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB;
-        `);
-    }
+    const pool = await sql.connect(config);
+    await pool.request().query(`CREATE DATABASE ${Sql.dbName}`);
+    console.log('Database created');
 
     return pool;
 
