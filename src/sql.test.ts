@@ -22,7 +22,7 @@ describe('sql', () => {
     });
 
     after(async () => {
-        // await poolConnection?.end();
+        await poolConnection?.close();
     });
 
     type SqlItem = { id: string; testData: string };
