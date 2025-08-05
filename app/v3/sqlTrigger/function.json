@@ -4,7 +4,7 @@
             "type": "sqlTrigger",
             "name": "changes",
             "direction": "in",
-            "tableName": "dbo.e2eSqlTriggerTable",
+            "tableName": "e2eSqlTriggerTable",
             "connectionStringSetting": "SqlConnection"
         }
     ],
