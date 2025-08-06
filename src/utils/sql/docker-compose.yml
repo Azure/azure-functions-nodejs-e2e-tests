@@ -10,6 +10,7 @@ services:
       SA_PASSWORD: ${AzureWebJobsSQLPassword}
       MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
       ACCEPT_EULA: "Y"
+      SQLConnection: ${SqlConnection}
     volumes:
       - mssql_data:/var/opt/mssql
     restart: unless-stopped

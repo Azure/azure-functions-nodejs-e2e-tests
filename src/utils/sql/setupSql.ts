@@ -6,9 +6,14 @@ import * as sql from 'mssql';
 // import { Sql } from '../../constants';
 
 export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
+    const password = process.env.MSSQL_SA_PASSWORD;
+    if (!password || password.trim() === '') {
+        throw new Error('Missing required environment variable: MSSQL_SA_PASSWORD');
+    }
+
     const config = {
         user: 'sa',
-        password: 'YourStrong!Passw0rd',
+        password: password,
         server: 'localhost',
         port: 15433,
         database: 'master',
