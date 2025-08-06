@@ -34,10 +34,9 @@ export namespace ServiceBus {
 }
 
 export namespace Sql {
-    export const dbName = 'e2eTestDB';
+    export const dbName = 'master';
     export const sqlTriggerTable = 'e2eSqlTriggerTable';
     export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
-    export const sqlSecretName = 'e2eSqlSecret';
 }
 
 export const defaultTimeout = 3 * 60 * 1000;
