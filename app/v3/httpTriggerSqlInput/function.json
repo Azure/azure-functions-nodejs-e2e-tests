@@ -1,26 +1,26 @@
-// {
-//     "bindings": [
-//         {
-//             "authLevel": "anonymous",
-//             "type": "httpTrigger",
-//             "direction": "in",
-//             "name": "req",
-//             "methods": ["get", "post"]
-//         },
-//         {
-//             "type": "http",
-//             "direction": "out",
-//             "name": "res"
-//         },
-//         {
-//             "type": "sql",
-//             "name": "inputItem",
-//             "direction": "in",
-//             "connectionStringSetting": "SqlConnection",
-//             "commandText": "SELECT * FROM e2eSqlNonTriggerTable WHERE id = ?",
-//             "commandType": "Text",
-//             "parameters": "?={Query.id}"
-//         }
-//     ],
-//     "scriptFile": "../dist/httpTriggerSqlInput/index.js"
-// }
+{
+    "bindings": [
+        {
+            "authLevel": "anonymous",
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req",
+            "methods": ["get", "post"]
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "res"
+        },
+        {
+            "type": "sql",
+            "name": "inputItem",
+            "direction": "in",
+            "connectionStringSetting": "SqlConnection",
+            "commandText": "select * from dbo.e2eSqlNonTriggerTable where id = @id",
+            "commandType": "Text",
+            "parameters": "@id={Query.id}"
+        }
+    ],
+    "scriptFile": "../dist/httpTriggerSqlInput/index.js"
+}

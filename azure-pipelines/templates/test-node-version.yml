@@ -39,7 +39,6 @@ steps:
     - bash: npm run testServiceBus
       env:
         SA_PASSWORD: $(AzureWebJobsSQLPassword)
-        SqlConnection: $(SqlConnection)
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
@@ -49,6 +48,8 @@ steps:
         docker compose -f src/utils/eventhub/docker-compose.yml up -d
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
     - bash: npm run testAllExceptServiceBus
+      env:
+        SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |

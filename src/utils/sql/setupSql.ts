@@ -3,31 +3,28 @@
 
 // import mysql from 'mysql2/promise';
 import * as sql from 'mssql';
+import { sqlConnectionString } from '../connectionStrings';
 // import { Sql } from '../../constants';
 
-export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
-    const password = process.env.SA_PASSWORD;
-    if (!password || password.trim() === '') {
-        throw new Error('Missing required environment variable: SA_PASSWORD');
-    }
+export async function createPoolConnnection(): Promise<sql.ConnectionPool> {
+    // const password = process.env.SA_PASSWORD;
+    // if (!password || password.trim() === '') {
+    //     throw new Error('Missing required environment variable: SA_PASSWORD');
+    // }
 
-    const config = {
-        user: 'sa',
-        password: password,
-        server: 'localhost',
-        port: 15433,
-        database: 'master',
-        options: {
-            encrypt: false, // set to true if connecting to Azure SQL
-            trustServerCertificate: true,
-        }
-    };
+    // const config = {
+    //     user: 'sa',
+    //     password: password,
+    //     server: 'localhost',
+    //     port: 15433,
+    //     database: 'master',
+    //     options: {
+    //         encrypt: false, // set to true if connecting to Azure SQL
+    //         trustServerCertificate: true,
+    //     }
+    // };
 
-    const pool = await sql.connect(config);
-    const result = await pool.request().query('SELECT name FROM sys.databases');
-    console.log('Databases:', result.recordset);
-
-    return pool;
+    return await sql.connect(sqlConnectionString);
 
     // const poolConnection = await createPoolConnnection();
 
