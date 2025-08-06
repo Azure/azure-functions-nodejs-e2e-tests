@@ -22,7 +22,6 @@ steps:
         sleep 60
       env:
         SA_PASSWORD: ${AzureWebJobsSQLPassword}
-        MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
         SqlConnection: ${SqlConnection}
       displayName: "Start SQL Service"
     - bash: |
@@ -31,11 +30,15 @@ steps:
       env:
         AzureWebJobsSQLPassword: ${AzureWebJobsSQLPassword}
       displayName: 'Start ServiceBus Emulator'
+    - script: |
+        echo "== Debugging SA_PASSWORD =="
+        echo "Length: ${#AzureWebJobsSQLPassword}"
+        echo "Value: ${AzureWebJobsSQLPassword}"
+      displayName: "Debug SQL Password in CI"
     - bash: npm run testServiceBus
       env:
         SqlConnection: ${SqlConnection}
         SA_PASSWORD: ${AzureWebJobsSQLPassword}
-        MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |

@@ -8,7 +8,6 @@ services:
       - "15433:1433"
     environment:
       SA_PASSWORD: ${AzureWebJobsSQLPassword}
-      MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
       ACCEPT_EULA: "Y"
       SQLConnection: ${SqlConnection}
     volumes:
