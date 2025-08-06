@@ -3,7 +3,7 @@
 
 // import mysql from 'mysql2/promise';
 import * as sql from 'mssql';
-import { Sql } from '../../constants';
+// import { Sql } from '../../constants';
 
 export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
     const config = {
