@@ -18,9 +18,8 @@ steps:
         docker ps
       displayName: "Start CosmosDB Emulator"
     - bash: |
-        docker compose -f src/utils/sql/docker-compose.yml pull
         docker compose -f src/utils/sql/docker-compose.yml up -d
-        sleep 30
+        sleep 60
       displayName: "Start SQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
@@ -41,7 +40,7 @@ steps:
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
-        docker logs mysql
+        docker logs mssql
       displayName: 'SQL logs'
     - bash: npm run testOldConfig
       displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'

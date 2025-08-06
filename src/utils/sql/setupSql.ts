@@ -7,20 +7,20 @@ import { Sql } from '../../constants';
 
 export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
     const config = {
-    user: 'sa',
-    password: process.env.AzureWebJobsSQLPassword,
-    server: 'localhost',
-    port: 14330,
-    database: 'master',
-    options: {
-        encrypt: false, // true for Azure; false for local/dev
-        trustServerCertificate: true, // required for local development
-    },
+        user: 'sa',
+        password: 'YourStrong!Passw0rd',
+        server: 'localhost',
+        port: 1433,
+        database: 'master',
+        options: {
+            encrypt: false, // set to true if connecting to Azure SQL
+            trustServerCertificate: true,
+        }
     };
 
     const pool = await sql.connect(config);
-    await pool.request().query(`CREATE DATABASE ${Sql.dbName}`);
-    console.log('Database created');
+    const result = await pool.request().query('SELECT name FROM sys.databases');
+    console.log('Databases:', result.recordset);
 
     return pool;
 
