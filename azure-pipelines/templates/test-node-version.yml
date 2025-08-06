@@ -33,6 +33,8 @@ steps:
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
       displayName: 'Start ServiceBus Emulator'
     - bash: npm run testServiceBus
       env:
