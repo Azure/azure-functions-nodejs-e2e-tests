@@ -7,9 +7,8 @@ services:
     ports:
       - "15433:1433"
     environment:
-      SA_PASSWORD: ${AzureWebJobsSQLPassword}
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
-      SQLConnection: ${SqlConnection}
     volumes:
       - mssql_data:/var/opt/mssql
     restart: unless-stopped

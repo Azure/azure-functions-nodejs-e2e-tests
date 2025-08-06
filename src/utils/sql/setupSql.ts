@@ -8,7 +8,7 @@ import * as sql from 'mssql';
 export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
     const password = process.env.SA_PASSWORD;
     if (!password || password.trim() === '') {
-        throw new Error('Missing required environment variable: MSSQL_SA_PASSWORD');
+        throw new Error('Missing required environment variable: SA_PASSWORD');
     }
 
     const config = {
