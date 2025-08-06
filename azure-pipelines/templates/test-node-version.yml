@@ -21,19 +21,21 @@ steps:
         docker compose -f src/utils/sql/docker-compose.yml up -d
         sleep 60
       env:
-        SA_PASSWORD: ${AzureWebJobsSQLPassword}
-        SqlConnection: ${SqlConnection}
+        SA_PASSWORD: $(AzureWebJobsSQLPassword)
+        SqlConnection: $(SqlConnection)
       displayName: "Start SQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
         docker compose -f src/utils/servicebus/docker-compose.yml up -d
       env:
-        AzureWebJobsSQLPassword: ${AzureWebJobsSQLPassword}
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
       displayName: 'Start ServiceBus Emulator'
     - script: |
         echo "== Debugging SA_PASSWORD =="
         echo "Length: ${#AzureWebJobsSQLPassword}"
-        echo "Value: ${AzureWebJobsSQLPassword}"
+        echo "Value: $AzureWebJobsSQLPassword"
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
       displayName: "Debug SQL Password in CI"
     - bash: npm run testServiceBus
       env:
