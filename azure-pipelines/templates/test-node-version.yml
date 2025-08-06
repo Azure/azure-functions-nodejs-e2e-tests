@@ -39,8 +39,8 @@ steps:
       displayName: "Debug SQL Password in CI"
     - bash: npm run testServiceBus
       env:
-        SqlConnection: ${SqlConnection}
-        SA_PASSWORD: ${AzureWebJobsSQLPassword}
+        SqlConnection: $(SqlConnection)
+        SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
