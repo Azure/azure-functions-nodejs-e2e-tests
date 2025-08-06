@@ -1,12 +1,12 @@
-{
-    "bindings": [
-        {
-            "type": "sqlTrigger",
-            "name": "changes",
-            "direction": "in",
-            "tableName": "e2eSqlTriggerTable",
-            "connectionStringSetting": "SqlConnection"
-        }
-    ],
-    "scriptFile": "../dist/sqlTrigger/index.js"
-}
+// {
+//     "bindings": [
+//         {
+//             "type": "sqlTrigger",
+//             "name": "changes",
+//             "direction": "in",
+//             "tableName": "e2eSqlTriggerTable",
+//             "connectionStringSetting": "SqlConnection"
+//         }
+//     ],
+//     "scriptFile": "../dist/sqlTrigger/index.js"
+// }

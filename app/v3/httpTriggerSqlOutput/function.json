@@ -1,24 +1,24 @@
-{
-    "bindings": [
-        {
-            "authLevel": "anonymous",
-            "type": "httpTrigger",
-            "direction": "in",
-            "name": "req",
-            "methods": ["get", "post"]
-        },
-        {
-            "type": "http",
-            "direction": "out",
-            "name": "res"
-        },
-        {
-            "type": "sql",
-            "name": "outputItem",
-            "direction": "out",
-            "connectionStringSetting": "SqlConnection",
-            "commandText": "e2eSqlNonTriggerTable"
-        }
-    ],
-    "scriptFile": "../dist/httpTriggerSqlOutput/index.js"
-}
+// {
+//     "bindings": [
+//         {
+//             "authLevel": "anonymous",
+//             "type": "httpTrigger",
+//             "direction": "in",
+//             "name": "req",
+//             "methods": ["get", "post"]
+//         },
+//         {
+//             "type": "http",
+//             "direction": "out",
+//             "name": "res"
+//         },
+//         {
+//             "type": "sql",
+//             "name": "outputItem",
+//             "direction": "out",
+//             "connectionStringSetting": "SqlConnection",
+//             "commandText": "e2eSqlNonTriggerTable"
+//         }
+//     ],
+//     "scriptFile": "../dist/httpTriggerSqlOutput/index.js"
+// }
