@@ -21,6 +21,8 @@ steps:
         docker compose -f src/utils/sql/docker-compose.yml up -d
         sleep 60
       env:
+        SA_PASSWORD: ${AzureWebJobsSQLPassword}
+        MSSQL_SA_PASSWORD: ${AzureWebJobsSQLPassword}
         SqlConnection: ${SqlConnection}
       displayName: "Start SQL Service"
     - bash: |
