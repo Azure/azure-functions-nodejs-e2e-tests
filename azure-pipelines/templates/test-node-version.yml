@@ -20,6 +20,8 @@ steps:
     - bash: |
         docker compose -f src/utils/sql/docker-compose.yml up -d
         sleep 60
+      env:
+        SqlConnection: ${SqlConnection}
       displayName: "Start SQL Service"
     - bash: |
         docker compose -f src/utils/servicebus/docker-compose.yml pull
@@ -28,6 +30,8 @@ steps:
         AzureWebJobsSQLPassword: ${AzureWebJobsSQLPassword}
       displayName: 'Start ServiceBus Emulator'
     - bash: npm run testServiceBus
+      env:
+        SqlConnection: ${SqlConnection}
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
     - bash: |
