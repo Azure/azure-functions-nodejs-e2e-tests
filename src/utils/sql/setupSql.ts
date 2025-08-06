@@ -10,7 +10,7 @@ export async function runSqlSetupQueries(): Promise<sql.ConnectionPool> {
         user: 'sa',
         password: 'YourStrong!Passw0rd',
         server: 'localhost',
-        port: 1433,
+        port: 15433,
         database: 'master',
         options: {
             encrypt: false, // set to true if connecting to Azure SQL
