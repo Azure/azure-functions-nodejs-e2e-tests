@@ -4,7 +4,7 @@
 // import mysql from 'mysql2/promise';
 import * as sql from 'mssql';
 import { sqlConnectionString } from '../connectionStrings';
-// import { Sql } from '../../constants';
+import { Sql } from '../../constants';
 
 export async function createPoolConnnection(): Promise<sql.ConnectionPool> {
     // const password = process.env.SA_PASSWORD;
@@ -24,26 +24,25 @@ export async function createPoolConnnection(): Promise<sql.ConnectionPool> {
     //     }
     // };
 
-    return await sql.connect(sqlConnectionString);
+    if (!sqlConnectionString || sqlConnectionString.trim() === '') {
+        throw new Error('Missing required environment variable: SqlConnection');
+    }
+    
+    const poolConnection = await sql.connect(sqlConnectionString);
+    await poolConnection
+            .request()
+            .query(`ALTER DATABASE ${Sql.dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
 
-    // const poolConnection = await createPoolConnnection();
+    for (const table of [Sql.sqlTriggerTable, Sql.sqlNonTriggerTable]) {
+        await poolConnection
+            .request()
+            .query(
+                `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
+            );
+        await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+    }
 
-    // try {
-    //     await poolConnection
-    //         .request()
-    //         .query(`ALTER DATABASE ${dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
-
-    //     for (const table of [sqlTriggerTable, sqlNonTriggerTable]) {
-    //         await poolConnection
-    //             .request()
-    //             .query(
-    //                 `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
-    //             );
-    //         await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
-    //     }
-    // } finally {
-    //     await poolConnection.close();
-    // }
+    return poolConnection;
 }
 
 // export async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
