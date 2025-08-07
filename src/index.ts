@@ -36,6 +36,7 @@ export async function run(): Promise<void> {
         }
 
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
+        mocha.addFile(path.resolve(__dirname, 'global.test.js'));
 
         const failures = await new Promise<number>((resolve) => mocha.run(resolve));
         if (failures > 0) {

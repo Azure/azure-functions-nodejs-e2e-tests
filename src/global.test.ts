@@ -6,7 +6,7 @@ import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
 import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
-import { getModelArg, getOldConfigArg, Model } from './getModelArg';
+import { getModelArg, getOldConfigArg, isOnlyRunningServiceBusTests, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
@@ -15,7 +15,6 @@ import {
     sqlTestConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
-// import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/setupCosmosDB';

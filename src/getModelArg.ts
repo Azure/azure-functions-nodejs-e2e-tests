@@ -28,9 +28,9 @@ export function getTestFileFilter(): { only?: string; exclude?: string } {
     return { only, exclude };
 }
 
-export function isOnlyRunningServiceBusTests(): boolean {
-    const args = parseArgs(process.argv.slice(2));
-    const only = typeof args.only === 'string' ? args.only : undefined;
+// export function isOnlyRunningServiceBusTests(): boolean {
+//     const args = parseArgs(process.argv.slice(2));
+//     const only = typeof args.only === 'string' ? args.only : undefined;
 
-    return only === 'serviceBus.test.js';
-}
+//     return only === 'serviceBus.test.js';
+// }
