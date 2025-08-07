@@ -17,7 +17,6 @@ import {
 } from './utils/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
-import { setupCosmosDB } from './utils/setupCosmosDB';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
