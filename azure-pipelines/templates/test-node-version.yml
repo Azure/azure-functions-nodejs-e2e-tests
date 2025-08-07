@@ -58,6 +58,9 @@ steps:
     - bash: |
         docker logs mssql
       displayName: 'SQL logs'
+    - bash: |
+        docker logs cosmosdb-emulator
+      displayName: 'Cosmos logs'
 
     # - bash: npm run testOldConfig
     #   displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
