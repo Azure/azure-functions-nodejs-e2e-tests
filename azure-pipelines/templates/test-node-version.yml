@@ -11,18 +11,36 @@ steps:
         versionSpec: ${{ parameters.nodeVersion }}
       displayName: 'Install Node ${{ parameters.nodeVersion }}'
       retryCountOnTaskFailure: 10
+
+    - bash: docker compose -f src/utils/servicebus/docker-compose.yml up -d
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+      displayName: 'Start ServiceBus Emulator'
+
+    - bash: npm run testServiceBus
+      displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
+      continueOnError: true
+
+    - bash: |
+        docker stop servicebus-emulator || true
+        docker rm -f servicebus-emulator || true
+        docker compose -f src/utils/eventhub/docker-compose.yml up -d
+      displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
+
     - bash: |
         docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
         docker run --detach --publish 8081:8081 --publish 1234:1234 --name cosmosdb-emulator mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
         sleep 30
         docker ps
       displayName: "Start CosmosDB Emulator"
+
     - bash: |
         docker compose -f src/utils/sql/docker-compose.yml up -d
         sleep 60
       env:
         SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: "Start SQL Service"
+
     - bash: |
         echo "Debugging SA_PASSWORD"
         echo "Length: ${#SA_PASSWORD}"
@@ -30,31 +48,17 @@ steps:
       env:
         SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: "Debug SQL Password"
-    - bash: |
-        docker compose -f src/utils/servicebus/docker-compose.yml pull
-        docker compose -f src/utils/servicebus/docker-compose.yml up -d
-      env:
-        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
-      displayName: 'Start ServiceBus Emulator'
-    - bash: npm run testServiceBus
+
+    - bash: npm run testAllExceptServiceBus
       env:
         SA_PASSWORD: $(AzureWebJobsSQLPassword)
-      displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
+      displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
-    # - bash: |
-    #     docker stop servicebus-emulator || true
-    #     docker rm -f servicebus-emulator || true
-    #     docker compose -f src/utils/eventhub/docker-compose.yml pull
-    #     docker compose -f src/utils/eventhub/docker-compose.yml up -d
-    #   displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
-    # - bash: npm run testAllExceptServiceBus
-    #   env:
-    #     SA_PASSWORD: $(AzureWebJobsSQLPassword)
-    #   displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
-    #   continueOnError: true
+
     - bash: |
         docker logs mssql
       displayName: 'SQL logs'
+
     # - bash: npm run testOldConfig
     #   displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
     #   condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))

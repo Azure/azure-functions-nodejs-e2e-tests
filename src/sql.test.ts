@@ -8,6 +8,7 @@ import { Sql, getFuncUrl } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { ConnectionPool } from 'mssql';
+import { runSqlSetupQueries } from './utils/sql/setupSql';
 
 describe('sql', () => {
     let poolConnection: ConnectionPool | undefined;
@@ -15,6 +16,8 @@ describe('sql', () => {
         if (isOldConfig) {
             this.skip();
         }
+
+        await runSqlSetupQueries();
     });
 
     after(async () => {
