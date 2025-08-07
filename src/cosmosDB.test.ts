@@ -11,7 +11,7 @@ import { getRandomTestData } from './utils/getRandomTestData';
 import { setupCosmosDB } from './utils/setupCosmosDB';
 
 describe('cosmosDB', () => {
-    before(async () => {
+    before(async function (this: Mocha.Context) {
         await setupCosmosDB();
     });
 

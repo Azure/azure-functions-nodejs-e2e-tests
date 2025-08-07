@@ -27,6 +27,9 @@ export async function run(): Promise<void> {
 
         const mocha = new Mocha(options);
 
+        const globalTestPath = path.resolve(__dirname, 'global.test.js');
+        mocha.addFile(globalTestPath);
+
         let files: string[] = await globby('**/*.test.js', { cwd: __dirname });
         const { only, exclude } = getTestFileFilter();
         if (only) {
@@ -35,8 +38,8 @@ export async function run(): Promise<void> {
             files = files.filter(f => !f.endsWith(exclude));
         }
 
+        files = files.filter(f => path.resolve(__dirname, f) !== globalTestPath);
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
-        mocha.addFile(path.resolve(__dirname, 'global.test.js'));
 
         const failures = await new Promise<number>((resolve) => mocha.run(resolve));
         if (failures > 0) {
