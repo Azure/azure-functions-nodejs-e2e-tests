@@ -12,7 +12,7 @@ import {
     eventHubConnectionString,
     initializeConnectionStrings,
     serviceBusConnectionString,
-    sqlConnectionString,
+    sqlTestConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
@@ -122,7 +122,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
-                    [EnvVarNames.sql]: sqlConnectionString,
+                    [EnvVarNames.sql]: sqlTestConnectionString,
                     WEBSITE_SITE_NAME: 'azure-functions-nodejs-e2e-tests',
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },

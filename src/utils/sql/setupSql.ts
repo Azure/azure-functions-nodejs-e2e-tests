@@ -3,29 +3,42 @@
 
 // import mysql from 'mysql2/promise';
 import * as sql from 'mssql';
-import { sqlConnectionString } from '../connectionStrings';
+import { sqlConnectionString, sqlTestConnectionString } from '../connectionStrings';
 import { Sql } from '../../constants';
 
 export async function runSqlSetupQueries() {
-    const poolConnection = await sql.connect(sqlConnectionString);
+    let pool = await sql.connect(sqlConnectionString);
     try {
-        await poolConnection
+        await pool
+            .request()
+            .query(`IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = '${Sql.dbName}')
+                    BEGIN
+                        CREATE DATABASE [${Sql.dbName}];
+                    END`);
+    } finally {
+        await pool.close();
+    }
+
+    pool = await sql.connect(sqlTestConnectionString);
+
+    try {
+        await pool
             .request()
             .query(`ALTER DATABASE ${Sql.dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
 
         for (const table of [Sql.sqlTriggerTable, Sql.sqlNonTriggerTable]) {
-            await poolConnection
+            await pool
                 .request()
                 .query(
                     `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
                 );
-            await poolConnection.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+            await pool.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
         }
     } finally {
-        await poolConnection.close();
+        await pool.close();
     }
 }
 
 export async function createPoolConnnection() {
-    return await sql.connect(sqlConnectionString);
+    return await sql.connect(sqlTestConnectionString);
 }
