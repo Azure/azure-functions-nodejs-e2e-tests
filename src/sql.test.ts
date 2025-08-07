@@ -17,9 +17,6 @@ describe('sql', () => {
         if (isOldConfig) {
             this.skip();
         }
-        
-        await runSqlSetupQueries();
-        throw new Error("Did it reach");
     });
 
     after(async () => {

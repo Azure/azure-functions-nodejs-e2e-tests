@@ -1,13 +1,13 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License.
 
-// import mysql from 'mysql2/promise';
 import * as sql from 'mssql';
-import { sqlConnectionString, sqlTestConnectionString } from '../connectionStrings';
+import retry from 'p-retry';
+import { sqlConnectionString } from '../connectionStrings';
 import { Sql } from '../../constants';
 
 export async function runSqlSetupQueries() {
-    let pool = await sql.connect(sqlConnectionString);
+    let pool = await createPoolConnnection(sqlConnectionString);
     try {
         await pool
             .request()
@@ -38,6 +38,27 @@ export async function runSqlSetupQueries() {
     // }
 }
 
-export async function createPoolConnnection() {
-    return await sql.connect(sqlTestConnectionString);
+async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
+    const retries = 5;
+    return retry(
+        async (currentAttempt: number) => {
+            if (currentAttempt > 1) {
+                console.log(
+                    `${new Date().toISOString()}: Retrying sql connect. Attempt ${currentAttempt}/${retries + 1}`
+                );
+            }
+            return sql.connect(connectionString);
+        },
+        {
+            retries: retries,
+            minTimeout: 5 * 1000,
+            onFailedAttempt: (error) => {
+                if (!/ip address/i.test(error?.message || '')) {
+                    throw error; // abort for an unrecognized error
+                } else if (error.retriesLeft > 0) {
+                    console.log(`Warning: Failed to sql connect with error "${error.message}"`);
+                }
+            },
+        }
+    );
 }
