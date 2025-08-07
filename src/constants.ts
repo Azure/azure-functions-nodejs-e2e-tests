@@ -34,7 +34,7 @@ export namespace ServiceBus {
 }
 
 export namespace Sql {
-    export const dbName = 'master';
+    export const dbName = 'e2eTestDB';
     export const sqlTriggerTable = 'e2eSqlTriggerTable';
     export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
 }
