@@ -79,7 +79,7 @@ export async function runSqlSetupQueries() {
     // }
 }
 
-async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
+export async function createPoolConnnection(connectionString: string): Promise<sql.ConnectionPool> {
     const retries = 5;
     return retry(
         async (currentAttempt: number) => {

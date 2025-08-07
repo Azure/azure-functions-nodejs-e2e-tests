@@ -8,7 +8,8 @@ import { Sql, getFuncUrl } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { ConnectionPool } from 'mssql';
-import { runSqlSetupQueries } from './utils/sql/setupSql';
+import { createPoolConnnection, runSqlSetupQueries } from './utils/sql/setupSql';
+import { sqlTestConnectionString } from './utils/connectionStrings';
 
 describe('sql', () => {
     let poolConnection: ConnectionPool | undefined;
@@ -18,6 +19,7 @@ describe('sql', () => {
         }
 
         await runSqlSetupQueries();
+        poolConnection = await createPoolConnnection(sqlTestConnectionString);
     });
 
     after(async () => {

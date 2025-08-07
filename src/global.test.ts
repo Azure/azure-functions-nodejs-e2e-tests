@@ -18,6 +18,7 @@ import {
 // import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
+import { setupCosmosDB } from './utils/setupCosmosDB';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
@@ -41,6 +42,8 @@ before(async function (this: Mocha.Context): Promise<void> {
     await killFuncProc();
 
     await initializeConnectionStrings();
+
+    await setupCosmosDB();
 
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig

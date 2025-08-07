@@ -27,3 +27,10 @@ export function getTestFileFilter(): { only?: string; exclude?: string } {
     const exclude = typeof args.exclude === 'string' ? args.exclude : undefined;
     return { only, exclude };
 }
+
+export function isOnlyRunningServiceBusTests(): boolean {
+    const args = parseArgs(process.argv.slice(2));
+    const only = typeof args.only === 'string' ? args.only : undefined;
+
+    return only === 'serviceBus.test.js';
+}
