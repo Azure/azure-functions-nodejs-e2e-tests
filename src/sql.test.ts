@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { getFuncUrl } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
-import { createPoolConnnection, runSqlSetupQueries } from './utils/sql/setupSql';
+import { runSqlSetupQueries } from './utils/sql/setupSql';
 import { Sql } from './constants';
 import { ConnectionPool } from 'mssql';
 
