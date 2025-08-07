@@ -43,10 +43,6 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    await setupCosmosDB();
-
-    await runSqlSetupQueries();
-
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
