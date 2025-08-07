@@ -8,8 +8,13 @@ import { getFuncUrl, CosmosDB } from './constants';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
+import { setupCosmosDB } from './utils/setupCosmosDB';
 
 describe('cosmosDB', () => {
+    before(async function (this: Mocha.Context) {
+        await setupCosmosDB();
+    });
+
     it('trigger, output, input', async () => {
         const client = new CosmosClient(cosmosDBConnectionString);
         const container = client.database(CosmosDB.dbName).container(CosmosDB.triggerAndOutputContainerName);
