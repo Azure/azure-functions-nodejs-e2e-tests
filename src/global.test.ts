@@ -6,7 +6,7 @@ import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
 import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
-import { getModelArg, getOldConfigArg, isOnlyRunningServiceBusTests, Model } from './getModelArg';
+import { getModelArg, getOldConfigArg, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
