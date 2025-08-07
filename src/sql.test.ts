@@ -4,11 +4,9 @@
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
-import { getFuncUrl } from './constants';
+import { Sql, getFuncUrl } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
-// import { runSqlSetupQueries } from './utils/sql/setupSql';
-import { Sql } from './constants';
 import { ConnectionPool } from 'mssql';
 
 describe('sql', () => {
