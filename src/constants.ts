@@ -10,10 +10,10 @@ export namespace EnvVarNames {
 }
 
 export namespace CosmosDB {
-    export const dbName = 'e2eTestDB';
+    export const dbName = 'e2eTestCosmosDB';
     export const triggerAndOutputContainerName = 'e2eTestContainerTriggerAndOutput';
     export const triggerContainerName = 'e2eTestContainerTrigger';
-    export const triggerDatabaseName = 'e2eTestDB';
+    export const triggerDatabaseName = 'e2eTestCosmosDB';
     export const partitionKey = 'testPartKey';
 }
 

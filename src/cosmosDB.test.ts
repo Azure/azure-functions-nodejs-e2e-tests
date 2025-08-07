@@ -8,7 +8,7 @@ import { getFuncUrl, CosmosDB } from './constants';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
-import { setupCosmosDB } from './utils/setupCosmosDB';
+import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 
 describe('cosmosDB', () => {
     before(async function (this: Mocha.Context) {

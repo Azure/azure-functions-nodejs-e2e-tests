@@ -13,13 +13,13 @@ export async function cosmosDBTriggerAndOutput(documents: unknown[], context: In
 
 app.cosmosDB('cosmosDBTriggerAndOutput', {
     connectionStringSetting: 'CosmosDBConnection',
-    databaseName: 'e2eTestDB',
+    databaseName: 'e2eTestCosmosDB',
     collectionName: 'e2eTestContainerTriggerAndOutput',
     createLeaseCollectionIfNotExists: true,
     leaseCollectionPrefix: '1',
     return: output.cosmosDB({
         connectionStringSetting: 'CosmosDBConnection',
-        databaseName: 'e2eTestDB',
+        databaseName: 'e2eTestCosmosDB',
         collectionName: 'e2eTestContainerTrigger',
     }),
     handler: cosmosDBTriggerAndOutput,

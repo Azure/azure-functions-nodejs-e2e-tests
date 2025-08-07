@@ -12,7 +12,7 @@ export async function cosmosDBTrigger(documents: unknown[], context: InvocationC
 
 app.cosmosDB('cosmosDBTrigger', {
     connection: 'CosmosDBConnection',
-    databaseName: 'e2eTestDB',
+    databaseName: 'e2eTestCosmosDB',
     containerName: 'e2eTestContainerTrigger',
     createLeaseContainerIfNotExists: true,
     leaseContainerPrefix: '2',
