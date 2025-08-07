@@ -15,6 +15,9 @@ export async function runSqlSetupQueries() {
                     BEGIN
                         CREATE DATABASE [${Sql.dbName}];
                     END`);
+        await pool
+            .request()
+            .query(`ALTER DATABASE ${Sql.dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
     } finally {
         await pool.close();
     }
@@ -22,10 +25,6 @@ export async function runSqlSetupQueries() {
     pool = await sql.connect(sqlTestConnectionString);
 
     try {
-        await pool
-            .request()
-            .query(`ALTER DATABASE ${Sql.dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
-
         for (const table of [Sql.sqlTriggerTable, Sql.sqlNonTriggerTable]) {
             await pool
                 .request()
