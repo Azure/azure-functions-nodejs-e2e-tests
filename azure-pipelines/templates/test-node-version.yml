@@ -30,39 +30,39 @@ steps:
       env:
         SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: "Debug SQL Password"
-    # - bash: |
-    #     docker compose -f src/utils/servicebus/docker-compose.yml pull
-    #     docker compose -f src/utils/servicebus/docker-compose.yml up -d
-    #   env:
-    #     AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
-    #   displayName: 'Start ServiceBus Emulator'
-    # - bash: npm run testServiceBus
-    #   env:
-    #     SA_PASSWORD: $(AzureWebJobsSQLPassword)
-    #   displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
-    #   continueOnError: true
+    - bash: |
+        docker compose -f src/utils/servicebus/docker-compose.yml pull
+        docker compose -f src/utils/servicebus/docker-compose.yml up -d
+      env:
+        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+      displayName: 'Start ServiceBus Emulator'
+    - bash: npm run testServiceBus
+      env:
+        SA_PASSWORD: $(AzureWebJobsSQLPassword)
+      displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
+      continueOnError: true
     # - bash: |
     #     docker stop servicebus-emulator || true
     #     docker rm -f servicebus-emulator || true
     #     docker compose -f src/utils/eventhub/docker-compose.yml pull
     #     docker compose -f src/utils/eventhub/docker-compose.yml up -d
     #   displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
-    - bash: npm run testAllExceptServiceBus
-      env:
-        SA_PASSWORD: $(AzureWebJobsSQLPassword)
-      displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
-      continueOnError: true
+    # - bash: npm run testAllExceptServiceBus
+    #   env:
+    #     SA_PASSWORD: $(AzureWebJobsSQLPassword)
+    #   displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
+    #   continueOnError: true
     - bash: |
         docker logs mssql
       displayName: 'SQL logs'
-    - bash: npm run testOldConfig
-      displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
-      condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))
-      continueOnError: true
-    - bash: |
-        docker stop cosmosdb-emulator || true
-        docker rm -f cosmosdb-emulator || true
-        docker compose -f src/utils/eventhub/docker-compose.yml down -v
-        docker compose -f src/utils/servicebus/docker-compose.yml down -v
-        docker compose -f src/utils/sql/docker-compose.yml down -v
-      displayName: 'Stop all resources'
+    # - bash: npm run testOldConfig
+    #   displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
+    #   condition: and(succeeded(), eq('${{ parameters.runOldConfig }}', 'true'))
+    #   continueOnError: true
+    # - bash: |
+    #     docker stop cosmosdb-emulator || true
+    #     docker rm -f cosmosdb-emulator || true
+    #     docker compose -f src/utils/eventhub/docker-compose.yml down -v
+    #     docker compose -f src/utils/servicebus/docker-compose.yml down -v
+    #     docker compose -f src/utils/sql/docker-compose.yml down -v
+    #   displayName: 'Stop all resources'

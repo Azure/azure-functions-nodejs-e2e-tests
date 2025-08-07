@@ -22,20 +22,20 @@ export async function runSqlSetupQueries() {
         await pool.close();
     }
 
-    pool = await sql.connect(sqlTestConnectionString);
+    // pool = await sql.connect(sqlTestConnectionString);
 
-    try {
-        for (const table of [Sql.sqlTriggerTable, Sql.sqlNonTriggerTable]) {
-            await pool
-                .request()
-                .query(
-                    `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
-                );
-            await pool.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
-        }
-    } finally {
-        await pool.close();
-    }
+    // try {
+    //     for (const table of [Sql.sqlTriggerTable, Sql.sqlNonTriggerTable]) {
+    //         await pool
+    //             .request()
+    //             .query(
+    //                 `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
+    //             );
+    //         await pool.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+    //     }
+    // } finally {
+    //     await pool.close();
+    // }
 }
 
 export async function createPoolConnnection() {

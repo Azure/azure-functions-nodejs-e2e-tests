@@ -19,7 +19,7 @@ describe('sql', () => {
         }
         
         await runSqlSetupQueries();
-        poolConnection = await createPoolConnnection();
+        throw new Error("Did it reach");
     });
 
     after(async () => {

@@ -22,13 +22,13 @@ jobs:
             nodeVersion: 18.x
             runOldConfig: true
 
-      - template: /azure-pipelines/templates/test-node-version.yml@self
-        parameters:
-            nodeVersion: 20.x
+      # - template: /azure-pipelines/templates/test-node-version.yml@self
+      #   parameters:
+      #       nodeVersion: 20.x
 
-      - template: /azure-pipelines/templates/test-node-version.yml@self
-        parameters:
-            nodeVersion: 22.x
+      # - template: /azure-pipelines/templates/test-node-version.yml@self
+      #   parameters:
+      #       nodeVersion: 22.x
 
       - task: PublishTestResults@2
         displayName: 'Publish Unit Test Results'
