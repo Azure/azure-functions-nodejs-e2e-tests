@@ -15,10 +15,10 @@ import {
     sqlTestConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
-import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+// import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
-import { runSqlSetupQueries } from './utils/sql/setupSql';
+// import { runSqlSetupQueries } from './utils/sql/setupSql';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';

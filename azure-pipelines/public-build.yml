@@ -42,11 +42,11 @@ extends:
             image: 1es-windows-2022
             os: windows
 
-        # sdl:
-        #     codeql:
-        #         compiled:
-        #             enabled: true
-        #         runSourceLanguagesInSourceAnalysis: true
+        sdl:
+            codeql:
+                compiled:
+                    enabled: true
+                runSourceLanguagesInSourceAnalysis: true
 
         settings:
             # PR's from forks do not have sufficient permissions to set tags.

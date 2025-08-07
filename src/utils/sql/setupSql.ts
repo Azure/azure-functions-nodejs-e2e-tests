@@ -15,9 +15,9 @@ export async function runSqlSetupQueries() {
                     BEGIN
                         CREATE DATABASE [${Sql.dbName}];
                     END`);
-        // await pool
-        //     .request()
-        //     .query(`ALTER DATABASE ${Sql.dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
+        await pool
+            .request()
+            .query(`ALTER DATABASE ${Sql.dbName} SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);`);
     } finally {
         await pool.close();
     }
@@ -31,7 +31,7 @@ export async function runSqlSetupQueries() {
                 .query(
                     `CREATE TABLE dbo.${table} ([id] UNIQUEIDENTIFIER PRIMARY KEY, [testData] NVARCHAR(200) NOT NULL);`
                 );
-            // await pool.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
+            await pool.request().query(`ALTER TABLE dbo.${table} ENABLE CHANGE_TRACKING;`);
         }
     } finally {
         await pool.close();
