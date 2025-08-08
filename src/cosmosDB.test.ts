@@ -8,12 +8,12 @@ import { getFuncUrl, CosmosDB } from './constants';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
-import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+// import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 
 describe('cosmosDB', () => {
-    before(async function (this: Mocha.Context) {
-        await setupCosmosDB();
-    });
+    // before(async function (this: Mocha.Context) {
+    //     await setupCosmosDB();
+    // });
 
     it('trigger, output, input', async () => {
         const client = new CosmosClient(cosmosDBConnectionString);

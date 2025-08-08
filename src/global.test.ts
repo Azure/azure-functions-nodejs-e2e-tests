@@ -6,7 +6,7 @@ import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
 import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
-import { getModelArg, getOldConfigArg, Model } from './getModelArg';
+import { getModelArg, getOldConfigArg, getTestFileFilter, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
@@ -17,6 +17,7 @@ import {
 } from './utils/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
+import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 // import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 
 let perTestFuncOutput = '';
@@ -42,7 +43,10 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    // await setupCosmosDB();
+    const { only } = getTestFileFilter();
+    if (only) {
+        await setupCosmosDB();
+    }
 
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig
