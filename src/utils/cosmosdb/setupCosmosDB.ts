@@ -8,10 +8,8 @@
 import { CosmosClient, PartitionKeyKind } from '@azure/cosmos';
 import { cosmosDBConnectionString } from '../connectionStrings';
 import { CosmosDB } from '../../constants';
-import { delay } from '../delay';
 
 export async function setupCosmosDB() {
-  try {
     const partitionKeyPath = `/${CosmosDB.partitionKey}`;
     if (!cosmosDBConnectionString) {
       throw new Error('CosmosDB connection string is not set');
@@ -26,9 +24,4 @@ export async function setupCosmosDB() {
       id: CosmosDB.triggerAndOutputContainerName,
       partitionKey: { paths: [partitionKeyPath], kind: PartitionKeyKind.Hash }
     });
-} catch (error) {
-    console.error('Error setting up CosmosDB:', error);
-    throw error;
-  }
-  await delay(30000);
 }

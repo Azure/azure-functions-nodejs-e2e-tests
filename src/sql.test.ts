@@ -31,10 +31,6 @@ describe('sql', () => {
         const id = uuid();
         const testData = getRandomTestData();
 
-        if (!poolConnection) {
-            throw new Error('SQL connection pool is not initialized');
-        }
-
         // trigger by insert
         await poolConnection!.request().query(`INSERT INTO ${Sql.sqlTriggerTable} VALUES ('${id}', '${testData}');`);
         await waitForOutput(`sqlTrigger processed 1 changes`);

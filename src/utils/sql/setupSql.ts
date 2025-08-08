@@ -9,19 +9,14 @@ import { Sql } from '../../constants';
 export async function runSqlSetupQueries() {
     // STEP 1: Create DB if not exists
     let pool = await createPoolConnnection(sqlConnectionString);
-    try {
-        await pool.request().query(`
-            IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = '${Sql.dbName}')
-            BEGIN
-                CREATE DATABASE [${Sql.dbName}];
-            END
-        `);
-    } finally {
-        await pool.close();
-    }
+    await pool.request().query(`
+        IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = '${Sql.dbName}')
+        BEGIN
+            CREATE DATABASE [${Sql.dbName}];
+        END
+    `);
 
     // STEP 2: Retry ALTER DATABASE (change_tracking)
-    pool = await createPoolConnnection(sqlConnectionString);
     try {
         await retry(async (currentAttempt) => {
             if (currentAttempt > 1) {
@@ -44,9 +39,6 @@ export async function runSqlSetupQueries() {
             retries: 5,
             minTimeout: 5000
         });
-    } catch (err) {
-        console.error("ALTER DATABASE failed:", err);
-        throw err;
     } finally {
         await pool.close();
     }
