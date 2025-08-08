@@ -14,7 +14,7 @@ steps:
 
     - bash: |
         docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
-        docker run --detach --publish 8081:8081 --publish --name cosmosdb-emulator 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+        docker run --detach --publish 8081:8081 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
         docker ps
       displayName: "Start CosmosDB Emulator"
 
@@ -26,10 +26,6 @@ steps:
     - bash: npm run testServiceBus
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
-
-    - bash: |
-        docker logs cosmosdb-emulator
-      displayName: 'Cosmos logs'
 
     - bash: |
         docker stop servicebus-emulator || true
@@ -61,9 +57,6 @@ steps:
     - bash: |
         docker logs mssql
       displayName: 'SQL logs'
-    - bash: |
-        docker logs cosmosdb-emulator
-      displayName: 'Cosmos logs'
 
     # - bash: npm run testOldConfig
     #   displayName: 'Run oldConfig tests Node ${{ parameters.nodeVersion }}'
