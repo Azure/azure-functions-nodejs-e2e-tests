@@ -18,6 +18,7 @@ import {
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+import { runSqlSetupQueries } from './utils/sql/setupSql';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
@@ -44,6 +45,7 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     const { only } = getTestFileFilter();
     if (only) {
+        await runSqlSetupQueries();
         await setupCosmosDB();
     }
 

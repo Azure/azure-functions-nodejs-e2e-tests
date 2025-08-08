@@ -8,7 +8,7 @@ import { Sql, getFuncUrl } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { ConnectionPool } from 'mssql';
-import { createPoolConnnection, runSqlSetupQueries } from './utils/sql/setupSql';
+import { createPoolConnnection } from './utils/sql/setupSql';
 import { sqlTestConnectionString } from './utils/connectionStrings';
 
 describe('sql', () => {
@@ -18,7 +18,6 @@ describe('sql', () => {
             this.skip();
         }
 
-        await runSqlSetupQueries();
         poolConnection = await createPoolConnnection(sqlTestConnectionString);
     });
 
