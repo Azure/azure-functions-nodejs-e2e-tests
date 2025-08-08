@@ -5,20 +5,21 @@
 // Otherwise the following error will occur:
 // Microsoft.Azure.Cosmos.Client: This builder instance has already been used to build a processor. Create a new instance to build another.
 
-import { CosmosClient, PartitionKeyKind } from '@azure/cosmos';
-import { cosmosDBConnectionString } from '../connectionStrings';
-import { CosmosDB } from '../../constants';
+// import { CosmosClient, PartitionKeyKind } from '@azure/cosmos';
+// import { cosmosDBConnectionString } from '../connectionStrings';
+// import { CosmosDB } from '../../constants';
 
 export async function setupCosmosDB() {
-  const partitionKeyPath = `/${CosmosDB.partitionKey}`;
-  const client = new CosmosClient(cosmosDBConnectionString);
-  await client.databases.createIfNotExists({ id: CosmosDB.triggerDatabaseName });
-  await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
-    id: CosmosDB.triggerContainerName,
-    partitionKey: { paths: [partitionKeyPath], kind: PartitionKeyKind.Hash }
-  });
-  await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
-    id: CosmosDB.triggerAndOutputContainerName,
-    partitionKey: { paths: [partitionKeyPath], kind: PartitionKeyKind.Hash }
-  });
+  throw new Error('When do we throw?');
+  // const partitionKeyPath = `/${CosmosDB.partitionKey}`;
+  // const client = new CosmosClient(cosmosDBConnectionString);
+  // await client.databases.createIfNotExists({ id: CosmosDB.triggerDatabaseName });
+  // await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
+  //   id: CosmosDB.triggerContainerName,
+  //   partitionKey: { paths: [partitionKeyPath], kind: PartitionKeyKind.Hash }
+  // });
+  // await client.database(CosmosDB.triggerDatabaseName).containers.createIfNotExists({
+  //   id: CosmosDB.triggerAndOutputContainerName,
+  //   partitionKey: { paths: [partitionKeyPath], kind: PartitionKeyKind.Hash }
+  // });
 }
