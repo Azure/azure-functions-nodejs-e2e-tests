@@ -17,7 +17,7 @@ import {
 } from './utils/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
-import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+// import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
@@ -42,7 +42,7 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    await setupCosmosDB();
+    // await setupCosmosDB();
 
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig
