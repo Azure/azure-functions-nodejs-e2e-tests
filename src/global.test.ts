@@ -18,7 +18,6 @@ import {
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
-// import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
