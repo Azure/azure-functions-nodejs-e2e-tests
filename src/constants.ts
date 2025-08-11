@@ -31,6 +31,7 @@ export namespace ServiceBus {
     export const serviceBusQueueManyTrigger = 'e2e-test-queue-many-trigger';
     export const serviceBusTopicTriggerAndOutput = 'e2e-test-topic-trigger-and-output';
     export const serviceBusTopicTrigger = 'e2e-test-topic-trigger';
+    export const serviceBusTestFileName = 'serviceBus.test';
 }
 
 export namespace Sql {
