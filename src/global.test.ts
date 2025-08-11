@@ -45,7 +45,7 @@ before(async function (this: Mocha.Context): Promise<void> {
     await initializeConnectionStrings();
 
     const { only } = getTestFileFilter();
-    if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
+    if (only === ServiceBus.serviceBusTestFileName) {
         await runSqlSetupQueries();
         await setupCosmosDB();
     }
