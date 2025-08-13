@@ -6,7 +6,7 @@
             "direction": "in",
             "leaseCollectionName": "leases",
             "connectionStringSetting": "CosmosDBConnection",
-            "databaseName": "e2eTestDB",
+            "databaseName": "e2eTestCosmosDB",
             "collectionName": "e2eTestContainerTriggerAndOutput",
             "createLeaseCollectionIfNotExists": true,
             "leaseCollectionPrefix": "1"
@@ -16,7 +16,7 @@
             "name": "$return",
             "direction": "out",
             "connectionStringSetting": "CosmosDBConnection",
-            "databaseName": "e2eTestDB",
+            "databaseName": "e2eTestCosmosDB",
             "collectionName": "e2eTestContainerTrigger"
         }
     ],

@@ -27,12 +27,15 @@
         "lint": "eslint . --fix",
         "watch": "tsc -w",
         "createCombinedApps": "node out/createCombinedApps.js",
-        "test": "npm run testV3 && npm run testV4",
         "testOldConfig": "npm run testV3OldConfig && npm run testV4OldConfig",
-        "testV3": "node out/index.js --model v3",
         "testV3OldConfig": "node out/index.js --model v3 --oldConfig",
-        "testV4": "node out/index.js --model v4",
-        "testV4OldConfig": "node out/index.js --model v4 --oldConfig"
+        "testV4OldConfig": "node out/index.js --model v4 --oldConfig",
+        "testServiceBus": "npm run testV3ServiceBus && npm run testV4ServiceBus",
+        "testV3ServiceBus": "node out/index.js --model v3 --only serviceBus.test.js",
+        "testV4ServiceBus": "node out/index.js --model v4 --only serviceBus.test.js",
+        "testAllExceptServiceBus": "npm run testV3AllExceptServiceBus && npm run testV4AllExceptServiceBus",
+        "testV3AllExceptServiceBus": "node out/index.js --model v3 --exclude serviceBus.test.js",
+        "testV4AllExceptServiceBus": "node out/index.js --model v4 --exclude serviceBus.test.js"
     },
     "dependencies": {
         "@azure/arm-cosmosdb": "^15.4.0",

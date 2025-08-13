@@ -16,7 +16,7 @@
             "type": "sql",
             "name": "inputItem",
             "direction": "in",
-            "connectionStringSetting": "e2eTest_sql",
+            "connectionStringSetting": "SqlConnection",
             "commandText": "select * from dbo.e2eSqlNonTriggerTable where id = @id",
             "commandType": "Text",
             "parameters": "@id={Query.id}"

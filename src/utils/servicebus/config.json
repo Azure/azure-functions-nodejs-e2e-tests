@@ -1,0 +1,116 @@
+{
+    "UserConfig": {
+     "Namespaces": [
+       {
+         "Name": "sbemulatorns",
+         "Queues": [
+           {
+             "Name": "e2e-test-queue-one-trigger",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           },
+           {
+             "Name": "e2e-test-queue-many-trigger",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           },
+           {
+             "Name": "e2e-test-queue-one-trigger-and-output",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           },
+           {
+             "Name": "e2e-test-queue-many-trigger-and-output",
+             "Properties": {
+               "DeadLetteringOnMessageExpiration": false,
+               "DefaultMessageTimeToLive": "PT1H",
+               "DuplicateDetectionHistoryTimeWindow": "PT20S",
+               "ForwardDeadLetteredMessagesTo": "",
+               "ForwardTo": "",
+               "LockDuration": "PT1M",
+               "MaxDeliveryCount": 10,
+               "RequiresDuplicateDetection": false,
+               "RequiresSession": false
+             }
+           }
+         ],
+         "Topics": [
+         {
+           "Name": "e2e-test-topic-trigger",
+           "Properties": {
+             "DefaultMessageTimeToLive": "PT1H",
+             "DuplicateDetectionHistoryTimeWindow": "PT20S",
+             "RequiresDuplicateDetection": false
+           },
+           "Subscriptions": [
+             {
+               "Name": "e2e-test-sub",
+               "Properties": {
+                 "DeadLetteringOnMessageExpiration": false,
+                 "DefaultMessageTimeToLive": "PT1H",
+                 "LockDuration": "PT1M",
+                 "MaxDeliveryCount": 3,
+                 "ForwardDeadLetteredMessagesTo": "",
+                 "ForwardTo": "",
+                 "RequiresSession": false
+               }
+             }
+           ]
+         },
+         {
+           "Name": "e2e-test-topic-trigger-and-output",
+           "Properties": {
+             "DefaultMessageTimeToLive": "PT1H",
+             "DuplicateDetectionHistoryTimeWindow": "PT20S",
+             "RequiresDuplicateDetection": false
+           },
+           "Subscriptions": [
+             {
+               "Name": "e2e-test-sub",
+               "Properties": {
+                 "DeadLetteringOnMessageExpiration": false,
+                 "DefaultMessageTimeToLive": "PT1H",
+                 "LockDuration": "PT1M",
+                 "MaxDeliveryCount": 3,
+                 "ForwardDeadLetteredMessagesTo": "",
+                 "ForwardTo": "",
+                 "RequiresSession": false
+               }
+             }
+           ]
+         }
+       ]
+       }
+     ],
+     "Logging": {
+       "Type": "File"
+     }
+  }
+}

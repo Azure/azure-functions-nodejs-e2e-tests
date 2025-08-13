@@ -6,16 +6,20 @@ import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
 import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
-import { getModelArg, getOldConfigArg, Model } from './getModelArg';
+import { getModelArg, getOldConfigArg, getTestFileFilter, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
+    serviceBusConnectionString,
+    sqlTestConnectionString,
     storageConnectionString
 } from './utils/connectionStrings';
-import { setupCosmosDB } from './utils/setupCosmosDB';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
+import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+import { runSqlSetupQueries } from './utils/sql/setupSql';
+import { ServiceBus } from './constants';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
@@ -40,7 +44,11 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await initializeConnectionStrings();
 
-    await setupCosmosDB();
+    const { only } = getTestFileFilter();
+    if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
+        await runSqlSetupQueries();
+        await setupCosmosDB();
+    }
 
     isOldConfig = getOldConfigArg();
     const appPath = isOldConfig
@@ -116,6 +124,9 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
+                    [EnvVarNames.serviceBus]: serviceBusConnectionString,
+                    [EnvVarNames.sql]: sqlTestConnectionString,
+                    WEBSITE_SITE_NAME: 'azure-functions-nodejs-e2e-tests',
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
                 },
             },

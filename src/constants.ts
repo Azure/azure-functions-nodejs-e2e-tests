@@ -5,13 +5,15 @@ export namespace EnvVarNames {
     export const storage = 'AzureWebJobsStorage';
     export const cosmosDB = 'CosmosDBConnection';
     export const eventHub = 'EventHubConnection';
+    export const serviceBus = 'ServiceBusConnection';
+    export const sql = 'SqlConnection';
 }
 
 export namespace CosmosDB {
-    export const dbName = 'e2eTestDB';
+    export const dbName = 'e2eTestCosmosDB';
     export const triggerAndOutputContainerName = 'e2eTestContainerTriggerAndOutput';
     export const triggerContainerName = 'e2eTestContainerTrigger';
-    export const triggerDatabaseName = 'e2eTestDB';
+    export const triggerDatabaseName = 'e2eTestCosmosDB';
     export const partitionKey = 'testPartKey';
 }
 
@@ -20,6 +22,22 @@ export namespace EventHub {
     export const eventHubManyTriggerAndOutput = 'e2e-test-hub-many-trigger-and-output';
     export const eventHubOneTrigger = 'e2e-test-hub-one-trigger';
     export const eventHubManyTrigger = 'e2e-test-hub-many-trigger';
+}
+
+export namespace ServiceBus {
+    export const serviceBusQueueOneTriggerAndOutput = 'e2e-test-queue-one-trigger-and-output';
+    export const serviceBusQueueOneTrigger = 'e2e-test-queue-one-trigger';
+    export const serviceBusQueueManyTriggerAndOutput = 'e2e-test-queue-many-trigger-and-output';
+    export const serviceBusQueueManyTrigger = 'e2e-test-queue-many-trigger';
+    export const serviceBusTopicTriggerAndOutput = 'e2e-test-topic-trigger-and-output';
+    export const serviceBusTopicTrigger = 'e2e-test-topic-trigger';
+    export const serviceBusTestFileName = 'serviceBus.test';
+}
+
+export namespace Sql {
+    export const dbName = 'e2eTestDB';
+    export const sqlTriggerTable = 'e2eSqlTriggerTable';
+    export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
 }
 
 export const defaultTimeout = 3 * 60 * 1000;

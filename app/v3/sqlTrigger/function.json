@@ -5,7 +5,7 @@
             "name": "changes",
             "direction": "in",
             "tableName": "dbo.e2eSqlTriggerTable",
-            "connectionStringSetting": "e2eTest_sql"
+            "connectionStringSetting": "SqlConnection"
         }
     ],
     "scriptFile": "../dist/sqlTrigger/index.js"

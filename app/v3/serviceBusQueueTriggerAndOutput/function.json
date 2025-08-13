@@ -4,15 +4,15 @@
             "name": "mySbMsg",
             "type": "serviceBusTrigger",
             "direction": "in",
-            "queueName": "e2eTestQueueOneTriggerAndOutput",
-            "connection": "e2eTest_serviceBus"
+            "queueName": "e2e-test-queue-one-trigger-and-output",
+            "connection": "ServiceBusConnection"
         },
         {
             "name": "$return",
             "type": "serviceBus",
             "direction": "out",
-            "topicName": "e2eTestQueueOneTrigger",
-            "connection": "e2eTest_serviceBus"
+            "topicName": "e2e-test-queue-one-trigger",
+            "connection": "ServiceBusConnection"
         }
     ],
     "scriptFile": "../dist/serviceBusQueueTriggerAndOutput/index.js"

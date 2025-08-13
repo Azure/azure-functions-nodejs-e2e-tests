@@ -16,7 +16,7 @@
             "type": "sql",
             "name": "outputItem",
             "direction": "out",
-            "connectionStringSetting": "e2eTest_sql",
+            "connectionStringSetting": "SqlConnection",
             "commandText": "dbo.e2eSqlNonTriggerTable"
         }
     ],

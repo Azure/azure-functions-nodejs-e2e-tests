@@ -16,8 +16,8 @@
             "type": "serviceBus",
             "name": "outputMsg",
             "direction": "out",
-            "connection": "e2eTest_serviceBus",
-            "queueName": "e2eTestQueueOneTrigger"
+            "connection": "ServiceBusConnection",
+            "queueName": "e2e-test-queue-one-trigger"
         }
     ],
     "scriptFile": "../dist/httpTriggerServiceBusOutput/index.js"

@@ -20,3 +20,10 @@ export function getOldConfigArg(): boolean {
     const args = parseArgs(process.argv.slice(2), { boolean: flag });
     return args[flag];
 }
+
+export function getTestFileFilter(): { only?: string; exclude?: string } {
+    const args = parseArgs(process.argv.slice(2));
+    const only = typeof args.only === 'string' ? args.only : undefined;
+    const exclude = typeof args.exclude === 'string' ? args.exclude : undefined;
+    return { only, exclude };
+}

@@ -4,16 +4,16 @@
             "name": "mySbMsg",
             "type": "serviceBusTrigger",
             "direction": "in",
-            "queueName": "e2eTestQueueManyTriggerAndOutput",
-            "connection": "e2eTest_serviceBus",
+            "queueName": "e2e-test-queue-many-trigger-and-output",
+            "connection": "ServiceBusConnection",
             "cardinality": "many"
         },
         {
             "name": "$return",
             "type": "serviceBus",
             "direction": "out",
-            "topicName": "e2eTestQueueManyTrigger",
-            "connection": "e2eTest_serviceBus"
+            "topicName": "e2e-test-queue-many-trigger",
+            "connection": "ServiceBusConnection"
         }
     ],
     "scriptFile": "../dist/serviceBusQueueManyTriggerAndOutput/index.js"

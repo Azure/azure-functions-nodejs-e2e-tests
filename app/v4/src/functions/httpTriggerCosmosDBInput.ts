@@ -4,7 +4,7 @@
 import { app, HttpRequest, HttpResponseInit, input, InvocationContext } from '@azure/functions';
 
 const cosmosInput = input.cosmosDB({
-    databaseName: 'e2eTestDB',
+    databaseName: 'e2eTestCosmosDB',
     containerName: 'e2eTestContainerTriggerAndOutput',
     id: '{Query.id}',
     partitionKey: 'testPartKey',
