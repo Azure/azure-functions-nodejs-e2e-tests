@@ -12,7 +12,7 @@ export async function httpTriggerSendStream(
 
     const lengthInMb = request.query.get('lengthInMb');
     const stream = createRandomStream(Number(lengthInMb));
-    return { body: stream };
+    return { body: stream as any };
 }
 
 app.http('httpTriggerSendStream', {
