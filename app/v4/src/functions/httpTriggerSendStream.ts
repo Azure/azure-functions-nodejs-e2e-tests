@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
+import { Readable } from 'stream';
 import { createRandomStream } from '../utils/streamHttp';
 
 export async function httpTriggerSendStream(
@@ -12,7 +13,7 @@ export async function httpTriggerSendStream(
 
     const lengthInMb = request.query.get('lengthInMb');
     const stream = createRandomStream(Number(lengthInMb));
-    return { body: stream as any };
+    return { body: Readable.toWeb(stream) as any };
 }
 
 app.http('httpTriggerSendStream', {
