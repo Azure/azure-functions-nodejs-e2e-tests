@@ -214,6 +214,25 @@ describe('http', () => {
                 expect(response.status).to.equal(200);
             });
         }
+
+        // Test for issue: Node.js Readable must be converted to Web ReadableStream
+        // In @azure/functions@4.11.1+, HttpResponseBodyInit no longer accepts Node.js Readable directly.
+        // This test validates the Readable.toWeb() conversion pattern works correctly.
+        it('stream JSON response with Readable.toWeb conversion', async () => {
+            const itemCount = 5;
+            const funcUrl = getFuncUrl('httpTriggerStreamJsonResponse');
+            const response = await fetch(`${funcUrl}?itemCount=${itemCount}`, { method: 'GET' });
+
+            expect(response.status).to.equal(200);
+            expect(response.headers.get('content-type')).to.equal('application/json');
+
+            const body = await response.json();
+            expect(body).to.be.an('array');
+            expect(body).to.have.lengthOf(itemCount);
+            expect(body[0]).to.have.property('id', 1);
+            expect(body[0]).to.have.property('name', 'Item 1');
+            expect(body[0]).to.have.property('timestamp');
+        });
     });
 
     describe('v3 only', () => {
