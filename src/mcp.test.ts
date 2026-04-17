@@ -5,7 +5,8 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { expect } from 'chai';
 import { defaultTimeout, MCP } from './constants';
-import { isOldConfig, model } from './global.test';
+import { isOldConfig, model, waitForOutput } from './global.test';
+import { delay } from './utils/delay';
 
 interface McpContent {
     type: string;
@@ -13,15 +14,30 @@ interface McpContent {
 }
 
 interface McpToolResult {
+    structuredContent?: McpToolPayload;
     content: McpContent[];
 }
 
+interface McpToolPayload {
+    success: boolean;
+    query: string;
+    resultCount: number;
+    results: unknown[];
+}
+
 describe('mcp', function () {
+    let mcpEndpointUrl: string;
+
     // MCP tests are only supported in v4 model with new config
-    before(function () {
+    before(async function () {
         if (model !== 'v4' || isOldConfig) {
             this.skip();
         }
+
+        await waitForOutput('Functions:', { checkFullOutput: true });
+        await waitForOutput('MCP server endpoint:', { checkFullOutput: true });
+
+        mcpEndpointUrl = await resolveMcpEndpointUrl();
     });
 
     // Set longer timeout for MCP operations
@@ -36,7 +52,7 @@ describe('mcp', function () {
             version: '1.0.0',
         });
 
-        transport = new StreamableHTTPClientTransport(new URL(MCP.sseUrl));
+        transport = new StreamableHTTPClientTransport(new URL(mcpEndpointUrl));
     });
 
     afterEach(async function () {
@@ -79,7 +95,7 @@ describe('mcp', function () {
             const textContent = result.content.find((c: McpContent) => c.type === 'text');
             expect(textContent).to.not.be.undefined;
 
-            const parsed = JSON.parse(textContent!.text!);
+            const parsed = parseToolPayload(result, textContent?.text);
             expect(parsed.success).to.be.true;
             expect(parsed.query).to.equal('test-query');
             expect(parsed.results).to.be.an('array');
@@ -101,7 +117,7 @@ describe('mcp', function () {
             const textContent = result.content.find((c: McpContent) => c.type === 'text');
             expect(textContent).to.not.be.undefined;
 
-            const parsed = JSON.parse(textContent!.text!);
+            const parsed = parseToolPayload(result, textContent?.text);
             expect(parsed.success).to.be.true;
             expect(parsed.query).to.equal('another-query');
         });
@@ -172,3 +188,53 @@ describe('mcp', function () {
         });
     });
 });
+
+async function resolveMcpEndpointUrl(): Promise<string> {
+    const candidates = [MCP.streamableUrl, MCP.sseUrl, MCP.legacySseUrl];
+    const start = Date.now();
+    let lastError: unknown;
+
+    while (Date.now() < start + defaultTimeout * 0.5) {
+        for (const candidate of candidates) {
+            try {
+                const response = await fetch(candidate, { method: 'GET' });
+                if (response.status !== 404) {
+                    return candidate;
+                }
+            } catch (err) {
+                lastError = err;
+            }
+        }
+
+        await delay(500);
+    }
+
+    throw new Error(`Timed out waiting for MCP endpoint to become available. Last error: ${String(lastError)}`);
+}
+
+function parseToolPayload(result: McpToolResult, textContent?: string): McpToolPayload {
+    if (result.structuredContent) {
+        return result.structuredContent;
+    }
+
+    if (!textContent) {
+        throw new Error('MCP tool response did not include text content or structuredContent.');
+    }
+
+    const parsed = JSON.parse(textContent) as Record<string, unknown>;
+    if (typeof parsed.success === 'boolean') {
+        return parsed as unknown as McpToolPayload;
+    }
+
+    const nestedContent = parsed.content;
+    if (Array.isArray(nestedContent)) {
+        const nestedText = nestedContent.find(
+            (item): item is McpContent => typeof item === 'object' && item !== null && 'type' in item && 'text' in item
+        )?.text;
+        if (nestedText) {
+            return JSON.parse(nestedText) as McpToolPayload;
+        }
+    }
+
+    throw new Error(`Unexpected MCP tool response payload: ${textContent}`);
+}

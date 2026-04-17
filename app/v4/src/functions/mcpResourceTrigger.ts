@@ -8,18 +8,10 @@ export interface McpResourceInput {
 }
 
 export interface McpResourceResult {
-    contents: Array<{
-        uri: string;
-        mimeType: string;
-        text?: string;
-        blob?: string;
-    }>;
+    json: string;
 }
 
-export async function mcpResourceTrigger(
-    input: McpResourceInput,
-    context: InvocationContext
-): Promise<McpResourceResult> {
+export async function mcpResourceTrigger(input: McpResourceInput, context: InvocationContext): Promise<string> {
     context.log('mcpResourceTrigger was triggered');
     context.log(`Resource input: ${JSON.stringify(input)}`);
 
@@ -35,15 +27,7 @@ export async function mcpResourceTrigger(
         },
     };
 
-    return {
-        contents: [
-            {
-                uri: 'mcp://test/config',
-                mimeType: 'application/json',
-                text: JSON.stringify(testData, null, 2),
-            },
-        ],
-    };
+    return JSON.stringify(testData, null, 2);
 }
 
 app.mcpResource('mcpResourceTrigger', {

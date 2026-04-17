@@ -41,8 +41,10 @@ export namespace Sql {
 }
 
 export namespace MCP {
-    export const sseUrl = 'http://127.0.0.1:7071/runtime/mcp/sse';
-    export const messageUrl = 'http://127.0.0.1:7071/runtime/mcp/sse/message';
+    export const streamableUrl = 'http://localhost:7071/runtime/webhooks/mcp';
+    export const sseUrl = 'http://localhost:7071/runtime/webhooks/mcp/sse';
+    export const legacySseUrl = 'http://localhost:7071/runtime/mcp/sse';
+    export const messageUrl = 'http://localhost:7071/runtime/webhooks/mcp/sse/message';
     export const searchToolName = 'searchTool';
     export const testConfigResourceUri = 'mcp://test/config';
     export const testConfigResourceName = 'testConfig';

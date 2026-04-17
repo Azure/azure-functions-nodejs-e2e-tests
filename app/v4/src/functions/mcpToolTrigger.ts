@@ -11,9 +11,13 @@ export interface McpToolInput {
 }
 
 export interface McpToolResult {
-    content: Array<{
-        type: string;
-        text: string;
+    success: boolean;
+    query: string;
+    resultCount: number;
+    results: Array<{
+        id: number;
+        name: string;
+        score: number;
     }>;
 }
 
@@ -35,17 +39,10 @@ export async function mcpToolTrigger(input: McpToolInput, context: InvocationCon
     const limitedResults = results.slice(0, maxResults);
 
     return {
-        content: [
-            {
-                type: 'text',
-                text: JSON.stringify({
-                    success: true,
-                    query,
-                    resultCount: limitedResults.length,
-                    results: limitedResults,
-                }),
-            },
-        ],
+        success: true,
+        query,
+        resultCount: limitedResults.length,
+        results: limitedResults,
     };
 }
 
