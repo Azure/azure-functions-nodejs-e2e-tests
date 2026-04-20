@@ -5,8 +5,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { expect } from 'chai';
 import { defaultTimeout, MCP } from './constants';
-import { isOldConfig, model, waitForOutput } from './global.test';
-import { delay } from './utils/delay';
+import { isOldConfig, model } from './global.test';
 
 interface McpContent {
     type: string;
@@ -26,19 +25,7 @@ interface McpToolPayload {
 }
 
 describe('mcp', function () {
-    let mcpEndpointUrl: string;
-
-    // MCP tests are only supported in v4 model with new config
-    before(async function () {
-        if (model !== 'v4' || isOldConfig) {
-            this.skip();
-        }
-
-        await waitForOutput('Functions:', { checkFullOutput: true });
-        await waitForOutput('MCP server endpoint:', { checkFullOutput: true });
-
-        mcpEndpointUrl = await resolveMcpEndpointUrl();
-    });
+    const mcpEndpointUrl = MCP.streamableUrl;
 
     // Set longer timeout for MCP operations
     this.timeout(defaultTimeout);
@@ -47,6 +34,11 @@ describe('mcp', function () {
     let transport: StreamableHTTPClientTransport;
 
     beforeEach(async function () {
+        // MCP tests are only supported in v4 model with new config
+        if (model !== 'v4' || isOldConfig) {
+            this.skip();
+        }
+
         client = new Client({
             name: 'azure-functions-e2e-test-client',
             version: '1.0.0',
@@ -188,29 +180,6 @@ describe('mcp', function () {
         });
     });
 });
-
-async function resolveMcpEndpointUrl(): Promise<string> {
-    const candidates = [MCP.streamableUrl, MCP.sseUrl, MCP.legacySseUrl];
-    const start = Date.now();
-    let lastError: unknown;
-
-    while (Date.now() < start + defaultTimeout * 0.5) {
-        for (const candidate of candidates) {
-            try {
-                const response = await fetch(candidate, { method: 'GET' });
-                if (response.status !== 404) {
-                    return candidate;
-                }
-            } catch (err) {
-                lastError = err;
-            }
-        }
-
-        await delay(500);
-    }
-
-    throw new Error(`Timed out waiting for MCP endpoint to become available. Last error: ${String(lastError)}`);
-}
 
 function parseToolPayload(result: McpToolResult, textContent?: string): McpToolPayload {
     if (result.structuredContent) {
