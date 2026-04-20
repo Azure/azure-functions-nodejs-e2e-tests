@@ -5,20 +5,19 @@
 // This ensures all ServiceBus trigger bindings can initialize successfully
 
 import { ServiceBusAdministrationClient } from '@azure/service-bus';
-import { serviceBusConnectionString } from '../connectionStrings';
 import { ServiceBus } from '../../constants';
+import { serviceBusConnectionString } from '../connectionStrings';
 
 export async function setupServiceBus(): Promise<void> {
     if (!serviceBusConnectionString) {
         throw new Error('ServiceBus connection string is not set');
     }
 
-    // Parse connection string to get the namespace
     const client = new ServiceBusAdministrationClient(serviceBusConnectionString);
 
     try {
         console.log('Setting up ServiceBus entities...');
-        
+
         // Create queues
         await createQueueIfNotExists(client, ServiceBus.serviceBusQueueOneTrigger);
         await createQueueIfNotExists(client, ServiceBus.serviceBusQueueOneTriggerAndOutput);
@@ -36,7 +35,7 @@ export async function setupServiceBus(): Promise<void> {
             ServiceBus.serviceBusTopicTriggerAndOutput,
             'e2e-test-sub'
         );
-        
+
         console.log('ServiceBus entities setup completed successfully');
     } catch (err) {
         console.error('Error setting up ServiceBus entities:', err);
@@ -52,10 +51,7 @@ async function createQueueIfNotExists(
     try {
         await client.getQueue(queueName);
     } catch (err: unknown) {
-        if (
-            err instanceof Error &&
-            err.message.includes('NotFound')
-        ) {
+        if (err instanceof Error && err.message.includes('NotFound')) {
             await client.createQueue(queueName, {
                 lockDuration: 'PT1M',
                 maxDeliveryCount: 10,
@@ -75,10 +71,7 @@ async function createTopicWithSubscriptionIfNotExists(
     try {
         await client.getTopic(topicName);
     } catch (err: unknown) {
-        if (
-            err instanceof Error &&
-            err.message.includes('NotFound')
-        ) {
+        if (err instanceof Error && err.message.includes('NotFound')) {
             await client.createTopic(topicName, {
                 defaultMessageTimeToLive: 'PT1H',
                 requiresDuplicateDetection: false,
@@ -91,10 +84,7 @@ async function createTopicWithSubscriptionIfNotExists(
     try {
         await client.getSubscription(topicName, subscriptionName);
     } catch (err: unknown) {
-        if (
-            err instanceof Error &&
-            err.message.includes('NotFound')
-        ) {
+        if (err instanceof Error && err.message.includes('NotFound')) {
             await client.createSubscription(topicName, subscriptionName, {
                 lockDuration: 'PT1M',
                 maxDeliveryCount: 3,

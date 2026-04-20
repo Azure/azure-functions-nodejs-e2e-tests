@@ -5,7 +5,7 @@ import cp from 'child_process';
 import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
-import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
+import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix, ServiceBus } from './constants';
 import { getModelArg, getOldConfigArg, getTestFileFilter, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
@@ -18,9 +18,8 @@ import {
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
-import { runSqlSetupQueries } from './utils/sql/setupSql';
 import { setupServiceBus } from './utils/servicebus/setupServiceBus';
-import { ServiceBus } from './constants';
+import { runSqlSetupQueries } from './utils/sql/setupSql';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
