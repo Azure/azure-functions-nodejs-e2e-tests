@@ -13,7 +13,7 @@ import {
     initializeConnectionStrings,
     serviceBusConnectionString,
     sqlTestConnectionString,
-    storageConnectionString
+    storageConnectionString,
 } from './utils/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
@@ -45,6 +45,7 @@ before(async function (this: Mocha.Context): Promise<void> {
     await initializeConnectionStrings();
 
     const { only } = getTestFileFilter();
+    const disableServiceBusFunctions = shouldDisableServiceBusFunctions();
     if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
         await runSqlSetupQueries();
         await setupCosmosDB();
@@ -52,7 +53,7 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     // Setup ServiceBus entities for v4 model (includes both MCP and ServiceBus functions)
     // This must be done before starting the functions app so that all trigger bindings can initialize
-    if (model === 'v4' && !getOldConfigArg()) {
+    if (model === 'v4' && !getOldConfigArg() && !disableServiceBusFunctions) {
         await setupServiceBus();
     }
 
@@ -61,7 +62,7 @@ before(async function (this: Mocha.Context): Promise<void> {
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
         : path.join(__dirname, '..', 'app', model);
 
-    await startFuncProcess(appPath);
+    await startFuncProcess(appPath, disableServiceBusFunctions);
     await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });
 
     // Add slight delay after starting func to hopefully increase reliability of tests
@@ -83,6 +84,15 @@ async function killFuncProc(): Promise<void> {
         console.log(`Killing process ${result.name} with id ${result.pid}`);
         process.kill(result.pid, 'SIGINT');
     }
+}
+
+function shouldDisableServiceBusFunctions(): boolean {
+    const { only, exclude } = getTestFileFilter();
+    if (only) {
+        return !only.startsWith(ServiceBus.serviceBusTestFileName);
+    }
+
+    return exclude?.startsWith(ServiceBus.serviceBusTestFileName) ?? false;
 }
 
 interface WaitForOutputOptions {
@@ -118,7 +128,19 @@ export async function waitForOutput(data: string, options?: WaitForOutputOptions
     }
 }
 
-async function startFuncProcess(appPath: string): Promise<void> {
+async function startFuncProcess(appPath: string, disableServiceBusFunctions: boolean): Promise<void> {
+    const disabledFunctions = disableServiceBusFunctions
+        ? {
+              'AzureWebJobs.serviceBusQueueTrigger.Disabled': 'true',
+              'AzureWebJobs.serviceBusQueueTriggerAndOutput.Disabled': 'true',
+              'AzureWebJobs.serviceBusQueueManyTrigger.Disabled': 'true',
+              'AzureWebJobs.serviceBusQueueManyTriggerAndOutput.Disabled': 'true',
+              'AzureWebJobs.serviceBusTopicTrigger.Disabled': 'true',
+              'AzureWebJobs.serviceBusTopicTriggerAndOutput.Disabled': 'true',
+              'AzureWebJobs.httpTriggerServiceBusOutput.Disabled': 'true',
+          }
+        : {};
+
     await fs.writeFile(
         path.join(appPath, 'local.settings.json'),
         JSON.stringify(
@@ -134,6 +156,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.sql]: sqlTestConnectionString,
                     WEBSITE_SITE_NAME: 'azure-functions-nodejs-e2e-tests',
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
+                    ...disabledFunctions,
                 },
             },
             null,
