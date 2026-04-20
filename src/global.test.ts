@@ -19,6 +19,7 @@ import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
 import { runSqlSetupQueries } from './utils/sql/setupSql';
+import { setupServiceBus } from './utils/servicebus/setupServiceBus';
 import { ServiceBus } from './constants';
 
 let perTestFuncOutput = '';
@@ -48,6 +49,12 @@ before(async function (this: Mocha.Context): Promise<void> {
     if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
         await runSqlSetupQueries();
         await setupCosmosDB();
+    }
+
+    // Setup ServiceBus entities for v4 model (includes both MCP and ServiceBus functions)
+    // This must be done before starting the functions app so that all trigger bindings can initialize
+    if (model === 'v4' && !getOldConfigArg()) {
+        await setupServiceBus();
     }
 
     isOldConfig = getOldConfigArg();
