@@ -64,9 +64,11 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     await startFuncProcess(appPath, disableServiceBusFunctions);
     await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });
+    await waitForOutput('Functions:', { checkFullOutput: true });
 
-    // Add slight delay after starting func to hopefully increase reliability of tests
-    await delay(30 * 1000);
+    if (model === 'v4' && !isOldConfig) {
+        await waitForOutput('MCP server endpoint:', { checkFullOutput: true, ignoreFailures: true });
+    }
 });
 
 after(async () => {
