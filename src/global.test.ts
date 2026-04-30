@@ -69,6 +69,10 @@ before(async function (this: Mocha.Context): Promise<void> {
     if (model === 'v4' && !isOldConfig) {
         await waitForOutput('MCP server endpoint:', { checkFullOutput: true, ignoreFailures: true });
     }
+
+    // The host can announce functions before all listeners finish binding to local emulators.
+    // Keep a small stabilization window so Service Bus and HTTP-triggered output tests don't race startup.
+    await delay(30 * 1000);
 });
 
 after(async () => {
