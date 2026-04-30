@@ -8,43 +8,56 @@ parameters:
 steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: ${{ parameters.nodeVersion }}
+          versionSpec: ${{ parameters.nodeVersion }}
       displayName: 'Install Node ${{ parameters.nodeVersion }}'
       retryCountOnTaskFailure: 10
 
     - bash: |
-        docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
-        docker run --detach --publish 8081:8081 --publish 1234:1234 --name cosmosdb-emulator mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
-        docker ps
-      displayName: "Start CosmosDB Emulator"
+          echo "Disk space before cleanup:"
+          df -h
+
+          docker system prune -af --volumes || true
+          npm cache clean --force || true
+          sudo apt-get clean || true
+          sudo rm -rf /var/lib/apt/lists/* || true
+
+          echo "Disk space after cleanup:"
+          df -h
+      displayName: 'Free disk space'
 
     - bash: |
-        docker compose -f src/utils/sql/docker-compose.yml up -d
-        sleep 60
+          docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+          docker run --detach --publish 8081:8081 --publish 1234:1234 --name cosmosdb-emulator mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview
+          docker ps
+      displayName: 'Start CosmosDB Emulator'
+
+    - bash: |
+          docker compose -f src/utils/sql/docker-compose.yml up -d
+          sleep 60
       env:
-        SA_PASSWORD: $(AzureWebJobsSQLPassword)
-      displayName: "Start SQL Service"
+          SA_PASSWORD: $(AzureWebJobsSQLPassword)
+      displayName: 'Start SQL Service'
 
     - bash: docker compose -f src/utils/servicebus/docker-compose.yml up -d
       env:
-        AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
+          AzureWebJobsSQLPassword: $(AzureWebJobsSQLPassword)
       displayName: 'Start ServiceBus Emulator'
 
     - bash: npm run testServiceBus
       env:
-        SA_PASSWORD: $(AzureWebJobsSQLPassword)
+          SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: 'Run ServiceBus tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
 
     - bash: |
-        docker stop servicebus-emulator || true
-        docker rm -f servicebus-emulator || true
-        docker compose -f src/utils/eventhub/docker-compose.yml up -d
+          docker stop servicebus-emulator || true
+          docker rm -f servicebus-emulator || true
+          docker compose -f src/utils/eventhub/docker-compose.yml up -d
       displayName: 'Stop ServiceBus Emulator and Start EventHub Emulator'
 
     - bash: npm run testAllExceptServiceBus
       env:
-        SA_PASSWORD: $(AzureWebJobsSQLPassword)
+          SA_PASSWORD: $(AzureWebJobsSQLPassword)
       displayName: 'Run remaining tests Node ${{ parameters.nodeVersion }}'
       continueOnError: true
 
@@ -54,9 +67,21 @@ steps:
       continueOnError: true
 
     - bash: |
-        docker stop cosmosdb-emulator || true
-        docker rm -f cosmosdb-emulator || true
-        docker compose -f src/utils/eventhub/docker-compose.yml down -v
-        docker compose -f src/utils/servicebus/docker-compose.yml down -v
-        docker compose -f src/utils/sql/docker-compose.yml down -v
+          docker stop cosmosdb-emulator || true
+          docker rm -f cosmosdb-emulator || true
+          docker compose -f src/utils/eventhub/docker-compose.yml down -v
+          docker compose -f src/utils/servicebus/docker-compose.yml down -v
+          docker compose -f src/utils/sql/docker-compose.yml down -v
       displayName: 'Stop all resources'
+
+    - bash: |
+          echo "Disk space after test cleanup:"
+          df -h
+
+          docker system prune -af --volumes || true
+          npm cache clean --force || true
+
+          echo "Disk space after final prune:"
+          df -h
+      displayName: 'Free disk space after tests'
+      condition: always()

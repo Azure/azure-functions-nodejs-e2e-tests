@@ -40,6 +40,16 @@ export namespace Sql {
     export const sqlNonTriggerTable = 'e2eSqlNonTriggerTable';
 }
 
+export namespace MCP {
+    export const streamableUrl = 'http://127.0.0.1:7071/runtime/webhooks/mcp';
+    export const sseUrl = 'http://127.0.0.1:7071/runtime/webhooks/mcp/sse';
+    export const legacySseUrl = 'http://127.0.0.1:7071/runtime/mcp/sse';
+    export const messageUrl = 'http://127.0.0.1:7071/runtime/webhooks/mcp/sse/message';
+    export const searchToolName = 'searchTool';
+    export const testConfigResourceUri = 'mcp://test/config';
+    export const testConfigResourceName = 'testConfig';
+}
+
 export const defaultTimeout = 3 * 60 * 1000;
 
 export const combinedFolder = 'combined';

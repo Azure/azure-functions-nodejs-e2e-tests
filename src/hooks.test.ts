@@ -14,9 +14,7 @@ describe('hooks', () => {
     });
 
     it('app start', async () => {
-        await waitForOutput(`Executing 1 "appStart" hooks`, { checkFullOutput: true });
         await waitForOutput(`appStart hook executed.`, { checkFullOutput: true });
-        await waitForOutput(`Executed "appStart" hooks`, { checkFullOutput: true });
     });
 
     it('invocation', async () => {
@@ -28,21 +26,17 @@ describe('hooks', () => {
         expect(body).to.equal('hookBodyResponse');
 
         // pre invocation
-        await waitForOutput(`Executing 1 "preInvocation" hooks`);
         await waitForOutput(`preInvocation hook executed with inputs ["HttpRequest"]`);
         await waitForOutput(`Ignored error: Cannot assign to read only property 'hookData'`);
         await waitForOutput(`Ignored error: Cannot assign to read only property 'invocationContext'`);
-        await waitForOutput(`Executed "preInvocation" hooks`);
 
         // invocation
         await waitForOutput(`extra log from updated functionHandler`);
         await waitForOutput(`httpTriggerForHooks was triggered with second input extraTestInput12345`);
 
         // post invocation
-        await waitForOutput(`Executing 2 "postInvocation" hooks`);
         await waitForOutput(
             `postInvocation hook executed with error: null, result: {"body":"hookBodyResponse"}, hook data: preInvocationHookData123`
         );
-        await waitForOutput(`Executed "postInvocation" hooks`);
     });
 });

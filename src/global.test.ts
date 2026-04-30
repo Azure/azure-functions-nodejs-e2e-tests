@@ -5,7 +5,7 @@ import cp from 'child_process';
 import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
-import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix } from './constants';
+import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix, ServiceBus } from './constants';
 import { getModelArg, getOldConfigArg, getTestFileFilter, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
@@ -13,13 +13,13 @@ import {
     initializeConnectionStrings,
     serviceBusConnectionString,
     sqlTestConnectionString,
-    storageConnectionString
+    storageConnectionString,
 } from './utils/connectionStrings';
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+import { setupServiceBus } from './utils/servicebus/setupServiceBus';
 import { runSqlSetupQueries } from './utils/sql/setupSql';
-import { ServiceBus } from './constants';
 
 let perTestFuncOutput = '';
 let fullFuncOutput = '';
@@ -45,9 +45,16 @@ before(async function (this: Mocha.Context): Promise<void> {
     await initializeConnectionStrings();
 
     const { only } = getTestFileFilter();
+    const disableServiceBusFunctions = shouldDisableServiceBusFunctions();
     if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
         await runSqlSetupQueries();
         await setupCosmosDB();
+    }
+
+    // Setup ServiceBus entities for v4 model (includes both MCP and ServiceBus functions)
+    // This must be done before starting the functions app so that all trigger bindings can initialize
+    if (model === 'v4' && !getOldConfigArg() && !disableServiceBusFunctions) {
+        await setupServiceBus();
     }
 
     isOldConfig = getOldConfigArg();
@@ -55,10 +62,16 @@ before(async function (this: Mocha.Context): Promise<void> {
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
         : path.join(__dirname, '..', 'app', model);
 
-    await startFuncProcess(appPath);
+    await startFuncProcess(appPath, disableServiceBusFunctions);
     await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });
+    await waitForOutput('Functions:', { checkFullOutput: true });
 
-    // Add slight delay after starting func to hopefully increase reliability of tests
+    if (model === 'v4' && !isOldConfig) {
+        await waitForOutput('MCP server endpoint:', { checkFullOutput: true, ignoreFailures: true });
+    }
+
+    // The host can announce functions before all listeners finish binding to local emulators.
+    // Keep a small stabilization window so Service Bus and HTTP-triggered output tests don't race startup.
     await delay(30 * 1000);
 });
 
@@ -77,6 +90,15 @@ async function killFuncProc(): Promise<void> {
         console.log(`Killing process ${result.name} with id ${result.pid}`);
         process.kill(result.pid, 'SIGINT');
     }
+}
+
+function shouldDisableServiceBusFunctions(): boolean {
+    const { only, exclude } = getTestFileFilter();
+    if (only) {
+        return !only.startsWith(ServiceBus.serviceBusTestFileName);
+    }
+
+    return exclude?.startsWith(ServiceBus.serviceBusTestFileName) ?? false;
 }
 
 interface WaitForOutputOptions {
@@ -112,7 +134,19 @@ export async function waitForOutput(data: string, options?: WaitForOutputOptions
     }
 }
 
-async function startFuncProcess(appPath: string): Promise<void> {
+async function startFuncProcess(appPath: string, disableServiceBusFunctions: boolean): Promise<void> {
+    const disabledFunctions = disableServiceBusFunctions
+        ? {
+              'AzureWebJobs.serviceBusQueueTrigger.Disabled': 'true',
+              'AzureWebJobs.serviceBusQueueTriggerAndOutput.Disabled': 'true',
+              'AzureWebJobs.serviceBusQueueManyTrigger.Disabled': 'true',
+              'AzureWebJobs.serviceBusQueueManyTriggerAndOutput.Disabled': 'true',
+              'AzureWebJobs.serviceBusTopicTrigger.Disabled': 'true',
+              'AzureWebJobs.serviceBusTopicTriggerAndOutput.Disabled': 'true',
+              'AzureWebJobs.httpTriggerServiceBusOutput.Disabled': 'true',
+          }
+        : {};
+
     await fs.writeFile(
         path.join(appPath, 'local.settings.json'),
         JSON.stringify(
@@ -128,6 +162,7 @@ async function startFuncProcess(appPath: string): Promise<void> {
                     [EnvVarNames.sql]: sqlTestConnectionString,
                     WEBSITE_SITE_NAME: 'azure-functions-nodejs-e2e-tests',
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
+                    ...disabledFunctions,
                 },
             },
             null,
