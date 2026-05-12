@@ -1,0 +1,37 @@
+{
+  "taskId": "harden-v3-sensitive-http-triggers",
+  "status": "Succeeded",
+  "summary": "Hardened the v3 resource-backed HTTP triggers with shared request validation, least-privilege auth/methods, and explicit 400/404 handling while preserving happy-path responses/logs; validated with app/v3 TypeScript build.",
+  "filesTouched": [
+    "app/v3/utils/httpValidation.ts",
+    "app/v3/httpTriggerTableInput/function.json",
+    "app/v3/httpTriggerTableInput/index.ts",
+    "app/v3/httpTriggerServiceBusOutput/function.json",
+    "app/v3/httpTriggerServiceBusOutput/index.ts",
+    "app/v3/httpTriggerSqlInput/function.json",
+    "app/v3/httpTriggerSqlInput/index.ts",
+    "app/v3/httpTriggerStorageQueueOutput/function.json",
+    "app/v3/httpTriggerStorageQueueOutput/index.ts",
+    "app/v3/httpTriggerTableOutput/function.json",
+    "app/v3/httpTriggerTableOutput/index.ts",
+    "app/v3/httpTriggerCosmosDBInput/function.json",
+    "app/v3/httpTriggerCosmosDBInput/index.ts",
+    "app/v3/httpTriggerCosmosDBOutput/function.json",
+    "app/v3/httpTriggerCosmosDBOutput/index.ts",
+    "app/v3/httpTriggerSqlOutput/function.json",
+    "app/v3/httpTriggerSqlOutput/index.ts",
+    "app/v3-oldConfig/httpTriggerCosmosDBInput/function.json",
+    "app/v3-oldConfig/httpTriggerCosmosDBOutput/function.json"
+  ],
+  "testsRun": {
+    "executed": true,
+    "passed": 1,
+    "failed": 0,
+    "command": "cd /workspace/repo/app/v3 \u0026\u0026 npm ci \u0026\u0026 npm run build"
+  },
+  "failureExcerpt": null,
+  "designDeviations": null,
+  "followUps": [
+    "Add regression coverage for the new 400/404 behavior and static auth/method guards in the dependent security test task."
+  ]
+}

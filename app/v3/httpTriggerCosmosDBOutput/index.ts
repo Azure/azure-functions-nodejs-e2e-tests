@@ -2,12 +2,19 @@
 // Licensed under the MIT License.
 
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { getJsonBody, hasItemsWithRequiredStringFields } from '../utils/httpValidation';
 
 const httpTriggerCosmosDBOutput: AzureFunction = async function (
     context: Context,
     request: HttpRequest
 ): Promise<void> {
-    context.bindings.outputDoc = request.body;
+    const body = getJsonBody(request);
+    if (!hasItemsWithRequiredStringFields(body, ['id', 'testData'])) {
+        context.res = { status: 400 };
+        return;
+    }
+
+    context.bindings.outputDoc = body;
     context.res = { body: 'done' };
 };
 
