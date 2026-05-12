@@ -21,7 +21,7 @@ export async function httpTriggerSqlInput(request: HttpRequest, context: Invocat
 
     const items = context.extraInputs.get(sqlInput);
     if (isMissingResult(items)) {
-        return notFound(`No SQL rows were found for id \"${idResult.value}\".`);
+        return notFound(`No SQL rows were found for id "${idResult.value}".`);
     }
 
     return { jsonBody: items };

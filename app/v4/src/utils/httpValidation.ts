@@ -32,7 +32,7 @@ export function notFound(message: string): HttpResponseInit {
 export function getRequiredQueryParam(request: HttpRequest, name: string): ValidationResult<string> {
     const value = request.query.get(name);
     if (!isNonEmptyString(value)) {
-        return { response: badRequest(`Missing or invalid query parameter \"${name}\".`) };
+        return { response: badRequest(`Missing or invalid query parameter "${name}".`) };
     }
 
     return { value };
@@ -41,7 +41,7 @@ export function getRequiredQueryParam(request: HttpRequest, name: string): Valid
 export function getRequiredRouteParam(request: HttpRequest, name: string): ValidationResult<string> {
     const value = request.params[name];
     if (!isNonEmptyString(value)) {
-        return { response: badRequest(`Missing or invalid route parameter \"${name}\".`) };
+        return { response: badRequest(`Missing or invalid route parameter "${name}".`) };
     }
 
     return { value };

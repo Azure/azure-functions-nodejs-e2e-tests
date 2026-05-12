@@ -23,7 +23,7 @@ export async function httpTriggerCosmosDBInput(
 
     const doc = context.extraInputs.get(cosmosInput);
     if (isMissingResult(doc)) {
-        return notFound(`No Cosmos DB document was found for id \"${idResult.value}\".`);
+        return notFound(`No Cosmos DB document was found for id "${idResult.value}".`);
     }
 
     return { body: (doc as { testData?: string }).testData };

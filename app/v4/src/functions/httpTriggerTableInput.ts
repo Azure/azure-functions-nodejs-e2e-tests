@@ -24,7 +24,7 @@ export async function httpTriggerTableInput(
 
     const items = context.extraInputs.get(tableInput);
     if (isMissingResult(items)) {
-        return notFound(`No table entities were found for rowKey \"${rowKeyResult.value}\".`);
+        return notFound(`No table entities were found for rowKey "${rowKeyResult.value}".`);
     }
 
     return { jsonBody: items };
