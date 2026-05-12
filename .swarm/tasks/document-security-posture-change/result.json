@@ -1,0 +1,17 @@
+{
+  "taskId": "document-security-posture-change",
+  "status": "Succeeded",
+  "summary": "Updated README.md with the localhost/emulator security posture, hosted function-key contract, and breaking-change guidance; validated formatting with Prettier.",
+  "filesTouched": [
+    "README.md"
+  ],
+  "testsRun": {
+    "executed": true,
+    "passed": 1,
+    "failed": 0,
+    "command": "npx prettier --check README.md"
+  },
+  "failureExcerpt": null,
+  "designDeviations": null,
+  "followUps": []
+}
