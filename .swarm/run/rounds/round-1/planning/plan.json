@@ -1,0 +1,44 @@
+{
+  "designDocument": "## Context / assessment\n- The reported findings are not generic scanner noise: each flagged route is an HTTP trigger directly wired to Table, Cosmos DB, SQL, Storage Queue, or Service Bus bindings. In any Azure-hosted or shared environment, anonymous callers can read or write real backing resources.\n- The repo\u2019s current operating model lowers immediate exploitability: \u0060README.md\u0060, \u0060src/global.test.ts\u0060, and the pipeline show a localhost-only E2E harness (\u0060func start\u0060 on \u0060127.0.0.1\u0060 plus storage/Cosmos/Service Bus/SQL emulators). There is no in-repo deployment flow to a public Azure Function App.\n- The fixes are still necessary. These are true-positive patterns on sensitive bindings, and equivalent v4/oldConfig endpoints use the same anonymous design even though the SFI report only enumerated v3 files.\n- This is primarily an auth/IDOR problem, not SQL injection: the SQL input binding already uses a parameterized query. Validation is defense in depth; requiring auth and reducing surface area are the primary controls.\n\n## Historical context\n- Git history shows these endpoints were introduced to expand binding coverage and keep the E2E harness simple (\u0060cosmos db test\u0060, \u0060Add extra output tests for storage/serviceBus (#12)\u0060, \u0060Add table input/output test (#16)\u0060, \u0060Emulate Storage and CosmosDB E2E Tests (#62)\u0060).\n- Anonymous auth appears to have been an intentional convenience choice for fetch-based tests, not a production threat model. There is no evidence of later hardening or auth-focused regression tests.\n\n## Planned change shape\n1. Harden only the resource-backed HTTP routes in v3, v4, and oldConfig equivalents; leave non-sensitive anonymous routes (hello world, headers, query, cookies, etc.) unchanged.\n2. Change auth from \u0060anonymous\u0060 to \u0060function\u0060 and narrow HTTP verbs to least privilege: GET for read endpoints, POST for write endpoints.\n3. Add minimal guard clauses instead of overly strict schemas:\n   - reject missing or malformed \u0060rowKey\u0060/\u0060id\u0060/request bodies with 400,\n   - return 404 when a lookup resolves to no resource,\n   - validate required payload fields before queue/table/cosmos/sql writes,\n   - preserve current happy-path payloads, status codes, and log messages.\n4. Add static regression coverage that inspects sensitive route definitions so auth cannot drift back to anonymous or broader methods, because local Core Tools does not enforce function-key auth.\n5. Document the hosted-call contract (\u0060code\u0060 query string or \u0060x-functions-key\u0060) and, if practical, let test helpers append an env-supplied key for future hosted runs without changing local behavior.\n\n## Regressions / breaking change\n- Local CI should not regress from the auth-level change alone because Azure Functions Core Tools disables HTTP auth enforcement when running locally. The main behavioral regression risk is the new request validation, so negative-path tests are needed.\n- Any deployed consumer calling these endpoints anonymously will see a deliberate breaking change and must send a function key. Tightening verbs can also break callers that currently use POST for reads or GET for writes.\n- Because this repo is an E2E harness rather than a customer-facing service, production impact is limited, but the contract change should still be documented clearly.\n\n## Test state\n- Existing happy-path E2E coverage is good: \u0060src/storage.test.ts\u0060, \u0060src/serviceBus.test.ts\u0060, \u0060src/cosmosDB.test.ts\u0060, and \u0060src/sql.test.ts\u0060 exercise the flagged flows across v3/v4, and combined oldConfig runs cover the legacy Cosmos paths.\n- Coverage is weak for security regression: there are no auth-focused checks, no malformed-input coverage for these endpoints, and no static assertions on auth level or HTTP methods.\n- We cannot fully prove Azure-hosted auth enforcement inside the current emulator-only suite, so the plan adds static config guards plus E2E validation tests for 400/404 behavior.",
+  "tasks": [
+    {
+      "id": "harden-v3-sensitive-http-triggers",
+      "title": "Harden v3 sensitive HTTP triggers",
+      "description": "Update the eight flagged v3 endpoints under \u0060app/v3/httpTrigger{TableInput,ServiceBusOutput,SqlInput,StorageQueueOutput,TableOutput,CosmosDBInput,CosmosDBOutput,SqlOutput}\u0060 and the matching legacy overlays in \u0060app/v3-oldConfig/httpTriggerCosmosDB{Input,Output}/function.json\u0060. Add a shared helper in \u0060app/v3/utils\u0060 for minimal request parsing/validation, change each sensitive trigger \u0060authLevel\u0060 from \u0060anonymous\u0060 to \u0060function\u0060, reduce verbs to GET for read routes and POST for write routes, return 400 for malformed ids/bodies and 404 for missing reads, and keep the current happy-path responses/log lines stable so existing E2E assertions still pass.",
+      "dependencies": [],
+      "roundNumber": 1,
+      "branchName": "worker/task-1"
+    },
+    {
+      "id": "harden-v4-sensitive-http-triggers",
+      "title": "Harden v4 sensitive HTTP triggers",
+      "description": "Apply the same least-privilege changes to the equivalent v4 routes in \u0060app/v4/src/functions/httpTrigger{TableInput,ServiceBusOutput,SqlInput,StorageQueueOutput,TableOutput,CosmosDBInput,CosmosDBOutput,SqlOutput}.ts\u0060 plus the old-config overlays in \u0060app/v4-oldConfig/src/functions/httpTriggerCosmosDB{Input,Output}.ts\u0060. Add a shared helper under \u0060app/v4/src/utils\u0060 for body/query/route validation and explicit 400/404 handling, set \u0060authLevel: \u0027function\u0027\u0060, tighten methods to the minimum needed, and preserve current successful outputs so the v4 E2E behavior stays consistent.",
+      "dependencies": [],
+      "roundNumber": 1,
+      "branchName": "worker/task-2"
+    },
+    {
+      "id": "add-security-regression-coverage",
+      "title": "Add security regression coverage",
+      "description": "Update \u0060src/{storage,serviceBus,cosmosDB,sql}.test.ts\u0060 and any shared helpers to cover both happy paths and negative cases for the hardened endpoints: malformed payloads, missing ids, and not-found reads should now produce deterministic 400/404 responses. Send explicit JSON content types in HTTP write tests. Add a repo-level regression script/test (for example under \u0060scripts/\u0060) that inspects the sensitive v3/v4/oldConfig routes and fails if auth drifts back to anonymous or methods broaden again. If useful, extend \u0060src/constants.ts\u0060 or a helper so hosted runs can append a function key from env without changing current local URLs. Validate with the existing v3/v4/oldConfig test suites plus the new static guard.",
+      "dependencies": [
+        "harden-v3-sensitive-http-triggers",
+        "harden-v4-sensitive-http-triggers"
+      ],
+      "roundNumber": 1,
+      "branchName": "worker/task-3"
+    },
+    {
+      "id": "document-security-posture-change",
+      "title": "Document security posture change",
+      "description": "Update \u0060README.md\u0060 (and add a focused note if needed) to explain: this repo is a localhost/emulator E2E harness; the findings are still actionable for any Azure-hosted deployment; anonymous auth was a historical convenience choice when these binding-coverage routes were added; function-level auth is a deliberate breaking change for deployed unauthenticated callers; and local Core Tools does not enforce function-key auth, so static checks and validation tests are the main regression guards. Include guidance for hosted invocation with \u0060code\u0060 or \u0060x-functions-key\u0060 so downstream users know the new contract.",
+      "dependencies": [
+        "harden-v3-sensitive-http-triggers",
+        "harden-v4-sensitive-http-triggers"
+      ],
+      "roundNumber": 1,
+      "branchName": "worker/task-4"
+    }
+  ],
+  "title": "Secure resource-backed E2E endpoints"
+}

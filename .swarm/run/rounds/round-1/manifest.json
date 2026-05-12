@@ -1,0 +1,9 @@
+{
+  "roundNumber": 1,
+  "taskIds": [
+    "harden-v3-sensitive-http-triggers",
+    "harden-v4-sensitive-http-triggers",
+    "add-security-regression-coverage",
+    "document-security-posture-change"
+  ]
+}
