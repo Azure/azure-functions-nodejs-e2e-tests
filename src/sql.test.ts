@@ -6,7 +6,7 @@ import { ConnectionPool } from 'mssql';
 import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 import { getFuncUrl, jsonContentTypeHeaders, Sql } from './constants';
-import { isOldConfig, waitForOutput } from './global.test';
+import { isOldConfig, model, waitForOutput } from './global.test';
 import { sqlTestConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
 import { createPoolConnnection } from './utils/sql/setupSql';
@@ -79,7 +79,13 @@ describe('sql', () => {
         await waitForOutput(`httpTriggerSqlInput was triggered`);
     });
 
-    it('input and output reject invalid requests', async () => {
+    it('input and output reject invalid requests', async function (this: Mocha.Context) {
+        // v3 binding extensions resolve {Query.id} before function code runs and may return
+        // 500 instead of 400 when the parameter is missing.  Skip for v3.
+        if (model === 'v3') {
+            this.skip();
+        }
+
         const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerSqlOutput'), {
             method: 'POST',
             headers: jsonContentTypeHeaders,
