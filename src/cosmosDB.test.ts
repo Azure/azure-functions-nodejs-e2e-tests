@@ -4,7 +4,7 @@
 import { CosmosClient } from '@azure/cosmos';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
-import { getFuncUrl, CosmosDB, jsonContentTypeHeaders } from './constants';
+import { CosmosDB, getFuncUrl, jsonContentTypeHeaders } from './constants';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';

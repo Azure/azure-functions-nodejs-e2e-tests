@@ -4,18 +4,17 @@
 import { ServiceBusClient } from '@azure/service-bus';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
-import { getFuncUrl, jsonContentTypeHeaders } from './constants';
+import { getFuncUrl, jsonContentTypeHeaders, ServiceBus } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
-import { getRandomTestData } from './utils/getRandomTestData';
 import { serviceBusConnectionString } from './utils/connectionStrings';
-import { ServiceBus } from './constants';
+import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('serviceBus', () => {
     let client: ServiceBusClient;
 
     before(function (this: Mocha.Context) {
         if (isOldConfig) {
-          this.skip();
+            this.skip();
         }
         client = new ServiceBusClient(serviceBusConnectionString);
     });
@@ -66,7 +65,11 @@ describe('serviceBus', () => {
 
         // single
         const message = getRandomTestData();
-        await fetch(url, { method: 'POST', headers: jsonContentTypeHeaders, body: JSON.stringify({ output: message }) });
+        await fetch(url, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ output: message }),
+        });
         await waitForOutput(`serviceBusQueueTrigger was triggered by "${message}"`);
 
         // bulk
@@ -74,7 +77,11 @@ describe('serviceBus', () => {
         for (let i = 0; i < 5; i++) {
             bulkMsgs.push(getRandomTestData());
         }
-        await fetch(url, { method: 'POST', headers: jsonContentTypeHeaders, body: JSON.stringify({ output: bulkMsgs }) });
+        await fetch(url, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ output: bulkMsgs }),
+        });
         for (const msg of bulkMsgs) {
             await waitForOutput(`serviceBusQueueTrigger was triggered by "${msg}"`);
         }

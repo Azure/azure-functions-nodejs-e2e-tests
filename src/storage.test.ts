@@ -7,8 +7,8 @@ import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { getFuncUrl, jsonContentTypeHeaders } from './constants';
 import { model, waitForOutput } from './global.test';
-import { getRandomTestData } from './utils/getRandomTestData';
 import { storageConnectionString } from './utils/connectionStrings';
+import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('storage', () => {
     it('queue trigger and output', async () => {
@@ -27,7 +27,11 @@ describe('storage', () => {
 
         // single
         const message = getRandomTestData();
-        await fetch(url, { method: 'POST', headers: jsonContentTypeHeaders, body: JSON.stringify({ output: message }) });
+        await fetch(url, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ output: message }),
+        });
         await waitForOutput(`storageQueueTrigger was triggered by "${message}"`);
 
         // bulk
@@ -35,7 +39,11 @@ describe('storage', () => {
         for (let i = 0; i < 5; i++) {
             bulkMsgs.push(getRandomTestData());
         }
-        await fetch(url, { method: 'POST', headers: jsonContentTypeHeaders, body: JSON.stringify({ output: bulkMsgs }) });
+        await fetch(url, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ output: bulkMsgs }),
+        });
         for (const msg of bulkMsgs) {
             await waitForOutput(`storageQueueTrigger was triggered by "${msg}"`);
         }
@@ -108,7 +116,9 @@ describe('storage', () => {
         });
         expect(invalidReadResponse.status).to.equal(400);
 
-        const missingRowResponse = await fetch(getFuncUrl(`httpTriggerTableInput/${getRandomTestData()}`), { method: 'GET' });
+        const missingRowResponse = await fetch(getFuncUrl(`httpTriggerTableInput/${getRandomTestData()}`), {
+            method: 'GET',
+        });
         expect(missingRowResponse.status).to.equal(404);
     });
 

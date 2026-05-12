@@ -23,7 +23,7 @@ export async function httpTriggerSqlOutput(
     const validationError = validateObjectOrArray(
         bodyResult.value,
         (item) => hasRequiredStringFields(item, ['id', 'testData']),
-        'Request body must include SQL rows with non-empty \"id\" and \"testData\" values.'
+        'Request body must include SQL rows with non-empty "id" and "testData" values.'
     );
     if (validationError) {
         return validationError;

@@ -4,10 +4,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { getQueryParam, isMissingReadResult } from '../utils/httpValidation';
 
-const httpTriggerCosmosDBInput: AzureFunction = async function (
-    context: Context,
-    request: HttpRequest
-): Promise<void> {
+const httpTriggerCosmosDBInput: AzureFunction = async function (context: Context, request: HttpRequest): Promise<void> {
     const id = getQueryParam(request, 'id');
     if (!id) {
         context.res = { status: 400 };

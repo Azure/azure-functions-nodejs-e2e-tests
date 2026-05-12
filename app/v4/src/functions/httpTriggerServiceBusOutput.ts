@@ -21,7 +21,7 @@ export async function httpTriggerServiceBusOutput(
     const validationError = validateObject(
         bodyResult.value,
         (item) => hasValidOutputEnvelope(item),
-        'Request body must include an \"output\" value.'
+        'Request body must include an "output" value.'
     );
     if (validationError) {
         return validationError;

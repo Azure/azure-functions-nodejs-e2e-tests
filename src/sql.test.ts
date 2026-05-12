@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 import { expect } from 'chai';
+import { ConnectionPool } from 'mssql';
 import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
-import { Sql, getFuncUrl, jsonContentTypeHeaders } from './constants';
+import { getFuncUrl, jsonContentTypeHeaders, Sql } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
-import { getRandomTestData } from './utils/getRandomTestData';
-import { ConnectionPool } from 'mssql';
-import { createPoolConnnection } from './utils/sql/setupSql';
 import { sqlTestConnectionString } from './utils/connectionStrings';
+import { getRandomTestData } from './utils/getRandomTestData';
+import { createPoolConnnection } from './utils/sql/setupSql';
 
 describe('sql', () => {
     let poolConnection: ConnectionPool | undefined;

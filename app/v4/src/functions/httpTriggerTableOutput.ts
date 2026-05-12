@@ -23,7 +23,7 @@ export async function httpTriggerTableOutput(
     const validationError = validateObjectOrArray(
         bodyResult.value,
         (item) => hasRequiredStringFields(item, ['PartitionKey', 'RowKey']),
-        'Request body must include table entities with non-empty \"PartitionKey\" and \"RowKey\" values.'
+        'Request body must include table entities with non-empty "PartitionKey" and "RowKey" values.'
     );
     if (validationError) {
         return validationError;

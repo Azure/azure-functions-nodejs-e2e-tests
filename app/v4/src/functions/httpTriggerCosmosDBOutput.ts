@@ -22,7 +22,7 @@ export async function httpTriggerCosmosDBOutput(
     const validationError = validateObjectOrArray(
         bodyResult.value,
         (item) => hasRequiredStringFields(item, ['id', 'testData']),
-        'Request body must include Cosmos DB documents with non-empty \"id\" and \"testData\" values.'
+        'Request body must include Cosmos DB documents with non-empty "id" and "testData" values.'
     );
     if (validationError) {
         return validationError;

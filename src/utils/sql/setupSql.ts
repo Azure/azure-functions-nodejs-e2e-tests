@@ -3,8 +3,8 @@
 
 import * as sql from 'mssql';
 import retry from 'p-retry';
-import { sqlConnectionString, sqlTestConnectionString } from '../connectionStrings';
 import { Sql } from '../../constants';
+import { sqlConnectionString, sqlTestConnectionString } from '../connectionStrings';
 
 export async function runSqlSetupQueries() {
     // STEP 1: Create DB if not exists
@@ -18,13 +18,12 @@ export async function runSqlSetupQueries() {
 
     // STEP 2: Retry ALTER DATABASE (change_tracking)
     try {
-        await retry(async (currentAttempt) => {
-            if (currentAttempt > 1) {
-                console.log(
-                    `${new Date().toISOString()}: Retrying ALTER DATABASE. Attempt ${currentAttempt}`
-                );
-            }
-            await pool.request().query(`
+        await retry(
+            async (currentAttempt) => {
+                if (currentAttempt > 1) {
+                    console.log(`${new Date().toISOString()}: Retrying ALTER DATABASE. Attempt ${currentAttempt}`);
+                }
+                await pool.request().query(`
                 IF NOT EXISTS (
                     SELECT 1
                     FROM sys.change_tracking_databases
@@ -35,10 +34,12 @@ export async function runSqlSetupQueries() {
                     SET CHANGE_TRACKING = ON (CHANGE_RETENTION = 2 DAYS, AUTO_CLEANUP = ON);
                 END
             `);
-        }, {
-            retries: 5,
-            minTimeout: 5000
-        });
+            },
+            {
+                retries: 5,
+                minTimeout: 5000,
+            }
+        );
     } finally {
         await pool.close();
     }
