@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { app, HttpRequest, HttpResponseInit, input, InvocationContext } from '@azure/functions';
+import { getRequiredQueryParam, isMissingResult, notFound } from '../utils/httpValidation';
 
 const sqlInput = input.sql({
     connectionStringSetting: 'SqlConnection',
@@ -12,13 +13,23 @@ const sqlInput = input.sql({
 
 export async function httpTriggerSqlInput(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`httpTriggerSqlInput was triggered`);
+
+    const idResult = getRequiredQueryParam(request, 'id');
+    if ('response' in idResult) {
+        return idResult.response;
+    }
+
     const items = context.extraInputs.get(sqlInput);
+    if (isMissingResult(items)) {
+        return notFound(`No SQL rows were found for id \"${idResult.value}\".`);
+    }
+
     return { jsonBody: items };
 }
 
 app.http('httpTriggerSqlInput', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
+    methods: ['GET'],
+    authLevel: 'function',
     extraInputs: [sqlInput],
     handler: httpTriggerSqlInput,
 });

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { app, HttpRequest, HttpResponseInit, InvocationContext, output } from '@azure/functions';
+import { getRequiredJsonBody, hasDefinedField, validateObject } from '../utils/httpValidation';
 
 const serviceBusOutput = output.serviceBusQueue({
     connection: 'ServiceBusConnection',
@@ -12,14 +13,27 @@ export async function httpTriggerServiceBusOutput(
     request: HttpRequest,
     context: InvocationContext
 ): Promise<HttpResponseInit> {
-    const body = <{ output: any }>await request.json();
-    context.extraOutputs.set(serviceBusOutput, body.output);
+    const bodyResult = await getRequiredJsonBody(request);
+    if ('response' in bodyResult) {
+        return bodyResult.response;
+    }
+
+    const validationError = validateObject(
+        bodyResult.value,
+        (item) => hasDefinedField(item, 'output'),
+        'Request body must include an \"output\" value.'
+    );
+    if (validationError) {
+        return validationError;
+    }
+
+    context.extraOutputs.set(serviceBusOutput, (bodyResult.value as { output: unknown }).output);
     return { body: 'done' };
 }
 
 app.http('httpTriggerServiceBusOutput', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
+    methods: ['POST'],
+    authLevel: 'function',
     extraOutputs: [serviceBusOutput],
     handler: httpTriggerServiceBusOutput,
 });
