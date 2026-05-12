@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import { app, HttpRequest, HttpResponseInit, InvocationContext, output } from '@azure/functions';
+import { getRequiredJsonBody, hasRequiredStringFields, validateObjectOrArray } from '../utils/httpValidation';
 
 const tableOutput = output.table({
     tableName: 'e2etesttable',
@@ -13,14 +14,28 @@ export async function httpTriggerTableOutput(
     context: InvocationContext
 ): Promise<HttpResponseInit> {
     context.log(`httpTriggerTableOutput was triggered`);
-    const body = await request.json();
-    context.extraOutputs.set(tableOutput, body);
+
+    const bodyResult = await getRequiredJsonBody(request);
+    if ('response' in bodyResult) {
+        return bodyResult.response;
+    }
+
+    const validationError = validateObjectOrArray(
+        bodyResult.value,
+        (item) => hasRequiredStringFields(item, ['PartitionKey', 'RowKey']),
+        'Request body must include table entities with non-empty \"PartitionKey\" and \"RowKey\" values.'
+    );
+    if (validationError) {
+        return validationError;
+    }
+
+    context.extraOutputs.set(tableOutput, bodyResult.value);
     return { status: 201 };
 }
 
 app.http('httpTriggerTableOutput', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
+    methods: ['POST'],
+    authLevel: 'function',
     extraOutputs: [tableOutput],
     handler: httpTriggerTableOutput,
 });
