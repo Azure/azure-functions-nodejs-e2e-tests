@@ -47,6 +47,18 @@ curl   -H "x-functions-key: <function-key>"   "https://<function-app>.azurewebsi
 
 The same requirement applies to hosted `POST` requests for the resource-backed output routes.
 
+### Automated test helper
+
+The test helper `getFuncUrl()` automatically appends `?code=<key>` to every URL when the `FUNCTIONS_TEST_KEY` environment variable is set. This means that the same test suite runs against both local Core Tools (no key needed—auth is not enforced locally) and hosted Azure Function Apps (key is injected via the env var) without any code changes:
+
+```bash
+# Local: no env var needed — Core Tools ignores auth
+npm run testAllExceptServiceBus
+
+# Hosted: set FUNCTIONS_TEST_KEY to your function's default key
+FUNCTIONS_TEST_KEY=<function-key> npm run testAllExceptServiceBus
+```
+
 ## Code of Conduct
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
