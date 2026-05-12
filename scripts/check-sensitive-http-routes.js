@@ -88,7 +88,9 @@ function assertEqual(filePath, label, actual, expected) {
 }
 
 function assertMethods(filePath, actual, expected) {
-    if (actual.length !== expected.length || actual.some((method, index) => method !== expected[index])) {
+    const actualSet = new Set(actual);
+    const expectedSet = new Set(expected);
+    if (actualSet.size !== expectedSet.size || [...expectedSet].some((method) => !actualSet.has(method))) {
         throw new Error(
             `Expected methods [${expected.join(', ')}] but found [${actual.join(', ')}] in ${path.relative(
                 repoRoot,

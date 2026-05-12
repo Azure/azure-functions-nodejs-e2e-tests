@@ -106,6 +106,11 @@ export function hasDefinedField(item: JsonRecord, fieldName: string): boolean {
     return Object.prototype.hasOwnProperty.call(item, fieldName) && item[fieldName] !== undefined;
 }
 
+export function hasValidOutputEnvelope(item: JsonRecord): boolean {
+    const output = item['output'];
+    return isNonEmptyString(output) || (Array.isArray(output) && output.length > 0 && output.every(isNonEmptyString));
+}
+
 export function isMissingResult(value: unknown): boolean {
     return Array.isArray(value) ? value.length === 0 : value === undefined || value === null;
 }

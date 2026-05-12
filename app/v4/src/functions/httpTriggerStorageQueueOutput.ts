@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { app, HttpRequest, HttpResponseInit, InvocationContext, output } from '@azure/functions';
-import { getRequiredJsonBody, hasDefinedField, validateObject } from '../utils/httpValidation';
+import { getRequiredJsonBody, hasValidOutputEnvelope, validateObject } from '../utils/httpValidation';
 
 const storageOutput = output.storageQueue({
     queueName: 'e2e-test-queue-trigger',
@@ -20,7 +20,7 @@ export async function httpTriggerStorageQueueOutput(
 
     const validationError = validateObject(
         bodyResult.value,
-        (item) => hasDefinedField(item, 'output'),
+        (item) => hasValidOutputEnvelope(item),
         'Request body must include an \"output\" value.'
     );
     if (validationError) {
