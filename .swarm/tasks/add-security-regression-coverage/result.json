@@ -1,0 +1,26 @@
+{
+  "taskId": "add-security-regression-coverage",
+  "status": "Succeeded",
+  "summary": "Added security regression coverage for storage, service bus, Cosmos DB, and SQL tests, added function-key-aware URL/query helpers and explicit JSON write headers, and introduced a static guard that locks sensitive HTTP routes to function auth and least-privilege methods; validated with TypeScript builds, combined-app build generation, the static guard, and diff checks.",
+  "filesTouched": [
+    "package.json",
+    "scripts/check-sensitive-http-routes.js",
+    "src/constants.ts",
+    "src/cosmosDB.test.ts",
+    "src/http.test.ts",
+    "src/serviceBus.test.ts",
+    "src/sql.test.ts",
+    "src/storage.test.ts"
+  ],
+  "testsRun": {
+    "executed": true,
+    "passed": 7,
+    "failed": 0,
+    "command": "npm run build \u0026\u0026 npm run createCombinedApps \u0026\u0026 npm --prefix app/v4 run build \u0026\u0026 npm --prefix app/combined/v4-oldConfig ci \u0026\u0026 npm --prefix app/combined/v4-oldConfig run build \u0026\u0026 npm run testSecurityRegression \u0026\u0026 git diff --check"
+  },
+  "failureExcerpt": null,
+  "designDeviations": null,
+  "followUps": [
+    "Run npm run testAllExceptServiceBus \u0026\u0026 npm run testServiceBus \u0026\u0026 npm run testOldConfig in an environment with Azure Functions Core Tools and the required local emulators; this worker image did not include func or the emulator services."
+  ]
+}

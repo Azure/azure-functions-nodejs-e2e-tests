@@ -7,6 +7,7 @@ export namespace EnvVarNames {
     export const eventHub = 'EventHubConnection';
     export const serviceBus = 'ServiceBusConnection';
     export const sql = 'SqlConnection';
+    export const functionKey = 'FUNCTIONS_TEST_KEY';
 }
 
 export namespace CosmosDB {
@@ -55,6 +56,37 @@ export const defaultTimeout = 3 * 60 * 1000;
 export const combinedFolder = 'combined';
 export const oldConfigSuffix = '-oldConfig';
 
-export function getFuncUrl(routeSuffix: string): string {
-    return `http://127.0.0.1:7071/api/${routeSuffix}`;
+export const jsonContentTypeHeaders = {
+    'content-type': 'application/json',
+};
+
+type QueryParamValue = string | number | boolean;
+type QueryParamInput = QueryParamValue | QueryParamValue[] | undefined;
+
+export function getFuncUrl(routeSuffix: string, queryParams?: Record<string, QueryParamInput>): string {
+    const url = new URL(`http://127.0.0.1:7071/api/${routeSuffix}`);
+    const functionKey = process.env[EnvVarNames.functionKey];
+    if (functionKey) {
+        url.searchParams.set('code', functionKey);
+    }
+
+    if (queryParams) {
+        for (const name in queryParams) {
+            if (!Object.prototype.hasOwnProperty.call(queryParams, name)) {
+                continue;
+            }
+
+            const value = queryParams[name];
+            if (value === undefined) {
+                continue;
+            }
+
+            const values = Array.isArray(value) ? value : [value];
+            for (const item of values) {
+                url.searchParams.append(name, String(item));
+            }
+        }
+    }
+
+    return url.toString();
 }

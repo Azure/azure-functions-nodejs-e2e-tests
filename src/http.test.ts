@@ -46,7 +46,7 @@ describe('http', () => {
     });
 
     it('hello world name in query', async () => {
-        const response = await fetch(`${helloWorldUrl}?name=testName`);
+        const response = await fetch(getFuncUrl('helloWorld', { name: 'testName' }));
         const body = await response.text();
         expect(body).to.equal('Hello, testName!');
         expect(response.status).to.equal(200);
@@ -61,8 +61,7 @@ describe('http', () => {
 
     // Related: https://github.com/Azure/azure-functions-nodejs-library/issues/285
     it('route parameters', async () => {
-        const funcUrl = getFuncUrl('httpTriggerRouteParams');
-        const response = await fetch(`${funcUrl}/testName/5`);
+        const response = await fetch(getFuncUrl('httpTriggerRouteParams/testName/5'));
         const body = await response.json();
         expect(body).to.deep.equal({ name: 'testName', id: '5' });
         expect(response.status).to.equal(200);
@@ -84,8 +83,7 @@ describe('http', () => {
     });
 
     it('query', async () => {
-        const funcUrl = getFuncUrl('httpTriggerQuery');
-        const response = await fetch(`${funcUrl}?name=testName&dupe=1&dupe=2`);
+        const response = await fetch(getFuncUrl('httpTriggerQuery', { name: 'testName', dupe: ['1', '2'] }));
         const body = await response.json();
         if (isOldConfig || model === 'v3') {
             // NOTE: more info on dupe query behavior here:
@@ -206,8 +204,7 @@ describe('http', () => {
             });
 
             it(`receive stream ${lengthInMb}mb`, async () => {
-                const funcUrl = getFuncUrl('httpTriggerSendStream');
-                const response = await fetch(`${funcUrl}?lengthInMb=${lengthInMb}`, { method: 'GET' });
+                const response = await fetch(getFuncUrl('httpTriggerSendStream', { lengthInMb }), { method: 'GET' });
 
                 const bytesReceived = await receiveStreamWithProgress(response.body);
                 expect(bytesReceived).to.equal(convertMbToB(lengthInMb));
