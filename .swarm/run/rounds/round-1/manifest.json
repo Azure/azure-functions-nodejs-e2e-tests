@@ -1,8 +1,9 @@
 {
   "roundNumber": 1,
   "taskIds": [
-    "fix-v3-input-binding-regression",
-    "fix-v4-input-binding-regression",
-    "reenable-invalid-request-tests"
+    "align-v3-input-bindings",
+    "trim-missing-id-e2es",
+    "align-v4-input-bindings",
+    "validate-binding-regression-fix"
   ]
 }
