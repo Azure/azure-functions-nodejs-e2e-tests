@@ -6,7 +6,6 @@ import { ConnectionPool } from 'mssql';
 import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
 import { getFuncUrl, jsonContentTypeHeaders, Sql } from './constants';
-import { getModelArg } from './getModelArg';
 import { isOldConfig, waitForOutput } from './global.test';
 import { sqlTestConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
@@ -80,31 +79,19 @@ describe('sql', () => {
         await waitForOutput(`httpTriggerSqlInput was triggered`);
     });
 
-    // v3 binding extensions resolve {Query.id} before function code runs and may return
-    // 500 instead of 400 when the parameter is missing.  Skip for v3.
-    // NOTE: this.skip() must run synchronously (not inside an async function) so Mocha
-    // catches the thrown Pending error directly instead of seeing it as a promise rejection.
-    it('input and output reject invalid requests', function (this: Mocha.Context) {
-        if (getModelArg() === 'v3') {
-            this.skip();
-            return;
-        }
+    it('input and output reject invalid payloads and missing resources', async () => {
+        const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerSqlOutput'), {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify([{ id: uuid() }]),
+        });
+        expect(invalidWriteResponse.status).to.equal(400);
 
-        return (async () => {
-            const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerSqlOutput'), {
-                method: 'POST',
-                headers: jsonContentTypeHeaders,
-                body: JSON.stringify([{ id: uuid() }]),
-            });
-            expect(invalidWriteResponse.status).to.equal(400);
-
-            const invalidReadResponse = await fetch(getFuncUrl('httpTriggerSqlInput'), { method: 'GET' });
-            expect(invalidReadResponse.status).to.equal(400);
-
-            const missingRowResponse = await fetch(getFuncUrl('httpTriggerSqlInput', { id: uuid() }), {
-                method: 'GET',
-            });
-            expect(missingRowResponse.status).to.equal(404);
-        })();
+        // Binding-backed input routes intentionally do not assert omitted-id 400s because
+        // the host resolves {Query.id} before the function code can validate it.
+        const missingRowResponse = await fetch(getFuncUrl('httpTriggerSqlInput', { id: uuid() }), {
+            method: 'GET',
+        });
+        expect(missingRowResponse.status).to.equal(404);
     });
 });

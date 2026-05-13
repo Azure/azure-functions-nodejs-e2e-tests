@@ -1,0 +1,20 @@
+{
+  "taskId": "trim-missing-id-e2es",
+  "status": "Succeeded",
+  "summary": "Removed Cosmos/SQL omitted-id assertions and v3 skip scaffolding while keeping 404 and invalid-output coverage; validated with TypeScript build, targeted lint, and the static security regression check.",
+  "filesTouched": [
+    "src/cosmosDB.test.ts",
+    "src/sql.test.ts"
+  ],
+  "testsRun": {
+    "executed": true,
+    "passed": 1,
+    "failed": 0,
+    "command": "npm run testSecurityRegression"
+  },
+  "failureExcerpt": null,
+  "designDeviations": null,
+  "followUps": [
+    "Attempted targeted E2Es via \u0060node out/index.js --model v3 --only cosmosDB.test.js\u0060, but Core Tools startup was blocked by missing local emulator services (\u0060Connection refused (127.0.0.1:10000)\u0060). Re-run the v3/v4 Cosmos and SQL suites in the full dockerized emulator environment (Azurite, Cosmos DB emulator, SQL container)."
+  ]
+}
