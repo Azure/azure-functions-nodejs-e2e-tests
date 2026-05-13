@@ -1,9 +1,0 @@
-{
-  "roundNumber": 1,
-  "taskIds": [
-    "align-v3-input-bindings",
-    "trim-missing-id-e2es",
-    "align-v4-input-bindings",
-    "validate-binding-regression-fix"
-  ]
-}
