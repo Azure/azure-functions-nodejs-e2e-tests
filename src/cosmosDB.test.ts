@@ -5,7 +5,8 @@ import { CosmosClient } from '@azure/cosmos';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { CosmosDB, getFuncUrl, jsonContentTypeHeaders } from './constants';
-import { model, waitForOutput } from './global.test';
+import { getModelArg } from './getModelArg';
+import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
 
@@ -54,8 +55,9 @@ describe('cosmosDB', () => {
     it('input and output reject invalid requests', async function (this: Mocha.Context) {
         // v3 binding extensions resolve {Query.id} before function code runs and may return
         // 500 instead of 400 when the parameter is missing.  Skip for v3.
-        if (model === 'v3') {
+        if (getModelArg() === 'v3') {
             this.skip();
+            return;
         }
 
         const invalidReadResponse = await fetch(getFuncUrl('httpTriggerCosmosDBInput'));
