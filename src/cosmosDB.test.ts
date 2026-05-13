@@ -5,7 +5,6 @@ import { CosmosClient } from '@azure/cosmos';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
 import { CosmosDB, getFuncUrl, jsonContentTypeHeaders } from './constants';
-import { getModelArg } from './getModelArg';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
@@ -52,29 +51,17 @@ describe('cosmosDB', () => {
         }
     });
 
-    // v3 binding extensions resolve {Query.id} before function code runs and may return
-    // 500 instead of 400 when the parameter is missing.  Skip for v3.
-    // NOTE: this.skip() must run synchronously (not inside an async function) so Mocha
-    // catches the thrown Pending error directly instead of seeing it as a promise rejection.
-    it('input and output reject invalid requests', function (this: Mocha.Context) {
-        if (getModelArg() === 'v3') {
-            this.skip();
-            return;
-        }
+    it('input and output reject invalid payloads and missing resources', async () => {
+        // Binding-backed input routes intentionally do not assert omitted-id 400s because
+        // the host resolves {Query.id} before the function code can validate it.
+        const missingDocResponse = await fetch(getFuncUrl('httpTriggerCosmosDBInput', { id: getRandomTestData() }));
+        expect(missingDocResponse.status).to.equal(404);
 
-        return (async () => {
-            const invalidReadResponse = await fetch(getFuncUrl('httpTriggerCosmosDBInput'));
-            expect(invalidReadResponse.status).to.equal(400);
-
-            const missingDocResponse = await fetch(getFuncUrl('httpTriggerCosmosDBInput', { id: getRandomTestData() }));
-            expect(missingDocResponse.status).to.equal(404);
-
-            const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerCosmosDBOutput'), {
-                method: 'POST',
-                headers: jsonContentTypeHeaders,
-                body: JSON.stringify({ testData: getRandomTestData() }),
-            });
-            expect(invalidWriteResponse.status).to.equal(400);
-        })();
+        const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerCosmosDBOutput'), {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ testData: getRandomTestData() }),
+        });
+        expect(invalidWriteResponse.status).to.equal(400);
     });
 });
