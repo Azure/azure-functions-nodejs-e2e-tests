@@ -80,25 +80,31 @@ describe('sql', () => {
         await waitForOutput(`httpTriggerSqlInput was triggered`);
     });
 
-    it('input and output reject invalid requests', async function (this: Mocha.Context) {
-        // v3 binding extensions resolve {Query.id} before function code runs and may return
-        // 500 instead of 400 when the parameter is missing.  Skip for v3.
+    // v3 binding extensions resolve {Query.id} before function code runs and may return
+    // 500 instead of 400 when the parameter is missing.  Skip for v3.
+    // NOTE: this.skip() must run synchronously (not inside an async function) so Mocha
+    // catches the thrown Pending error directly instead of seeing it as a promise rejection.
+    it('input and output reject invalid requests', function (this: Mocha.Context) {
         if (getModelArg() === 'v3') {
             this.skip();
             return;
         }
 
-        const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerSqlOutput'), {
-            method: 'POST',
-            headers: jsonContentTypeHeaders,
-            body: JSON.stringify([{ id: uuid() }]),
-        });
-        expect(invalidWriteResponse.status).to.equal(400);
+        return (async () => {
+            const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerSqlOutput'), {
+                method: 'POST',
+                headers: jsonContentTypeHeaders,
+                body: JSON.stringify([{ id: uuid() }]),
+            });
+            expect(invalidWriteResponse.status).to.equal(400);
 
-        const invalidReadResponse = await fetch(getFuncUrl('httpTriggerSqlInput'), { method: 'GET' });
-        expect(invalidReadResponse.status).to.equal(400);
+            const invalidReadResponse = await fetch(getFuncUrl('httpTriggerSqlInput'), { method: 'GET' });
+            expect(invalidReadResponse.status).to.equal(400);
 
-        const missingRowResponse = await fetch(getFuncUrl('httpTriggerSqlInput', { id: uuid() }), { method: 'GET' });
-        expect(missingRowResponse.status).to.equal(404);
+            const missingRowResponse = await fetch(getFuncUrl('httpTriggerSqlInput', { id: uuid() }), {
+                method: 'GET',
+            });
+            expect(missingRowResponse.status).to.equal(404);
+        })();
     });
 });
