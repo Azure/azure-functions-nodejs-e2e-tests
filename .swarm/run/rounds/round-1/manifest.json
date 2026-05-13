@@ -1,0 +1,7 @@
+{
+  "roundNumber": 1,
+  "taskIds": [
+    "fix-v3-input-binding-regression",
+    "reenable-invalid-request-tests"
+  ]
+}

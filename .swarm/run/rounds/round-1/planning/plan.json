@@ -1,0 +1,24 @@
+{
+  "designDocument": "## Findings\n- PR build \u0060277790\u0060 ran source SHA \u0060595f886\u0060 and failed only in the v3 leg. The failing host log shows \u0060Functions.httpTriggerCosmosDBInput\u0060 and \u0060Functions.httpTriggerSqlInput\u0060 throwing \u0060Microsoft.Azure.WebJobs.Host: Error while accessing \u0027id\u0027: property doesn\u0027t exist.\u0060 immediately before the \u0060expected 500 to equal 400\u0060 assertions.\n- Main build \u0060277740\u0060 succeeded on \u0060main\u0060 because \u0060main\u0060 does not include this branch\u0027s hardening changes and new invalid-request coverage. The regression is in the branch diff, not in pipeline infra.\n- This branch added 400/404 handling inside the v3 Cosmos/SQL HTTP input handlers, but both \u0060function.json\u0060 files still bind \u0060id\u0060 from \u0060{Query.id}\u0060 / \u0060@id={Query.id}\u0060. In the v3 extensions that binding is resolved before user code runs, so a missing \u0060id\u0060 becomes a host-level 500 and the handler never gets a chance to return 400.\n- Recent commits (\u006030b7377\u0060, \u00601ee55ca\u0060, \u0060595f886\u0060) tried to mask the issue with Mocha skips. The logs show the underlying host failure still exists, so the durable fix is to remove the pre-bound dependency on \u0060id\u0060 rather than layering more skip logic.\n- Table, storage, and Service Bus negative-path coverage are not implicated by the logs and should stay unchanged.\n\n## Plan\n- Replace the v3 Cosmos and SQL HTTP input bindings with handler-managed SDK lookups that validate \u0060id\u0060 first, so missing ids return 400 and unknown ids return 404 without host exceptions. Update the v3 old-config Cosmos metadata too so combined apps do not keep the broken pre-binding.\n- After the handlers own the contract, remove the temporary v3 skips in the root E2E tests and keep the invalid-request assertions enabled for both models.",
+  "tasks": [
+    {
+      "id": "fix-v3-input-binding-regression",
+      "title": "Replace v3 pre-bound input reads",
+      "description": "In \u0060app/v3/httpTriggerCosmosDBInput\u0060 and \u0060app/v3/httpTriggerSqlInput\u0060, stop relying on the current \u0060cosmosDB\u0060 / \u0060sql\u0060 input bindings that resolve \u0060{Query.id}\u0060 before the handler executes. Remove those pre-bound input definitions from \u0060app/v3/httpTriggerCosmosDBInput/function.json\u0060, \u0060app/v3/httpTriggerSqlInput/function.json\u0060, and \u0060app/v3-oldConfig/httpTriggerCosmosDBInput/function.json\u0060; then perform the Cosmos and SQL reads manually in the handlers after validating the query param with the existing v3 validation helpers. Add any small shared client/pool helper under \u0060app/v3/utils/\u0060, update \u0060app/v3/package.json\u0060 and \u0060app/v3/package-lock.json\u0060 for the required runtime SDKs, preserve the existing success payloads (Cosmos returns \u0060testData\u0060, SQL returns the row array), and make missing/blank ids return 400 while unknown ids return 404 instead of a host 500.",
+      "dependencies": [],
+      "roundNumber": 1,
+      "branchName": "worker/task-1"
+    },
+    {
+      "id": "reenable-invalid-request-tests",
+      "title": "Re-enable invalid-request E2Es",
+      "description": "Once the v3 handlers own the lookup path, remove the temporary v3 skip/workaround logic from \u0060src/cosmosDB.test.ts\u0060 and \u0060src/sql.test.ts\u0060 so the invalid-request assertions run for both models again. Clean up the workaround comments to reflect the real contract, rebuild the root test harness, and run targeted Cosmos/SQL suites for v3 and v4 (plus a v3 old-config Cosmos spot-check after recreating combined apps) to confirm the branch no longer logs \u0060Error while accessing \u0027id\u0027: property doesn\u0027t exist.\u0060 and the negative-path requests now return 400/404 as intended.",
+      "dependencies": [
+        "fix-v3-input-binding-regression"
+      ],
+      "roundNumber": 1,
+      "branchName": "worker/task-2"
+    }
+  ],
+  "title": "Fix v3 request validation regression"
+}
