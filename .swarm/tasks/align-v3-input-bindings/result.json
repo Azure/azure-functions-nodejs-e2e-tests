@@ -1,0 +1,20 @@
+{
+  "taskId": "align-v3-input-bindings",
+  "status": "Succeeded",
+  "summary": "Removed the unreachable v3 Cosmos/SQL missing-id 400 branches while preserving binding-backed 404 and success responses; validated with builds, lint, and the security regression check.",
+  "filesTouched": [
+    "app/v3/httpTriggerCosmosDBInput/index.ts",
+    "app/v3/httpTriggerSqlInput/index.ts"
+  ],
+  "testsRun": {
+    "executed": true,
+    "passed": 4,
+    "failed": 1,
+    "command": "npm run build \u0026\u0026 npm --prefix app/v3 run build \u0026\u0026 npm --prefix app/v3 run lint \u0026\u0026 npm run testSecurityRegression \u0026\u0026 PATH=/tmp/func-wrapper:$PATH node out/index.js --model v3 --only cosmosDB.test.js"
+  },
+  "failureExcerpt": null,
+  "designDeviations": null,
+  "followUps": [
+    "Targeted v3 runtime validation is blocked in this environment because Azure Functions Core Tools cannot reach the Blob Storage secret repository at 127.0.0.1:10000, so rerun the Cosmos/SQL E2Es with local storage/Azurite available."
+  ]
+}
