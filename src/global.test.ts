@@ -5,10 +5,11 @@ import cp from 'child_process';
 import * as fs from 'fs/promises';
 import path from 'path';
 import semver from 'semver';
-import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix, ServiceBus } from './constants';
+import { combinedFolder, CosmosDBMongo, defaultTimeout, EnvVarNames, oldConfigSuffix, ServiceBus } from './constants';
 import { getModelArg, getOldConfigArg, getTestFileFilter, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
+    cosmosDBMongoConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
     serviceBusConnectionString,
@@ -18,6 +19,7 @@ import {
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+import { setupCosmosDBMongo } from './utils/cosmosdbmongo/setupCosmosDBMongo';
 import { setupServiceBus } from './utils/servicebus/setupServiceBus';
 import { runSqlSetupQueries } from './utils/sql/setupSql';
 
@@ -46,9 +48,13 @@ before(async function (this: Mocha.Context): Promise<void> {
 
     const { only } = getTestFileFilter();
     const disableServiceBusFunctions = shouldDisableServiceBusFunctions();
+    const disableCosmosDBMongoFunctions = shouldDisableCosmosDBMongoFunctions();
     if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
         await runSqlSetupQueries();
         await setupCosmosDB();
+    }
+    if (!disableCosmosDBMongoFunctions) {
+        await setupCosmosDBMongo();
     }
 
     // Setup ServiceBus entities for v4 model (includes both MCP and ServiceBus functions)
@@ -62,11 +68,11 @@ before(async function (this: Mocha.Context): Promise<void> {
         ? path.join(__dirname, '..', 'app', combinedFolder, model + oldConfigSuffix)
         : path.join(__dirname, '..', 'app', model);
 
-    await startFuncProcess(appPath, disableServiceBusFunctions);
+    await startFuncProcess(appPath, disableServiceBusFunctions, disableCosmosDBMongoFunctions);
     await waitForOutput('Host lock lease acquired by instance ID', { ignoreFailures: true });
     await waitForOutput('Functions:', { checkFullOutput: true });
 
-    if (model === 'v4' && !isOldConfig) {
+    if (model === 'v4' && !isOldConfig && !shouldOnlyRunCosmosDBMongoFunctions()) {
         await waitForOutput('MCP server endpoint:', { checkFullOutput: true, ignoreFailures: true });
     }
 
@@ -90,6 +96,23 @@ async function killFuncProc(): Promise<void> {
         console.log(`Killing process ${result.name} with id ${result.pid}`);
         process.kill(result.pid, 'SIGINT');
     }
+}
+
+function shouldOnlyRunCosmosDBMongoFunctions(): boolean {
+    return getTestFileFilter().only?.startsWith(CosmosDBMongo.cosmosDBMongoTestFileName) ?? false;
+}
+
+function shouldDisableCosmosDBMongoFunctions(): boolean {
+    if (model !== 'v4' || getOldConfigArg() || !cosmosDBMongoConnectionString) {
+        return true;
+    }
+
+    const { only, exclude } = getTestFileFilter();
+    if (only) {
+        return !only.startsWith(CosmosDBMongo.cosmosDBMongoTestFileName);
+    }
+
+    return exclude?.startsWith(CosmosDBMongo.cosmosDBMongoTestFileName) ?? false;
 }
 
 function shouldDisableServiceBusFunctions(): boolean {
@@ -134,8 +157,12 @@ export async function waitForOutput(data: string, options?: WaitForOutputOptions
     }
 }
 
-async function startFuncProcess(appPath: string, disableServiceBusFunctions: boolean): Promise<void> {
-    const disabledFunctions = disableServiceBusFunctions
+async function startFuncProcess(
+    appPath: string,
+    disableServiceBusFunctions: boolean,
+    disableCosmosDBMongoFunctions: boolean
+): Promise<void> {
+    const disabledServiceBusFunctions = disableServiceBusFunctions
         ? {
               'AzureWebJobs.serviceBusQueueTrigger.Disabled': 'true',
               'AzureWebJobs.serviceBusQueueTriggerAndOutput.Disabled': 'true',
@@ -144,6 +171,21 @@ async function startFuncProcess(appPath: string, disableServiceBusFunctions: boo
               'AzureWebJobs.serviceBusTopicTrigger.Disabled': 'true',
               'AzureWebJobs.serviceBusTopicTriggerAndOutput.Disabled': 'true',
               'AzureWebJobs.httpTriggerServiceBusOutput.Disabled': 'true',
+          }
+        : {};
+    const onlyCosmosDBMongoFunctions = shouldOnlyRunCosmosDBMongoFunctions();
+    const disabledCosmosDBMongoFunctionSettings = disableCosmosDBMongoFunctions
+        ? {
+              'AzureWebJobs.cosmosDBMongoTrigger.Disabled': 'true',
+              'AzureWebJobs.httpTriggerCosmosDBMongoInput.Disabled': 'true',
+              'AzureWebJobs.httpTriggerCosmosDBMongoOutput.Disabled': 'true',
+          }
+        : {};
+    const functionAllowlistSettings = onlyCosmosDBMongoFunctions
+        ? {
+              AzureFunctionsJobHost__functions__0: 'cosmosDBMongoTrigger',
+              AzureFunctionsJobHost__functions__1: 'httpTriggerCosmosDBMongoInput',
+              AzureFunctionsJobHost__functions__2: 'httpTriggerCosmosDBMongoOutput',
           }
         : {};
 
@@ -157,12 +199,15 @@ async function startFuncProcess(appPath: string, disableServiceBusFunctions: boo
                     logging__logLevel__Worker: 'debug',
                     [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
+                    [EnvVarNames.cosmosDBMongo]: cosmosDBMongoConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
                     [EnvVarNames.sql]: sqlTestConnectionString,
                     WEBSITE_SITE_NAME: 'azure-functions-nodejs-e2e-tests',
                     FUNCTIONS_REQUEST_BODY_SIZE_LIMIT: '4294967296',
-                    ...disabledFunctions,
+                    ...disabledServiceBusFunctions,
+                    ...disabledCosmosDBMongoFunctionSettings,
+                    ...functionAllowlistSettings,
                 },
             },
             null,
