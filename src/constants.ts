@@ -4,6 +4,7 @@
 export namespace EnvVarNames {
     export const storage = 'AzureWebJobsStorage';
     export const cosmosDB = 'CosmosDBConnection';
+    export const cosmosDBMongo = 'CosmosDBMongoConnection';
     export const eventHub = 'EventHubConnection';
     export const serviceBus = 'ServiceBusConnection';
     export const sql = 'SqlConnection';
@@ -15,6 +16,15 @@ export namespace CosmosDB {
     export const triggerContainerName = 'e2eTestContainerTrigger';
     export const triggerDatabaseName = 'e2eTestCosmosDB';
     export const partitionKey = 'testPartKey';
+}
+
+export namespace CosmosDBMongo {
+    export const dbName = 'e2eTestCosmosDBMongo';
+    export const triggerCollectionName = 'e2eTestCollectionTrigger';
+    export const triggerAndOutputCollectionName = 'e2eTestCollectionTriggerAndOutput';
+    export const leaseDbName = 'e2eTestCosmosDBMongo';
+    export const leaseCollectionTrigger = 'e2eLeasesTrigger';
+    export const leaseCollectionTriggerAndOutput = 'e2eLeasesTriggerAndOutput';
 }
 
 export namespace EventHub {
