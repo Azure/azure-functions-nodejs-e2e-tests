@@ -9,6 +9,7 @@ import { combinedFolder, defaultTimeout, EnvVarNames, oldConfigSuffix, ServiceBu
 import { getModelArg, getOldConfigArg, getTestFileFilter, Model } from './getModelArg';
 import {
     cosmosDBConnectionString,
+    cosmosDBMongoConnectionString,
     eventHubConnectionString,
     initializeConnectionStrings,
     serviceBusConnectionString,
@@ -18,6 +19,7 @@ import {
 import { delay } from './utils/delay';
 import findProcess = require('find-process');
 import { setupCosmosDB } from './utils/cosmosdb/setupCosmosDB';
+import { setupCosmosDBMongo } from './utils/cosmosdbmongo/setupCosmosDBMongo';
 import { setupServiceBus } from './utils/servicebus/setupServiceBus';
 import { runSqlSetupQueries } from './utils/sql/setupSql';
 
@@ -49,6 +51,7 @@ before(async function (this: Mocha.Context): Promise<void> {
     if (only?.startsWith(ServiceBus.serviceBusTestFileName)) {
         await runSqlSetupQueries();
         await setupCosmosDB();
+        await setupCosmosDBMongo();
     }
 
     // Setup ServiceBus entities for v4 model (includes both MCP and ServiceBus functions)
@@ -157,6 +160,7 @@ async function startFuncProcess(appPath: string, disableServiceBusFunctions: boo
                     logging__logLevel__Worker: 'debug',
                     [EnvVarNames.storage]: storageConnectionString,
                     [EnvVarNames.cosmosDB]: cosmosDBConnectionString,
+                    [EnvVarNames.cosmosDBMongo]: cosmosDBMongoConnectionString,
                     [EnvVarNames.eventHub]: eventHubConnectionString,
                     [EnvVarNames.serviceBus]: serviceBusConnectionString,
                     [EnvVarNames.sql]: sqlTestConnectionString,
