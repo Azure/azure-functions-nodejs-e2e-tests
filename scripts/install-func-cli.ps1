@@ -16,9 +16,6 @@ if ($IsWindows) {
 }
 
 Write-Host "Install Functions Core Tools for integration tests" -fore Green
-$FUNC_RUNTIME_VERSION = '4'
-$coreToolsDownloadURL = "https://functionsintegclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest/Azure.Functions.Cli.$os-$arch.zip"
-$env:CORE_TOOLS_URL = "https://functionsintegclibuilds.blob.core.windows.net/builds/$FUNC_RUNTIME_VERSION/latest"
 
 $FUNC_CLI_DIRECTORY = Join-Path $PSScriptRoot '..' 'func-cli'
 
@@ -26,8 +23,18 @@ Write-Host 'Deleting Functions Core Tools if exists...'
 Remove-Item -Force "$FUNC_CLI_DIRECTORY.zip" -ErrorAction Ignore
 Remove-Item -Recurse -Force $FUNC_CLI_DIRECTORY -ErrorAction Ignore
 
-$version = Invoke-RestMethod -Uri "$env:CORE_TOOLS_URL/version.txt"
-$version = $version.Trim()
+# Resolve the latest v4 release asset from the public GitHub releases feed.
+$releaseApiUrl = "https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest"
+$assetNamePattern = "Azure.Functions.Cli.$os-$arch."
+Write-Host "Querying latest Functions Core Tools release from $releaseApiUrl..."
+$release = Invoke-RestMethod -Uri $releaseApiUrl -Headers @{ 'User-Agent' = 'azure-functions-nodejs-e2e-tests' }
+
+$version = $release.tag_name
+$asset = $release.assets | Where-Object { $_.name.StartsWith($assetNamePattern) -and $_.name.EndsWith('.zip') } | Select-Object -First 1
+if (-not $asset) {
+    throw "Could not find a Functions Core Tools asset matching '$assetNamePattern*.zip' in release $version."
+}
+$coreToolsDownloadURL = $asset.browser_download_url
 Write-Host "Downloading Functions Core Tools (Version: $version)..."
 
 $output = "$FUNC_CLI_DIRECTORY.zip"
