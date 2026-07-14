@@ -11,3 +11,5 @@ steps:
       displayName: 'build e2e tests'
     - script: npm run lint
       displayName: 'lint e2e tests'
+    - script: npm run testSecurityRegression
+      displayName: 'check sensitive HTTP route auth/methods'

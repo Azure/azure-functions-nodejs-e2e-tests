@@ -4,7 +4,7 @@
 import { CosmosClient } from '@azure/cosmos';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
-import { getFuncUrl, CosmosDB } from './constants';
+import { CosmosDB, getFuncUrl, jsonContentTypeHeaders } from './constants';
 import { waitForOutput } from './global.test';
 import { cosmosDBConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
@@ -21,7 +21,7 @@ describe('cosmosDB', () => {
         await waitForOutput(`cosmosDBTrigger processed 1 documents`);
         await waitForOutput(`cosmosDBTrigger was triggered by "${testData}"`);
 
-        const url = `${getFuncUrl('httpTriggerCosmosDBInput')}?id=${createdItem.item.id}`;
+        const url = getFuncUrl('httpTriggerCosmosDBInput', { id: createdItem.item.id });
         const response = await fetch(url);
         const body = await response.text();
         expect(body).to.equal(testData);
@@ -37,7 +37,7 @@ describe('cosmosDB', () => {
 
         // single doc
         const singleDoc = getDoc();
-        await fetch(url, { method: 'POST', body: JSON.stringify(singleDoc) });
+        await fetch(url, { method: 'POST', headers: jsonContentTypeHeaders, body: JSON.stringify(singleDoc) });
         await waitForOutput(`cosmosDBTrigger was triggered by "${singleDoc.testData}"`);
 
         // bulk docs
@@ -45,9 +45,23 @@ describe('cosmosDB', () => {
         for (let i = 0; i < 5; i++) {
             bulkDocs.push(getDoc());
         }
-        await fetch(url, { method: 'POST', body: JSON.stringify(bulkDocs) });
+        await fetch(url, { method: 'POST', headers: jsonContentTypeHeaders, body: JSON.stringify(bulkDocs) });
         for (const doc of bulkDocs) {
             await waitForOutput(`cosmosDBTrigger was triggered by "${doc.testData}"`);
         }
+    });
+
+    it('input and output reject invalid payloads and missing resources', async () => {
+        // Binding-backed input routes intentionally do not assert omitted-id 400s because
+        // the host resolves {Query.id} before the function code can validate it.
+        const missingDocResponse = await fetch(getFuncUrl('httpTriggerCosmosDBInput', { id: getRandomTestData() }));
+        expect(missingDocResponse.status).to.equal(404);
+
+        const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerCosmosDBOutput'), {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ testData: getRandomTestData() }),
+        });
+        expect(invalidWriteResponse.status).to.equal(400);
     });
 });

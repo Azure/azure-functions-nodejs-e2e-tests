@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 import { expect } from 'chai';
+import { ConnectionPool } from 'mssql';
 import { default as fetch } from 'node-fetch';
 import { v4 as uuid } from 'uuid';
-import { Sql, getFuncUrl } from './constants';
+import { getFuncUrl, jsonContentTypeHeaders, Sql } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
-import { getRandomTestData } from './utils/getRandomTestData';
-import { ConnectionPool } from 'mssql';
-import { createPoolConnnection } from './utils/sql/setupSql';
 import { sqlTestConnectionString } from './utils/connectionStrings';
+import { getRandomTestData } from './utils/getRandomTestData';
+import { createPoolConnnection } from './utils/sql/setupSql';
 
 describe('sql', () => {
     let poolConnection: ConnectionPool | undefined;
@@ -64,15 +64,34 @@ describe('sql', () => {
                 testData: getRandomTestData(),
             },
         ];
-        const responseOut = await fetch(outputUrl, { method: 'POST', body: JSON.stringify(items) });
+        const responseOut = await fetch(outputUrl, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify(items),
+        });
         expect(responseOut.status).to.equal(201);
         await waitForOutput(`httpTriggerSqlOutput was triggered`);
 
-        const inputUrl = getFuncUrl('httpTriggerSqlInput');
-        const responseIn = await fetch(`${inputUrl}?id=${id}`, { method: 'GET' });
+        const responseIn = await fetch(getFuncUrl('httpTriggerSqlInput', { id }), { method: 'GET' });
         expect(responseIn.status).to.equal(200);
         const result = await responseIn.json();
         expect(result).to.deep.equal(items);
         await waitForOutput(`httpTriggerSqlInput was triggered`);
+    });
+
+    it('input and output reject invalid payloads and missing resources', async () => {
+        const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerSqlOutput'), {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify([{ id: uuid() }]),
+        });
+        expect(invalidWriteResponse.status).to.equal(400);
+
+        // Binding-backed input routes intentionally do not assert omitted-id 400s because
+        // the host resolves {Query.id} before the function code can validate it.
+        const missingRowResponse = await fetch(getFuncUrl('httpTriggerSqlInput', { id: uuid() }), {
+            method: 'GET',
+        });
+        expect(missingRowResponse.status).to.equal(404);
     });
 });

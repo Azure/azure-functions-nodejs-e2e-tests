@@ -25,11 +25,7 @@ export async function setupServiceBus(): Promise<void> {
         await createQueueIfNotExists(client, ServiceBus.serviceBusQueueManyTriggerAndOutput);
 
         // Create topics with subscriptions
-        await createTopicWithSubscriptionIfNotExists(
-            client,
-            ServiceBus.serviceBusTopicTrigger,
-            'e2e-test-sub'
-        );
+        await createTopicWithSubscriptionIfNotExists(client, ServiceBus.serviceBusTopicTrigger, 'e2e-test-sub');
         await createTopicWithSubscriptionIfNotExists(
             client,
             ServiceBus.serviceBusTopicTriggerAndOutput,
@@ -44,10 +40,7 @@ export async function setupServiceBus(): Promise<void> {
     }
 }
 
-async function createQueueIfNotExists(
-    client: ServiceBusAdministrationClient,
-    queueName: string
-): Promise<void> {
+async function createQueueIfNotExists(client: ServiceBusAdministrationClient, queueName: string): Promise<void> {
     try {
         await client.getQueue(queueName);
     } catch (err: unknown) {

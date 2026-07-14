@@ -2,17 +2,16 @@
 // Licensed under the MIT License.
 
 import { EventHubProducerClient } from '@azure/event-hubs';
+import { EventHub } from './constants';
 import { isOldConfig, waitForOutput } from './global.test';
 import { eventHubConnectionString } from './utils/connectionStrings';
 import { getRandomTestData } from './utils/getRandomTestData';
-import { EventHub } from './constants';
 
 describe('eventHub', () => {
     let clientOneTriggerAndOutput: EventHubProducerClient;
     let clientOneTrigger: EventHubProducerClient;
     let clientManyTriggerAndOutput: EventHubProducerClient;
     let clientManyTrigger: EventHubProducerClient;
-
 
     before(function (this: Mocha.Context) {
         // Old config (Exts bundles < 4.0.0) cannot use EventHub emulator
@@ -21,9 +20,15 @@ describe('eventHub', () => {
         if (isOldConfig) {
             this.skip();
         }
-        clientOneTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTriggerAndOutput);
+        clientOneTriggerAndOutput = new EventHubProducerClient(
+            eventHubConnectionString,
+            EventHub.eventHubOneTriggerAndOutput
+        );
         clientOneTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubOneTrigger);
-        clientManyTriggerAndOutput = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTriggerAndOutput);
+        clientManyTriggerAndOutput = new EventHubProducerClient(
+            eventHubConnectionString,
+            EventHub.eventHubManyTriggerAndOutput
+        );
         clientManyTrigger = new EventHubProducerClient(eventHubConnectionString, EventHub.eventHubManyTrigger);
     });
 

@@ -33,12 +33,12 @@ export async function run(): Promise<void> {
         let files: string[] = await globby('**/*.test.js', { cwd: __dirname });
         const { only, exclude } = getTestFileFilter();
         if (only) {
-            files = files.filter(f => f.endsWith(only));
+            files = files.filter((f) => f.endsWith(only));
         } else if (exclude) {
-            files = files.filter(f => !f.endsWith(exclude));
+            files = files.filter((f) => !f.endsWith(exclude));
         }
 
-        files = files.filter(f => path.resolve(__dirname, f) !== globalTestPath);
+        files = files.filter((f) => path.resolve(__dirname, f) !== globalTestPath);
         files.forEach((f) => mocha.addFile(path.resolve(__dirname, f)));
 
         const failures = await new Promise<number>((resolve) => mocha.run(resolve));

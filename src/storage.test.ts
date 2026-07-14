@@ -5,10 +5,10 @@ import { ContainerClient } from '@azure/storage-blob';
 import { QueueClient } from '@azure/storage-queue';
 import { expect } from 'chai';
 import { default as fetch } from 'node-fetch';
-import { getFuncUrl } from './constants';
+import { getFuncUrl, jsonContentTypeHeaders } from './constants';
 import { model, waitForOutput } from './global.test';
-import { getRandomTestData } from './utils/getRandomTestData';
 import { storageConnectionString } from './utils/connectionStrings';
+import { getRandomTestData } from './utils/getRandomTestData';
 
 describe('storage', () => {
     it('queue trigger and output', async () => {
@@ -27,7 +27,11 @@ describe('storage', () => {
 
         // single
         const message = getRandomTestData();
-        await fetch(url, { method: 'POST', body: JSON.stringify({ output: message }) });
+        await fetch(url, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ output: message }),
+        });
         await waitForOutput(`storageQueueTrigger was triggered by "${message}"`);
 
         // bulk
@@ -35,10 +39,24 @@ describe('storage', () => {
         for (let i = 0; i < 5; i++) {
             bulkMsgs.push(getRandomTestData());
         }
-        await fetch(url, { method: 'POST', body: JSON.stringify({ output: bulkMsgs }) });
+        await fetch(url, {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({ output: bulkMsgs }),
+        });
         for (const msg of bulkMsgs) {
             await waitForOutput(`storageQueueTrigger was triggered by "${msg}"`);
         }
+    });
+
+    it('queue extra output rejects malformed payloads', async () => {
+        const response = await fetch(getFuncUrl('httpTriggerStorageQueueOutput'), {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify({}),
+        });
+
+        expect(response.status).to.equal(400);
     });
 
     it('blob trigger and output', async () => {
@@ -72,6 +90,7 @@ describe('storage', () => {
         ];
         const responseOut = await fetch(getFuncUrl('httpTriggerTableOutput'), {
             method: 'POST',
+            headers: jsonContentTypeHeaders,
             body: JSON.stringify(items),
         });
         expect(responseOut.status).to.equal(201);
@@ -82,6 +101,25 @@ describe('storage', () => {
         const result = await responseIn.json();
         expect(result).to.deep.equal(items);
         await waitForOutput(`httpTriggerTableInput was triggered`);
+    });
+
+    it('table input and output reject invalid requests', async () => {
+        const invalidWriteResponse = await fetch(getFuncUrl('httpTriggerTableOutput'), {
+            method: 'POST',
+            headers: jsonContentTypeHeaders,
+            body: JSON.stringify([{ PartitionKey: 'e2eTestPartKey' }]),
+        });
+        expect(invalidWriteResponse.status).to.equal(400);
+
+        const invalidReadResponse = await fetch(getFuncUrl(`httpTriggerTableInput/${encodeURIComponent('  ')}`), {
+            method: 'GET',
+        });
+        expect(invalidReadResponse.status).to.equal(400);
+
+        const missingRowResponse = await fetch(getFuncUrl(`httpTriggerTableInput/${getRandomTestData()}`), {
+            method: 'GET',
+        });
+        expect(missingRowResponse.status).to.equal(404);
     });
 
     // Test for bug https://github.com/Azure/azure-functions-nodejs-library/issues/179

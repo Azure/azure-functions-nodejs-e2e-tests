@@ -27,6 +27,7 @@
         "lint": "eslint . --fix",
         "watch": "tsc -w",
         "createCombinedApps": "node out/createCombinedApps.js",
+        "testSecurityRegression": "node scripts/check-sensitive-http-routes.js",
         "testOldConfig": "npm run testV3OldConfig && npm run testV4OldConfig",
         "testV3OldConfig": "node out/index.js --model v3 --oldConfig",
         "testV4OldConfig": "node out/index.js --model v4 --oldConfig",
