@@ -12,7 +12,7 @@ export async function helloWorld(request: HttpRequest, context: InvocationContex
 }
 
 app.http('helloWorld', {
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'HEAD'],
     authLevel: 'anonymous',
     handler: helloWorld,
 });
