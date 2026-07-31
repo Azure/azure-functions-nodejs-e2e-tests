@@ -5,6 +5,11 @@ steps:
       displayName: 'Install Node.js'
       retryCountOnTaskFailure: 10
 
+    - task: npmAuthenticate@0
+      inputs:
+          workingFile: '$(Build.SourcesDirectory)/.npmrc'
+      displayName: 'Authenticate npm'
+
     - script: npm ci
       displayName: 'install deps e2e tests'
     - script: npm run build
