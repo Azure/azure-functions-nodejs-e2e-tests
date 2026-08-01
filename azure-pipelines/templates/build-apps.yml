@@ -1,5 +1,10 @@
 steps:
     # Setup v3 app
+    - task: npmAuthenticate@0
+      inputs:
+          workingFile: '$(Build.SourcesDirectory)/app/v3/.npmrc'
+      displayName: 'Authenticate npm for v3 app'
+
     - script: npm ci
       displayName: 'install deps v3 app'
       workingDirectory: 'app/v3'
@@ -18,6 +23,11 @@ steps:
       workingDirectory: 'app/v3'
 
     # Setup v4 app
+    - task: npmAuthenticate@0
+      inputs:
+          workingFile: '$(Build.SourcesDirectory)/app/v4/.npmrc'
+      displayName: 'Authenticate npm for v4 app'
+
     - script: npm ci
       displayName: 'install deps v4 app'
       workingDirectory: 'app/v4'
@@ -39,6 +49,11 @@ steps:
       displayName: 'Create combined apps'
 
     # Setup v3 oldConfig app
+    - task: npmAuthenticate@0
+      inputs:
+          workingFile: '$(Build.SourcesDirectory)/app/combined/v3-oldConfig/.npmrc'
+      displayName: 'Authenticate npm for v3 oldConfig app'
+
     - script: npm ci
       displayName: 'install deps v3 app (oldConfig)'
       workingDirectory: 'app/combined/v3-oldConfig'
@@ -50,6 +65,11 @@ steps:
       workingDirectory: 'app/combined/v3-oldConfig'
 
     # Setup v4 oldConfig app
+    - task: npmAuthenticate@0
+      inputs:
+          workingFile: '$(Build.SourcesDirectory)/app/combined/v4-oldConfig/.npmrc'
+      displayName: 'Authenticate npm for v4 oldConfig app'
+
     - script: npm ci
       displayName: 'install deps v4 app (oldConfig)'
       workingDirectory: 'app/combined/v4-oldConfig'
