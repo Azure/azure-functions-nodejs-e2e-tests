@@ -3,6 +3,7 @@
 
 import Agent from 'agentkeepalive';
 import { expect } from 'chai';
+import * as http from 'http';
 import { encode } from 'iconv-lite';
 // Node.js core added support for fetch in v18, but while we're testing versions <18 we'll use "node-fetch"
 import { default as fetch, HeadersInit } from 'node-fetch';
@@ -25,6 +26,42 @@ const applicationJsonHeaders = getContentTypeHeaders('application/json');
 const octetStreamHeaders = getContentTypeHeaders('application/octet-stream');
 const multipartFormHeaders = getContentTypeHeaders('multipart/form');
 const textPlainHeaders = getContentTypeHeaders('text/plain');
+
+// node-fetch (like the WHATWG fetch spec) refuses to send a body with GET/HEAD, so we use the raw
+// http module to reproduce a GET/HEAD request that arrives with a body (as an upstream/proxy might send).
+// See https://github.com/Azure/azure-functions-nodejs-library/issues/458
+function sendRequestWithBody(
+    url: string,
+    method: 'GET' | 'HEAD',
+    body: string
+): Promise<{ status: number; body: string }> {
+    return new Promise((resolve, reject) => {
+        const parsed = new URL(url);
+        const req = http.request(
+            {
+                hostname: parsed.hostname,
+                port: parsed.port,
+                path: `${parsed.pathname}${parsed.search}`,
+                method,
+                headers: {
+                    'content-type': 'text/plain',
+                    'content-length': Buffer.byteLength(body),
+                },
+            },
+            (res) => {
+                let data = '';
+                res.setEncoding('utf8');
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+                res.on('end', () => resolve({ status: res.statusCode ?? 0, body: data }));
+            }
+        );
+        req.on('error', reject);
+        req.write(body);
+        req.end();
+    });
+}
 
 describe('http', () => {
     afterEach(() => {
@@ -122,6 +159,27 @@ describe('http', () => {
                 'mycookie=myvalue; max-age=200000, mycookie2=myvalue; max-age=200000; path=/, mycookie3-expires=myvalue3-expires; max-age=0, mycookie4-samesite-lax=myvalue; samesite=lax, mycookie5-samesite-strict=myvalue; samesite=strict'
             );
         }
+    });
+
+    // Regression test for https://github.com/Azure/azure-functions-nodejs-library/issues/458
+    // A GET/HEAD request that arrives with a body must reach the handler instead of crashing the worker
+    // while constructing the WHATWG Request (which rejects bodies for GET/HEAD). The name is passed via
+    // query so the response is deterministic across models and streaming modes; a status of 200 (rather
+    // than a 500) confirms the request reached the handler.
+    describe('GET/HEAD request with a body (issue #458)', () => {
+        it('GET with a body reaches the handler', async () => {
+            const url = getFuncUrl('helloWorld', { name: 'getWithBody' });
+            const { status, body } = await sendRequestWithBody(url, 'GET', 'this GET body must not crash the worker');
+            expect(status).to.equal(200);
+            expect(body).to.equal('Hello, getWithBody!');
+        });
+
+        it('HEAD with a body reaches the handler', async () => {
+            const url = getFuncUrl('helloWorld', { name: 'headWithBody' });
+            // HEAD responses carry no body, so we only assert the request reached the handler (status 200).
+            const { status } = await sendRequestWithBody(url, 'HEAD', 'this HEAD body must not crash the worker');
+            expect(status).to.equal(200);
+        });
     });
 
     // Use a connection pool to avoid flaky test failures due to various connection limits (Mac in particular seems to have a low limit)
