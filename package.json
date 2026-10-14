@@ -91,7 +91,7 @@
         "uuid": "^9.0.1"
     },
     "devDependencies": {
-        "@modelcontextprotocol/sdk": "^1.29.0",
+        "@modelcontextprotocol/sdk": "^1.31.0",
         "@types/node": "^20.19.39",
         "typescript": "^5.9.3"
     }
